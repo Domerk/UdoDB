@@ -12,6 +12,10 @@ MainWindow::MainWindow(QWidget *parent) :
     lastSelect = new QString();
     currentTable = new QString();
 
+    // ------------------------- Всякая красота ----------------------------
+
+    this->setWindowTitle(tr("Тут будет содержательное название"));
+
     // --------------------------- Main ToolBar ----------------------------
 
     ui->mainToolBar->addAction(tr("Удалить запись"), this, SLOT(deleteThis()));
@@ -65,17 +69,17 @@ MainWindow::~MainWindow()
 
 bool MainWindow::connectDB(QString pathToDB)
 {
-    myDB = QSqlDatabase::addDatabase("QSQLITE");
-    myDB.setDatabaseName(pathToDB);
+    myDB = QSqlDatabase::addDatabase("QSQLITE");    // Указываем СУБД
+    myDB.setDatabaseName(pathToDB);                 // Задаём полное имя базы
 
-    QFileInfo checkFile(pathToDB);
+    QFileInfo checkFile(pathToDB);                  // Информация о файле базы
 
-    if (checkFile.isFile())
+    if (checkFile.isFile())                         // Если такой файл существует
     {
-        if (myDB.open())
+        if (myDB.open())                            // Открываем соединение
         {
-            ui->lblStatus->setText(tr("Соединение установлено"));
-            return true;
+            ui->lblStatus->setText(tr("Соединение установлено")); // Выводим сообщение
+            return true;                 // Возвращаем true
         }
         else
         {
@@ -95,9 +99,13 @@ bool MainWindow::connectDB(QString pathToDB)
 
 void MainWindow::showTable(QString table)
 {
-    QSqlQuery query;
-    lastSelect->clear();
-    currentTable->clear();
+    QSqlQuery query;        // Создаём запрос
+    lastSelect->clear();    // Удаляем данные о последнем запросе
+    currentTable->clear();  // И о текущей таблице
+
+    // Далее в зависимости от того, какую таблицу нцжно вывести
+    // Выполняем соотвествующий запрос, сохраняем информацию о нём
+    // И показываем соотвесттвующую страницу StackedWidget (форму)
 
     if (table == "Учащиеся")
     {
@@ -120,8 +128,10 @@ void MainWindow::showTable(QString table)
         ui->stackedWidget->setCurrentIndex(0);
     }
 
+    // Сохраняем инфу о текущей таблице
     currentTable->append(table);
 
+    // Отображаем заголовки и строки таблицы
     drawHeaders(query);
     drawRows(query);
 }
@@ -141,17 +151,17 @@ void MainWindow::drawHeaders(QSqlQuery query)
 
     columnCount = 0;
     QStringList qsl;
-    QSqlRecord rec;
-    rec = query.record();
-    columnCount = rec.count();
-    ui->tableWidget->setColumnCount(columnCount);
+    QSqlRecord rec;             // Объект данного типа содержит информацию о Select'е
+    rec = query.record();       // Получаем нужную инфу от запроса
+    columnCount = rec.count();  // Узнаём количество столбцов
+    ui->tableWidget->setColumnCount(columnCount);   // Задаём количество столбцов у таблицы
 
-    for (int i = 0; i<columnCount; i++)
+    for (int i = 0; i<columnCount; i++)     // Пока прочитали не все столбцы
     {
-        qsl.append(rec.fieldName(i));
+        qsl.append(rec.fieldName(i));       // Пишем их названия в стринглист
     }
 
-    ui->tableWidget->setHorizontalHeaderLabels(qsl);
+    ui->tableWidget->setHorizontalHeaderLabels(qsl);    // Устанавливаем названия столбцов в таблице
 }
 
 // ============================================================
@@ -166,27 +176,19 @@ void MainWindow::drawRows(QSqlQuery query)
     for(int i = 0; i < rowCount; i++)
              ui->tableWidget->removeRow(0);
 
-    rowCount = 0;
-    while (query.next())
+    rowCount = 0;           // Нет ни одной строки
+    while (query.next())    // Пока есть результаты запроса
         {
-            ui->tableWidget->insertRow(rowCount);
-            for (int i = 0; i<columnCount; i++)
+            ui->tableWidget->insertRow(rowCount);   // Добавляем строку в конец
+            for (int i = 0; i<columnCount; i++)     // Для всех полей таблицы
             {
+                // Создаём ячейку в текущем поле текущей строки и заносим туда инфу
                 ui->tableWidget->setItem(rowCount, i, new QTableWidgetItem(query.value(i).toString()));
             }
-            rowCount ++;
+            rowCount ++;    // Увеличиваем количество строк
         }
 
-    ui->tableWidget->insertRow(rowCount);
-}
-
-// ============================================================
-// =========== Вывод подробной информации в форму =============
-// ============================================================
-
-void MainWindow::showMoreInfo()
-{
-
+    ui->tableWidget->insertRow(rowCount); // В конце добавляем пустую строку
 }
 
 // ============================================================
@@ -195,9 +197,9 @@ void MainWindow::showMoreInfo()
 
 void MainWindow::deleteThis()
 {
-    if(ui->tableWidget->verticalHeader()->currentIndex().row() >= 0)
+    if(ui->tableWidget->verticalHeader()->currentIndex().row() >= 0) // Если выбрана строка
         {
-
+            // Создаём окно, запрашивающее подтверждение действия
             QMessageBox messageBox(QMessageBox::Question,
                         tr("Удаление записи"),
                         tr("Вы действительно хотите удалить запись из базы?"),
@@ -207,17 +209,19 @@ void MainWindow::deleteThis()
             messageBox.setButtonText(QMessageBox::Yes, tr("Да"));
             messageBox.setButtonText(QMessageBox::No, tr("Нет"));
 
+            // Если действие подтверждено
             if (messageBox.exec() == QMessageBox::Yes)
             {
-                    QSqlQuery query;
+                    QSqlQuery query;        // Создаём и формируем запрос
                     QString str = "DELETE FROM " + *currentTable + "WHERE ID = " + ui->tableWidget->item(ui->tableWidget->verticalHeader()->currentIndex().row(), 0)->text() + " ;";
-                    query.exec(str);
-                    repeatLastSelect();
+                    query.exec(str);        // Выполняем запрос
+                    repeatLastSelect();     // Повторяеи последний Select
             }
 
         }
         else
         {
+            // Иначе сообщаем пользователю, что ни одной записи не выбрано
             QMessageBox messageBox(QMessageBox::Information,
                                    tr("Удаление записи"),
                                    tr("Не выбрано ни одной записи для удаления!"),

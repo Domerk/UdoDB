@@ -54,7 +54,6 @@ private slots:
     void insertThis();
     void refreshTable();
     void repeatLastSelect();
-    void showMoreInfo();
     void headerClicked(int);
 
     void on_treeWidget_itemClicked(QTreeWidgetItem *item, int column);
