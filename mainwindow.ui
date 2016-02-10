@@ -324,7 +324,7 @@
                    <number>6</number>
                   </property>
                   <item row="0" column="0">
-                   <widget class="QLabel" name="ID">
+                   <widget class="QLabel" name="studID">
                     <property name="text">
                      <string>ID</string>
                     </property>
@@ -401,34 +401,61 @@
                    </widget>
                   </item>
                   <item row="1" column="1">
-                   <widget class="QLineEdit" name="lineEdit"/>
+                   <widget class="QLineEdit" name="studSurname"/>
                   </item>
                   <item row="2" column="1">
-                   <widget class="QLineEdit" name="lineEdit_2"/>
+                   <widget class="QLineEdit" name="studName"/>
                   </item>
                   <item row="3" column="1">
-                   <widget class="QLineEdit" name="lineEdit_3"/>
+                   <widget class="QLineEdit" name="studPatr"/>
                   </item>
                   <item row="4" column="1">
-                   <widget class="QComboBox" name="comboBox"/>
+                   <widget class="QComboBox" name="studDoc">
+                    <item>
+                     <property name="text">
+                      <string>Свидетельство о рождении</string>
+                     </property>
+                    </item>
+                    <item>
+                     <property name="text">
+                      <string>Паспорт</string>
+                     </property>
+                    </item>
+                   </widget>
                   </item>
                   <item row="5" column="1">
-                   <widget class="QLineEdit" name="lineEdit_4"/>
+                   <widget class="QLineEdit" name="studNumDoc"/>
                   </item>
                   <item row="6" column="1">
-                   <widget class="QComboBox" name="comboBox_2"/>
+                   <widget class="QComboBox" name="studGender">
+                    <item>
+                     <property name="text">
+                      <string>-</string>
+                     </property>
+                    </item>
+                    <item>
+                     <property name="text">
+                      <string>Муж</string>
+                     </property>
+                    </item>
+                    <item>
+                     <property name="text">
+                      <string>Жен</string>
+                     </property>
+                    </item>
+                   </widget>
                   </item>
                   <item row="7" column="1">
-                   <widget class="QDateEdit" name="dateEdit"/>
+                   <widget class="QDateEdit" name="studBirthday"/>
                   </item>
                   <item row="8" column="1">
-                   <widget class="QLineEdit" name="lineEdit_5"/>
+                   <widget class="QLineEdit" name="areaSchools"/>
                   </item>
                   <item row="9" column="1">
-                   <widget class="QLineEdit" name="lineEdit_6"/>
+                   <widget class="QLineEdit" name="school"/>
                   </item>
                   <item row="10" column="1">
-                   <widget class="QLineEdit" name="lineEdit_7"/>
+                   <widget class="QLineEdit" name="grade"/>
                   </item>
                  </layout>
                 </item>
@@ -440,7 +467,7 @@
                  </widget>
                 </item>
                 <item>
-                 <widget class="QTextEdit" name="textEdit"/>
+                 <widget class="QTextEdit" name="parents"/>
                 </item>
                 <item>
                  <widget class="QLabel" name="label_12">
@@ -450,7 +477,7 @@
                  </widget>
                 </item>
                 <item>
-                 <widget class="QTextEdit" name="textEdit_2"/>
+                 <widget class="QTextEdit" name="address"/>
                 </item>
                 <item>
                  <layout class="QFormLayout" name="formLayout_2">
@@ -493,19 +520,19 @@
                    </widget>
                   </item>
                   <item row="0" column="1">
-                   <widget class="QLineEdit" name="lineEdit_8"/>
+                   <widget class="QLineEdit" name="phone"/>
                   </item>
                   <item row="1" column="1">
-                   <widget class="QLineEdit" name="lineEdit_9"/>
+                   <widget class="QLineEdit" name="email"/>
                   </item>
                   <item row="2" column="1">
-                   <widget class="QDateEdit" name="dateEdit_2"/>
+                   <widget class="QDateEdit" name="admissDate"/>
                   </item>
                   <item row="3" column="1">
-                   <widget class="QComboBox" name="comboBox_3"/>
+                   <widget class="QComboBox" name="eduForm"/>
                   </item>
                   <item row="4" column="1">
-                   <widget class="QDateEdit" name="dateEdit_3"/>
+                   <widget class="QDateEdit" name="outDate"/>
                   </item>
                  </layout>
                 </item>
@@ -573,7 +600,7 @@
                  </widget>
                 </item>
                 <item>
-                 <widget class="QTextEdit" name="textEdit_3"/>
+                 <widget class="QTextEdit" name="studComments"/>
                 </item>
                </layout>
               </widget>

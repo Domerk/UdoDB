@@ -34,8 +34,15 @@ private:
     QString *lastSelect;
     QString *currentTable;
 
+    // Шаблонные запросы на вывод таблиц
+    // Вероятно, стоит вынести отсюда в отдельный файл
+
+    QString queryStud;
+    QString queryTeach;
+    QString queryAllians;
+
     bool connectDB(QString pathToDB);
-    void showTable(QSqlQuery query);
+    void showTable(QString table);
     void drawHeaders(QSqlQuery query);
     void drawRows(QSqlQuery query);
 
@@ -45,6 +52,7 @@ private slots:
     void insertThis();
     void refreshTable();
     void repeatLastSelect();
+    void showMoreInfo();
 
 
 
