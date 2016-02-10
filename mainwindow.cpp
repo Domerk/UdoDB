@@ -138,8 +138,7 @@ void MainWindow::refreshTable()
 void MainWindow::repeatLastSelect()
 {
     QSqlQuery query;
-    str.append(*lastSelect);
-    query.exec(str);
+    query.exec(*lastSelect);
     drawRows(query);
 }
 
