@@ -29,9 +29,24 @@
        </property>
        <column>
         <property name="text">
-         <string notr="true">1</string>
+         <string>ЦДЮТТ</string>
         </property>
        </column>
+       <item>
+        <property name="text">
+         <string>Учащиеся</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>Преподаватели</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>Объединения</string>
+        </property>
+       </item>
       </widget>
       <widget class="QTableWidget" name="tableWidget"/>
       <widget class="QWidget" name="verticalLayoutWidget">

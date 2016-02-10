@@ -45,6 +45,8 @@ private:
     void showTable(QString table);
     void drawHeaders(QSqlQuery query);
     void drawRows(QSqlQuery query);
+    void showMoreInfo(int row);
+    void clearMoreInfoForm();
 
 private slots:
     void deleteThis();
@@ -53,9 +55,12 @@ private slots:
     void refreshTable();
     void repeatLastSelect();
     void showMoreInfo();
+    void headerClicked(int);
+
+    void on_treeWidget_itemClicked(QTreeWidgetItem *item, int column);
 
 
-
+    void on_tableWidget_cellClicked(int row, int column);
 };
 
 #endif // MAINWINDOW_H

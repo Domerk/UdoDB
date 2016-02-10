@@ -20,7 +20,12 @@ MainWindow::MainWindow(QWidget *parent) :
     //ui->mainToolBar->addAction(tr("Расширенный поиск"), this, SLOT(showSearchForm()));
 
 
+    connect(ui->tableWidget->horizontalHeader(), SIGNAL(sectionClicked(int)), this, SLOT(headerClicked(int)));
+
+
     // ------------------ Запросы на вывод основных таблиц -----------------
+
+    // Разобраться с ковычками. Возможно, читать запросы из файла.
 
    /* queryStud.append("SELECT 'ID', 'Фамилия', 'Имя', 'Отчество', 'Тип документа', 'Номер документа', 'Пол', 'Год рождения', ");
     queryStud.append("'Район школы', 'Школа', 'Класс', 'Родители', 'Домашний адрес', 'Телефон', 'e-mail', 'Дата заявления', 'Форма обучения', ");
@@ -30,7 +35,10 @@ MainWindow::MainWindow(QWidget *parent) :
 
     queryStud.append("SELECT * FROM Учащиеся");
 
-    queryTeach.append("SELECT ID, 'Фамилия', 'Имя', 'Отчество', 'Номер паспорта', 'Отдел' FROM Преподаватели;");
+    //queryTeach.append("SELECT ID, 'Фамилия', 'Имя', 'Отчество', 'Номер паспорта', 'Отдел' FROM Преподаватели;");
+    queryTeach.append("SELECT * FROM Преподаватели;");
+
+
     queryAllians.append("SELECT ID, 'Название', 'Направленность', 'Отдел', 'Описание' FROM Объединения;");
 
     // ----------------------------- DataBase ------------------------------
@@ -95,18 +103,21 @@ void MainWindow::showTable(QString table)
     {
         query.exec(queryStud);
         lastSelect->append(queryStud);
+        ui->stackedWidget->setCurrentIndex(2);
     }
 
     if (table == "Преподаватели")
     {
         query.exec(queryTeach);
         lastSelect->append(queryTeach);
+        ui->stackedWidget->setCurrentIndex(1);
     }
 
     if (table == "Объединения")
     {
         query.exec(queryAllians);
         lastSelect->append(queryAllians);
+        ui->stackedWidget->setCurrentIndex(0);
     }
 
     currentTable->append(table);
@@ -278,3 +289,92 @@ void MainWindow::repeatLastSelect()
 
 // ============================================================
 // ============================================================
+
+void MainWindow::on_treeWidget_itemClicked(QTreeWidgetItem *item, int column)
+{
+    QString str = item->text(column);
+    showTable(str);
+}
+
+// ============================================================
+// ============================================================
+
+void MainWindow::headerClicked(int index)
+{
+    ui->tableWidget->sortByColumn(index);
+}
+
+
+// ============================================================
+// ============== Вывод подробной инфы в форму ================
+// ============================================================
+void MainWindow::showMoreInfo(int row)
+{
+    if (*currentTable == "Учащиеся")
+    {
+        ui->studID->setText(ui->tableWidget->item(row, 0)->text());
+        ui->studSurname->setText(ui->tableWidget->item(row, 1)->text());
+        ui->studName->setText(ui->tableWidget->item(row, 2)->text());
+        ui->studPatr->setText(ui->tableWidget->item(row, 3)->text());
+
+        if (ui->tableWidget->item(row, 4)->text() == "Паспорт")
+            ui->studDoc->setCurrentIndex(1);
+        else
+            ui->studDoc->setCurrentIndex(0);
+
+        ui->studNumDoc->setText(ui->tableWidget->item(row, 5)->text());
+    }
+
+    if (*currentTable == "Преподаватели")
+    {
+
+    }
+
+    if (*currentTable == "Объединения")
+    {
+
+    }
+}
+
+// ============================================================
+// ============================================================
+
+void MainWindow::clearMoreInfoForm()
+{
+    if (*currentTable == "Учащиеся")
+    {
+        ui->studID->clear();
+        ui->studSurname->clear();
+        ui->studName->clear();
+        ui->studPatr->clear();
+
+        // ui->studDoc-> ??
+
+        ui->studNumDoc->clear();
+    }
+
+    if (*currentTable == "Преподаватели")
+    {
+
+    }
+
+    if (*currentTable == "Объединения")
+    {
+
+    }
+}
+
+// ============================================================
+// ============================================================
+
+void MainWindow::on_tableWidget_cellClicked(int row, int column)
+{
+    if (row < rowCount)
+    {
+        showMoreInfo(row);
+    }
+    else
+    {
+        clearMoreInfoForm();
+    }
+}
