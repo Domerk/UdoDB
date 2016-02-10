@@ -34,10 +34,10 @@ private:
     QString *lastSelect;
     QString *currentTable;
 
-    void connectDB(QString pathToDB);
-    void showTable();
-    void drawHeaders();
-    void drawRows();
+    bool connectDB(QString pathToDB);
+    void showTable(QSqlQuery query);
+    void drawHeaders(QSqlQuery query);
+    void drawRows(QSqlQuery query);
 
 private slots:
     void deleteThis();
