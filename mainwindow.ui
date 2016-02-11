@@ -116,7 +116,7 @@
                 <item>
                  <layout class="QFormLayout" name="formLayout_4">
                   <item row="0" column="0">
-                   <widget class="QLabel" name="label_29">
+                   <widget class="QLabel" name="alID">
                     <property name="text">
                      <string>ID</string>
                     </property>
@@ -144,13 +144,13 @@
                    </widget>
                   </item>
                   <item row="1" column="1">
-                   <widget class="QLineEdit" name="lineEdit_15"/>
+                   <widget class="QLineEdit" name="alName"/>
                   </item>
                   <item row="2" column="1">
-                   <widget class="QLineEdit" name="lineEdit_16"/>
+                   <widget class="QLineEdit" name="alDirect"/>
                   </item>
                   <item row="3" column="1">
-                   <widget class="QLineEdit" name="lineEdit_17"/>
+                   <widget class="QLineEdit" name="alOtd"/>
                   </item>
                  </layout>
                 </item>
@@ -162,7 +162,7 @@
                  </widget>
                 </item>
                 <item>
-                 <widget class="QTextEdit" name="textEdit_4"/>
+                 <widget class="QTextEdit" name="alDescript"/>
                 </item>
                </layout>
               </widget>
@@ -221,7 +221,7 @@
                 <item>
                  <layout class="QFormLayout" name="formLayout_3">
                   <item row="0" column="0">
-                   <widget class="QLabel" name="label_20">
+                   <widget class="QLabel" name="teachID">
                     <property name="text">
                      <string>ID</string>
                     </property>
@@ -263,19 +263,19 @@
                    </widget>
                   </item>
                   <item row="1" column="1">
-                   <widget class="QLineEdit" name="lineEdit_10"/>
+                   <widget class="QLineEdit" name="teachSurname"/>
                   </item>
                   <item row="2" column="1">
-                   <widget class="QLineEdit" name="lineEdit_11"/>
+                   <widget class="QLineEdit" name="teachName"/>
                   </item>
                   <item row="3" column="1">
-                   <widget class="QLineEdit" name="lineEdit_12"/>
+                   <widget class="QLineEdit" name="teachPatr"/>
                   </item>
                   <item row="4" column="1">
-                   <widget class="QLineEdit" name="lineEdit_13"/>
+                   <widget class="QLineEdit" name="teachNumPass"/>
                   </item>
                   <item row="5" column="1">
-                   <widget class="QLineEdit" name="lineEdit_14"/>
+                   <widget class="QLineEdit" name="teachOtd"/>
                   </item>
                  </layout>
                 </item>

@@ -18,9 +18,10 @@ MainWindow::MainWindow(QWidget *parent) :
 
     // --------------------------- Main ToolBar ----------------------------
 
+    ui->mainToolBar->addAction(tr("Новая запись"), this, SLOT(clearFormForAdd()));
     ui->mainToolBar->addAction(tr("Удалить запись"), this, SLOT(deleteThis()));
     ui->mainToolBar->addAction(tr("Перезагрузить таблицу"), this, SLOT(refreshTable()));
-    ui->mainToolBar->addAction(tr("Перезагрузить таблицу"), this, SLOT(repeatLastSelect()));
+    ui->mainToolBar->addAction(tr("Повторить последний запрос"), this, SLOT(repeatLastSelect()));
     //ui->mainToolBar->addAction(tr("Расширенный поиск"), this, SLOT(showSearchForm()));
 
 
@@ -213,9 +214,11 @@ void MainWindow::deleteThis()
             if (messageBox.exec() == QMessageBox::Yes)
             {
                     QSqlQuery query;        // Создаём и формируем запрос
-                    QString str = "DELETE FROM " + *currentTable + "WHERE ID = " + ui->tableWidget->item(ui->tableWidget->verticalHeader()->currentIndex().row(), 0)->text() + " ;";
+                    QString str = "DELETE FROM " + *currentTable + " WHERE ID = " + ui->tableWidget->item(ui->tableWidget->verticalHeader()->currentIndex().row(), 0)->text() + " ;";
                     query.exec(str);        // Выполняем запрос
                     repeatLastSelect();     // Повторяеи последний Select
+
+                    ui->lblStatus->setText(str);
             }
 
         }
@@ -316,26 +319,65 @@ void MainWindow::showMoreInfo(int row)
 {
     if (*currentTable == "Учащиеся")
     {
-        ui->studID->setText(ui->tableWidget->item(row, 0)->text());
-        ui->studSurname->setText(ui->tableWidget->item(row, 1)->text());
-        ui->studName->setText(ui->tableWidget->item(row, 2)->text());
-        ui->studPatr->setText(ui->tableWidget->item(row, 3)->text());
+        ui->studID->setText(ui->tableWidget->item(row, 0)->text());         // ID
+        ui->studSurname->setText(ui->tableWidget->item(row, 1)->text());    // Фамилия
+        ui->studName->setText(ui->tableWidget->item(row, 2)->text());       // Имя
+        ui->studPatr->setText(ui->tableWidget->item(row, 3)->text());       // Отчество
 
-        if (ui->tableWidget->item(row, 4)->text() == "Паспорт")
-            ui->studDoc->setCurrentIndex(1);
+        if (ui->tableWidget->item(row, 4)->text() == "Паспорт")     // Тип документа
+            ui->studDoc->setCurrentIndex(1);                        // Паспорт
         else
-            ui->studDoc->setCurrentIndex(0);
+            ui->studDoc->setCurrentIndex(0);                        // Свидетельство о рождении
 
-        ui->studNumDoc->setText(ui->tableWidget->item(row, 5)->text());
+        ui->studNumDoc->setText(ui->tableWidget->item(row, 5)->text()); // Номер документа
+
+        if (ui->tableWidget->item(row, 6)->text() == "Жен") // Пол
+            ui->studDoc->setCurrentIndex(2);                // Жен
+        else
+            ui->studDoc->setCurrentIndex(1);                // Муж
+
+        // Переписать эту строку, потому что QDate()
+        //ui->studBirthday->setDate(ui->tableWidget->item(row, 7)->text());   // Год рождения
+
+        ui->areaSchools->setText(ui->tableWidget->item(row, 8)->text());    // Район школы
+        ui->school->setText(ui->tableWidget->item(row, 9)->text());         // Школа
+        ui->grade->setText(ui->tableWidget->item(row, 10)->text());         // Класс
+        ui->parents->setText(ui->tableWidget->item(row, 11)->text());       // Родители
+        ui->address->setText(ui->tableWidget->item(row, 12)->text());       // Адрес
+        ui->phone->setText(ui->tableWidget->item(row, 13)->text());         // Телефон
+        ui->email->setText(ui->tableWidget->item(row, 14)->text());         // email
+
+       // ui->admissDate->setDate(ui->tableWidget->item(row, 15)->text());  // Дата подачи заявления
+
+        ui->eduForm->setCurrentText(ui->tableWidget->item(row, 16)->text()); // Форма обучения
+
+       // ui->outDate->setDate(ui->tableWidget->item(row, 17)->text());     // Когда выбыл
+
+        // Чекбоксы - посмотреть, как установить их значения !!!!
+        //ui->checkBox->setChecked(ui->tableWidget->item(row, 18)->text());
+
+
+
     }
 
     if (*currentTable == "Преподаватели")
     {
 
+        ui->teachID->setText(ui->tableWidget->item(row, 0)->text());        // ID
+        ui->teachSurname->setText(ui->tableWidget->item(row, 1)->text());   // Фамилия
+        ui->teachName->setText(ui->tableWidget->item(row, 2)->text());      // Имя
+        ui->teachPatr->setText(ui->tableWidget->item(row, 3)->text());      // Отчество
+        ui->teachNumPass->setText(ui->tableWidget->item(row, 4)->text());   // Номер паспорта
+        ui->teachOtd->setText(ui->tableWidget->item(row, 5)->text());       // Отдел
     }
 
     if (*currentTable == "Объединения")
     {
+        ui->alID->setText(ui->tableWidget->item(row, 0)->text());           // ID
+        ui->alName->setText(ui->tableWidget->item(row, 1)->text());         // Описание
+        ui->alDirect->setText(ui->tableWidget->item(row, 2)->text());       // Напавленность
+        ui->alOtd->setText(ui->tableWidget->item(row, 3)->text());          // Отдел
+        ui->alDescript->setText(ui->tableWidget->item(row, 4)->text());     // Описание
 
     }
 }
@@ -359,12 +401,21 @@ void MainWindow::clearMoreInfoForm()
 
     if (*currentTable == "Преподаватели")
     {
-
+        ui->teachID->clear();        // ID
+        ui->teachSurname->clear();   // Фамилия
+        ui->teachName->clear();      // Имя
+        ui->teachPatr->clear();      // Отчество
+        ui->teachNumPass->clear();   // Номер паспорта
+        ui->teachOtd->clear();       // Отдел
     }
 
     if (*currentTable == "Объединения")
     {
-
+        ui->alID->clear();           // ID
+        ui->alName->clear();         // Описание
+        ui->alDirect->clear();       // Напавленность
+        ui->alOtd->clear();          // Отдел
+        ui->alDescript->clear();     // Описание
     }
 }
 
@@ -381,4 +432,12 @@ void MainWindow::on_tableWidget_cellClicked(int row, int column)
     {
         clearMoreInfoForm();
     }
+}
+
+// ============================================================
+// ============================================================
+
+void MainWindow::clearFormForAdd()
+{
+    clearMoreInfoForm();
 }

@@ -49,6 +49,7 @@ private:
     void clearMoreInfoForm();
 
 private slots:
+    void clearFormForAdd();
     void deleteThis();
     void updateThis();
     void insertThis();
