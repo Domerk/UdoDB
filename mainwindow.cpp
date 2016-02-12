@@ -17,6 +17,16 @@ MainWindow::MainWindow(QWidget *parent) :
 
     this->setWindowTitle(tr("Тут будет содержательное название"));
 
+    // -------------------------------- Меню --------------------------------
+
+    connect(ui->exit, SIGNAL(triggered()), this, SLOT(close()));
+
+    connect(ui->actionRefreshTab, SIGNAL(triggered()), this, SLOT(refreshTable()));
+    connect(ui->actionRepeatLastSelect, SIGNAL(triggered()), this, SLOT(repeatLastSelect()));
+
+    connect(ui->actionNewStr, SIGNAL(triggered()), this, SLOT(clearFormForAdd()));
+    connect(ui->actionDeleteStr, SIGNAL(triggered()), this, SLOT(deleteThis()));
+
     // --------------------------- Main ToolBar ----------------------------
 
     ui->mainToolBar->addAction(tr("Новая запись"), this, SLOT(clearFormForAdd()));
@@ -27,6 +37,7 @@ MainWindow::MainWindow(QWidget *parent) :
 
 
     connect(ui->tableWidget->horizontalHeader(), SIGNAL(sectionClicked(int)), this, SLOT(headerClicked(int)));
+    connect(ui->tableWidget->verticalHeader(), SIGNAL(sectionClicked(int)), this, SLOT(rowClicked(int)));
 
 
     // ------------------ Запросы на вывод основных таблиц -----------------
@@ -60,6 +71,9 @@ MainWindow::MainWindow(QWidget *parent) :
 
 MainWindow::~MainWindow()
 {
+    if (myDB.isOpen())
+        myDB.close();
+
     delete lastSelect;
     delete currentTable;
     delete ui;
@@ -136,6 +150,8 @@ void MainWindow::showTable(QString table)
     // Отображаем заголовки и строки таблицы
     drawHeaders(query);
     drawRows(query);
+
+    return;
 }
 
 // ============================================================
@@ -164,6 +180,7 @@ void MainWindow::drawHeaders(QSqlQuery query)
     }
 
     ui->tableWidget->setHorizontalHeaderLabels(qsl);    // Устанавливаем названия столбцов в таблице
+    //ui->tableWidget->setColumnHidden(0, true);        // Прячем служебное поле с ID
 }
 
 // ============================================================
@@ -445,6 +462,22 @@ void MainWindow::on_tableWidget_cellClicked(int row, int column)
 }
 
 // ============================================================
+// ========= Слот для сигнала Выбрана строка таблицы ==========
+// ============================================================
+
+void MainWindow::rowClicked(int row)
+{
+    if (row < rowCount)
+    {
+        showMoreInfo(row);
+    }
+    else
+    {
+        clearMoreInfoForm();
+    }
+}
+
+// ============================================================
 // ============== Слот для сигнала Очистить форму =============
 // ============================================================
 
@@ -549,7 +582,7 @@ void MainWindow::on_saveButton_clicked()
             QString docNum = ui->studNumDoc->text();
             QString gender = ui->studGender->currentText();
 
-            if (name.isEmpty() || surname.isEmpty() || docType == "-" || docNum.isEmpty() || gender == "-")
+            if (name.isEmpty() || surname.isEmpty() || docType == "" || docNum.isEmpty() || gender == "")
             {
                 // Сообщаем пользователю, что обязательные поля не заполнены
                 QMessageBox messageBox(QMessageBox::Information,
@@ -584,3 +617,13 @@ void MainWindow::on_saveButton_clicked()
 
 // ============================================================
 // ============================================================
+
+
+void MainWindow::hideColumnsFromMask(QVector<bool> mask)
+{
+    if (mask.size() == ui->tableWidget->columnCount())
+    {
+        for (int i = 1; i < mask.size(); i++)
+            ui->tableWidget->setColumnHidden(i, mask[i]);
+    }
+}

@@ -109,8 +109,8 @@
                 <rect>
                  <x>0</x>
                  <y>0</y>
-                 <width>314</width>
-                 <height>316</height>
+                 <width>169</width>
+                 <height>207</height>
                 </rect>
                </property>
                <layout class="QVBoxLayout" name="verticalLayout_8">
@@ -205,8 +205,8 @@
                 <rect>
                  <x>0</x>
                  <y>0</y>
-                 <width>305</width>
-                 <height>307</height>
+                 <width>166</width>
+                 <height>163</height>
                 </rect>
                </property>
                <layout class="QVBoxLayout" name="verticalLayout_6">
@@ -325,7 +325,7 @@
                <property name="geometry">
                 <rect>
                  <x>0</x>
-                 <y>0</y>
+                 <y>-581</y>
                  <width>297</width>
                  <height>897</height>
                 </rect>
@@ -432,7 +432,7 @@
                    <widget class="QComboBox" name="studDoc">
                     <item>
                      <property name="text">
-                      <string>-</string>
+                      <string/>
                      </property>
                     </item>
                     <item>
@@ -454,7 +454,7 @@
                    <widget class="QComboBox" name="studGender">
                     <item>
                      <property name="text">
-                      <string>-</string>
+                      <string/>
                      </property>
                     </item>
                     <item>
@@ -556,7 +556,7 @@
                    <widget class="QComboBox" name="eduForm">
                     <item>
                      <property name="text">
-                      <string>-</string>
+                      <string/>
                      </property>
                     </item>
                    </widget>
@@ -724,13 +724,29 @@
      <height>21</height>
     </rect>
    </property>
-   <widget class="QMenu" name="menu">
+   <widget class="QMenu" name="menuFile">
     <property name="title">
      <string>Файл</string>
     </property>
     <addaction name="exit"/>
    </widget>
-   <addaction name="menu"/>
+   <widget class="QMenu" name="menuTab">
+    <property name="title">
+     <string>Таблица</string>
+    </property>
+    <addaction name="actionRefreshTab"/>
+    <addaction name="actionRepeatLastSelect"/>
+   </widget>
+   <widget class="QMenu" name="menuStr">
+    <property name="title">
+     <string>Строка</string>
+    </property>
+    <addaction name="actionNewStr"/>
+    <addaction name="actionDeleteStr"/>
+   </widget>
+   <addaction name="menuFile"/>
+   <addaction name="menuTab"/>
+   <addaction name="menuStr"/>
   </widget>
   <widget class="QToolBar" name="mainToolBar">
    <property name="movable">
@@ -746,6 +762,26 @@
   <action name="exit">
    <property name="text">
     <string>Выход</string>
+   </property>
+  </action>
+  <action name="actionNewStr">
+   <property name="text">
+    <string>Новая строка</string>
+   </property>
+  </action>
+  <action name="actionDeleteStr">
+   <property name="text">
+    <string>Удалить текущую</string>
+   </property>
+  </action>
+  <action name="actionRefreshTab">
+   <property name="text">
+    <string>Перезагрузить таблицу</string>
+   </property>
+  </action>
+  <action name="actionRepeatLastSelect">
+   <property name="text">
+    <string>Повторить последний запрос</string>
    </property>
   </action>
  </widget>

@@ -41,12 +41,17 @@ private:
     QString queryTeach;
     QString queryAllians;
 
+    QVector<bool> studTableMask;
+    QVector<bool> teachTableMask;
+    QVector<bool> alliansTableMask;
+
     bool connectDB(QString pathToDB);
     void showTable(QString table);
     void drawHeaders(QSqlQuery query);
     void drawRows(QSqlQuery query);
     void showMoreInfo(int row);
     void clearMoreInfoForm();
+    void hideColumnsFromMask(QVector<bool> mask);
 
 private slots:
     void clearFormForAdd();
@@ -54,12 +59,13 @@ private slots:
     void refreshTable();
     void repeatLastSelect();
     void headerClicked(int);
+    void rowClicked(int);
+    //void changeTableMask();
 
     void on_treeWidget_itemClicked(QTreeWidgetItem *item, int column);
-
-
     void on_tableWidget_cellClicked(int row, int column);
     void on_saveButton_clicked();
+
 };
 
 #endif // MAINWINDOW_H
