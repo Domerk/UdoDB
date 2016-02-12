@@ -12,6 +12,7 @@ MainWindow::MainWindow(QWidget *parent) :
     lastSelect = new QString();
     currentTable = new QString();
 
+
     // ------------------------- Всякая красота ----------------------------
 
     this->setWindowTitle(tr("Тут будет содержательное название"));
@@ -40,11 +41,11 @@ MainWindow::MainWindow(QWidget *parent) :
 
     queryStud.append("SELECT * FROM Учащиеся");
 
-    //queryTeach.append("SELECT ID, 'Фамилия', 'Имя', 'Отчество', 'Номер паспорта', 'Отдел' FROM Преподаватели;");
-    queryTeach.append("SELECT * FROM Преподаватели;");
+    queryTeach.append("SELECT ID, Фамилия, Имя, Отчество, Паспорт, Отдел FROM Преподаватели;");
+    //queryTeach.append("SELECT * FROM Преподаватели;");
 
 
-    queryAllians.append("SELECT ID, 'Название', 'Направленность', 'Отдел', 'Описание' FROM Объединения;");
+    queryAllians.append("SELECT ID, Название, Направленность, Отдел, Описание FROM Объединения;");
 
     // ----------------------------- DataBase ------------------------------
 
@@ -236,24 +237,6 @@ void MainWindow::deleteThis()
 }
 
 // ============================================================
-// =================== Обновление строки ======================
-// ============================================================
-
-void MainWindow::updateThis()
-{
-
-}
-
-// ============================================================
-// =================== Добавление строки ======================
-// ============================================================
-
-void MainWindow::insertThis()
-{
-
-}
-
-// ============================================================
 // =============== Обновление таблицы (Select *) ==============
 // ============================================================
 
@@ -295,6 +278,7 @@ void MainWindow::repeatLastSelect()
 }
 
 // ============================================================
+// =============== Выбрана таблица из дерева ==================
 // ============================================================
 
 void MainWindow::on_treeWidget_itemClicked(QTreeWidgetItem *item, int column)
@@ -304,6 +288,7 @@ void MainWindow::on_treeWidget_itemClicked(QTreeWidgetItem *item, int column)
 }
 
 // ============================================================
+// ============= Сортировка выбранного столбца ================
 // ============================================================
 
 void MainWindow::headerClicked(int index)
@@ -311,10 +296,10 @@ void MainWindow::headerClicked(int index)
     ui->tableWidget->sortByColumn(index);
 }
 
-
 // ============================================================
 // ============== Вывод подробной инфы в форму ================
 // ============================================================
+
 void MainWindow::showMoreInfo(int row)
 {
     if (*currentTable == "Учащиеся")
@@ -325,16 +310,16 @@ void MainWindow::showMoreInfo(int row)
         ui->studPatr->setText(ui->tableWidget->item(row, 3)->text());       // Отчество
 
         if (ui->tableWidget->item(row, 4)->text() == "Паспорт")     // Тип документа
-            ui->studDoc->setCurrentIndex(1);                        // Паспорт
+            ui->studDoc->setCurrentIndex(2);                        // Паспорт
         else
-            ui->studDoc->setCurrentIndex(0);                        // Свидетельство о рождении
+            ui->studDoc->setCurrentIndex(1);                        // Свидетельство о рождении
 
         ui->studNumDoc->setText(ui->tableWidget->item(row, 5)->text()); // Номер документа
 
         if (ui->tableWidget->item(row, 6)->text() == "Жен") // Пол
-            ui->studDoc->setCurrentIndex(2);                // Жен
+            ui->studGender->setCurrentIndex(2);                // Жен
         else
-            ui->studDoc->setCurrentIndex(1);                // Муж
+            ui->studGender->setCurrentIndex(1);                // Муж
 
         // Переписать эту строку, потому что QDate()
         //ui->studBirthday->setDate(ui->tableWidget->item(row, 7)->text());   // Год рождения
@@ -383,6 +368,7 @@ void MainWindow::showMoreInfo(int row)
 }
 
 // ============================================================
+// ============= Очистка формы с подробной инфой ==============
 // ============================================================
 
 void MainWindow::clearMoreInfoForm()
@@ -397,6 +383,29 @@ void MainWindow::clearMoreInfoForm()
         // ui->studDoc-> ??
 
         ui->studNumDoc->clear();
+
+        ui->studGender->setCurrentIndex(0);
+
+        // Переписать эту строку, потому что QDate()
+        //ui->studBirthday->   // Год рождения
+
+        ui->areaSchools->clear();   // Район школы
+        ui->school->clear();        // Школа
+        ui->grade->clear();         // Класс
+        ui->parents->clear();       // Родители
+        ui->address->clear();       // Адрес
+        ui->phone->clear();         // Телефон
+        ui->email->clear();         // email
+
+       // ui->admissDate->  // Дата подачи заявления
+
+        ui->eduForm->setCurrentIndex(0); // Форма обучения
+
+       // ui->outDate->setDate(ui->tableWidget->item(row, 17)->text());     // Когда выбыл
+
+        // Чекбоксы - посмотреть, как установить их значения !!!!
+        //ui->checkBox->setChecked(ui->tableWidget->item(row, 18)->text());
+
     }
 
     if (*currentTable == "Преподаватели")
@@ -420,6 +429,7 @@ void MainWindow::clearMoreInfoForm()
 }
 
 // ============================================================
+// ========= Слот для сигнала Выбрана ячейка таблицы ==========
 // ============================================================
 
 void MainWindow::on_tableWidget_cellClicked(int row, int column)
@@ -435,6 +445,7 @@ void MainWindow::on_tableWidget_cellClicked(int row, int column)
 }
 
 // ============================================================
+// ============== Слот для сигнала Очистить форму =============
 // ============================================================
 
 void MainWindow::clearFormForAdd()
@@ -443,6 +454,7 @@ void MainWindow::clearFormForAdd()
 }
 
 // ============================================================
+// ============== Добавление и изменение записей ==============
 // ============================================================
 
 void MainWindow::on_saveButton_clicked()
@@ -492,12 +504,12 @@ void MainWindow::on_saveButton_clicked()
         case 1:     // Преподаватель
         {
 
-            QString id = ui->teachID->text();        // ID
-            QString surname = ui->teachSurname->text();   // Фамилия
-            QString name = ui->teachName->text();      // Имя
-            QString patrname = ui->teachPatr->text();      // Отчество
-            QString numpass = ui->teachNumPass->text();   // Номер паспорта
-            QString otd = ui->teachOtd->text();       // Отдел
+            QString id = ui->teachID->text();               // ID
+            QString surname = ui->teachSurname->text();     // Фамилия
+            QString name = ui->teachName->text();           // Имя
+            QString patrname = ui->teachPatr->text();       // Отчество
+            QString numpass = ui->teachNumPass->text();     // Номер паспорта
+            QString otd = ui->teachOtd->text();             // Отдел
 
             if (name.isEmpty() || surname.isEmpty() || numpass.isEmpty())
             {
@@ -518,17 +530,48 @@ void MainWindow::on_saveButton_clicked()
                 // Пока, вероятно, стоит написать функцию, вычисляющую значение ID на стороне клиента
                 // В данный момент инфы об ID в запросе НЕТ, так что работать он не будет
 
-                strQuery = "INSERT INTO Преподаватели (Имя, Фамилия, Отчество, Номер паспорта, Отдел) VALUES ('" + name + "', '" + surname + "', '" + patrname + "', '" + numpass + "', '" + otd + "';";
+                strQuery = "INSERT INTO Преподаватели (Имя, Фамилия, Отчество, Паспорт, Отдел) VALUES ('" + name + "', '" + surname + "', '" + patrname + "', '" + numpass + "', '" + otd + "';";
             }
             else
             {
-                strQuery = "UPDATE Преподаватели SET Имя = '" + name + "', Фамилия = '" + surname + "', Отчество = '" + patrname + "', 'Номер паспорта' = '" + numpass + "', Отдел = '" + otd + "' WHERE ID = " + id + ";";
+                strQuery = "UPDATE Преподаватели SET Имя = '" + name + "', Фамилия = '" + surname + "', Отчество = '" + patrname + "', Паспорт = '" + numpass + "', Отдел = '" + otd + "' WHERE ID = " + id + ";";
             }
 
             break;
         }
         case 2:     // Учащийся
         {
+            QString id = ui->studID->text();               // ID
+            QString surname = ui->studSurname->text();     // Фамилия
+            QString name = ui->studName->text();           // Имя
+
+            QString docType = ui->studDoc->currentText();
+            QString docNum = ui->studNumDoc->text();
+            QString gender = ui->studGender->currentText();
+
+            if (name.isEmpty() || surname.isEmpty() || docType == "-" || docNum.isEmpty() || gender == "-")
+            {
+                // Сообщаем пользователю, что обязательные поля не заполнены
+                QMessageBox messageBox(QMessageBox::Information,
+                                       tr("Добавление записи"),
+                                       tr("Одно или несколько обязательных полей не заполнены!<br />Проверьте заполнение полей Фамилия, Имя, Тип документа, Номер документа и Пол."),
+                                       QMessageBox::Yes,
+                                       this);
+                messageBox.setButtonText(QMessageBox::Yes, tr("ОК"));
+                messageBox.exec();
+                return;
+            }
+
+            // Если обязательные поля заполнены, можно собирать информацию об остальных полях.
+
+            if (id.isEmpty())
+            {
+
+            }
+            else
+            {
+
+            }
 
             break;
         }
@@ -538,3 +581,6 @@ void MainWindow::on_saveButton_clicked()
     query.exec(strQuery);
     repeatLastSelect();
 }
+
+// ============================================================
+// ============================================================

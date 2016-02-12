@@ -51,8 +51,6 @@ private:
 private slots:
     void clearFormForAdd();
     void deleteThis();
-    void updateThis();
-    void insertThis();
     void refreshTable();
     void repeatLastSelect();
     void headerClicked(int);
