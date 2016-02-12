@@ -412,7 +412,7 @@ void MainWindow::clearMoreInfoForm()
     if (*currentTable == "Объединения")
     {
         ui->alID->clear();           // ID
-        ui->alName->clear();         // Описание
+        ui->alName->clear();         // Название
         ui->alDirect->clear();       // Напавленность
         ui->alOtd->clear();          // Отдел
         ui->alDescript->clear();     // Описание
@@ -440,4 +440,101 @@ void MainWindow::on_tableWidget_cellClicked(int row, int column)
 void MainWindow::clearFormForAdd()
 {
     clearMoreInfoForm();
+}
+
+// ============================================================
+// ============================================================
+
+void MainWindow::on_saveButton_clicked()
+{
+    int currentIndex = ui->stackedWidget->currentIndex();
+    QString strQuery;
+
+    switch (currentIndex)
+    {
+        case 0:     // Объединение
+        {
+            QString id = ui->alID->text();              // ID
+            QString name = ui->alName->text();          // Название
+            QString direct = ui->alDirect->text();      // Напавленность
+            QString otd = ui->alOtd->text();            // Отдел
+            QString desc = ui->alDescript->toPlainText();     // Описание
+
+            if (name.isEmpty() || direct.isEmpty() || otd.isEmpty())
+            {
+                // Сообщаем пользователю, что обязательные поля не заполнены
+                QMessageBox messageBox(QMessageBox::Information,
+                                       tr("Добавление записи"),
+                                       tr("Одно или несколько обязательных полей не заполнены!<br />Проверьте заполнение полей Название, Направленность и Отдел."),
+                                       QMessageBox::Yes,
+                                       this);
+                messageBox.setButtonText(QMessageBox::Yes, tr("ОК"));
+                messageBox.exec();
+                return;
+            }
+
+
+            if (id.isEmpty())
+            {
+                // То, как будет проставлять ID, зависит от СУБД, иногда там бывают специальные типы для этого.
+                // Пока, вероятно, стоит написать функцию, вычисляющую значение ID на стороне клиента
+                // В данный момент инфы об ID в запросе НЕТ, так что работать он не будет
+
+                strQuery = "INSERT INTO Объединения (Название, Направленность, Отдел, Описание) VALUES ('" + name + "', '" + direct + "', '" + otd  + "', '" + desc + "';";
+            }
+            else
+            {
+                strQuery = "UPDATE Объединения SET Название = '" + name + "', Направленность = '" + direct + "', Отдел = '" + otd + "', Описание = '" + desc + "' WHERE ID = " + id + ";";
+            }
+
+            break;
+        }
+        case 1:     // Преподаватель
+        {
+
+            QString id = ui->teachID->text();        // ID
+            QString surname = ui->teachSurname->text();   // Фамилия
+            QString name = ui->teachName->text();      // Имя
+            QString patrname = ui->teachPatr->text();      // Отчество
+            QString numpass = ui->teachNumPass->text();   // Номер паспорта
+            QString otd = ui->teachOtd->text();       // Отдел
+
+            if (name.isEmpty() || surname.isEmpty() || numpass.isEmpty())
+            {
+                // Сообщаем пользователю, что обязательные поля не заполнены
+                QMessageBox messageBox(QMessageBox::Information,
+                                       tr("Добавление записи"),
+                                       tr("Одно или несколько обязательных полей не заполнены!<br />Проверьте заполнение полей Фамилия, Имя и Номер паспорта."),
+                                       QMessageBox::Yes,
+                                       this);
+                messageBox.setButtonText(QMessageBox::Yes, tr("ОК"));
+                messageBox.exec();
+                return;
+            }
+
+            if (id.isEmpty())
+            {
+                // То, как будет проставлять ID, зависит от СУБД, иногда там бывают специальные типы для этого.
+                // Пока, вероятно, стоит написать функцию, вычисляющую значение ID на стороне клиента
+                // В данный момент инфы об ID в запросе НЕТ, так что работать он не будет
+
+                strQuery = "INSERT INTO Преподаватели (Имя, Фамилия, Отчество, Номер паспорта, Отдел) VALUES ('" + name + "', '" + surname + "', '" + patrname + "', '" + numpass + "', '" + otd + "';";
+            }
+            else
+            {
+                strQuery = "UPDATE Преподаватели SET Имя = '" + name + "', Фамилия = '" + surname + "', Отчество = '" + patrname + "', 'Номер паспорта' = '" + numpass + "', Отдел = '" + otd + "' WHERE ID = " + id + ";";
+            }
+
+            break;
+        }
+        case 2:     // Учащийся
+        {
+
+            break;
+        }
+    }
+
+    QSqlQuery query;
+    query.exec(strQuery);
+    repeatLastSelect();
 }

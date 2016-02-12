@@ -61,6 +61,7 @@ private slots:
 
 
     void on_tableWidget_cellClicked(int row, int column);
+    void on_saveButton_clicked();
 };
 
 #endif // MAINWINDOW_H
