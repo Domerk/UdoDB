@@ -48,7 +48,11 @@
         </property>
        </item>
       </widget>
-      <widget class="QTableWidget" name="tableWidget"/>
+      <widget class="QTableWidget" name="tableWidget">
+       <property name="editTriggers">
+        <set>QAbstractItemView::NoEditTriggers</set>
+       </property>
+      </widget>
       <widget class="QWidget" name="verticalLayoutWidget">
        <layout class="QVBoxLayout" name="verticalLayout">
         <property name="topMargin">
@@ -66,7 +70,7 @@
            </sizepolicy>
           </property>
           <property name="currentIndex">
-           <number>1</number>
+           <number>2</number>
           </property>
           <widget class="QWidget" name="alliance">
            <layout class="QVBoxLayout" name="verticalLayout_7">
@@ -428,6 +432,11 @@
                    <widget class="QComboBox" name="studDoc">
                     <item>
                      <property name="text">
+                      <string>-</string>
+                     </property>
+                    </item>
+                    <item>
+                     <property name="text">
                       <string>Свидетельство о рождении</string>
                      </property>
                     </item>
@@ -544,7 +553,13 @@
                    <widget class="QDateEdit" name="admissDate"/>
                   </item>
                   <item row="3" column="1">
-                   <widget class="QComboBox" name="eduForm"/>
+                   <widget class="QComboBox" name="eduForm">
+                    <item>
+                     <property name="text">
+                      <string>-</string>
+                     </property>
+                    </item>
+                   </widget>
                   </item>
                   <item row="4" column="1">
                    <widget class="QDateEdit" name="outDate"/>
