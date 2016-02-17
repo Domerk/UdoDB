@@ -8,7 +8,7 @@ DROP TABLE IF EXISTS Нагрузка;
 
 CREATE TABLE Учащиеся (
 -- Поля
-"ID"      			INTEGER,
+"ID"      			INTEGER			PRIMARY KEY			AUTOINCREMENT,
 "Фамилия"			VARCHAR(60)		NOT NULL,
 "Имя"				VARCHAR(60)		NOT NULL,
 "Отчество"		    VARCHAR(60),
@@ -40,48 +40,38 @@ CREATE TABLE Учащиеся (
 "Мигранты"    		BOOLEAN,
 
 
-"Примечания"  		VARCHAR(200),
-
--- Параметры
-PRIMARY KEY ("ID")
+"Примечания"  		VARCHAR(200)
 );
 
 CREATE TABLE Преподаватели (
 -- Поля
-"ID" 				INTEGER,
+"ID" 				INTEGER			PRIMARY KEY			AUTOINCREMENT,
 "Фамилия"   		VARCHAR(60)		NOT NULL,
 "Имя"     			VARCHAR(60)		NOT NULL,
 "Отчество"    		VARCHAR(60),
 "Паспорт"			VARCHAR(60)		NOT NULL,
-"Отдел"     		VARCHAR(60),
-
--- Параметры
-PRIMARY KEY ("ID")
+"Отдел"     		VARCHAR(60)
 );
 
 
 CREATE TABLE Объединения (
 -- Поля
-"ID" 			INTEGER,
+"ID" 			INTEGER				PRIMARY KEY			AUTOINCREMENT,
 "Название"		VARCHAR(60)		NOT NULL,
 "Направленность"	VARCHAR(60)		NOT NULL,
 "Отдел"			  	VARCHAR(60)		NOT NULL,
-"Описание"		VARCHAR(300),
-
--- Параметры
-PRIMARY KEY ("ID")
+"Описание"		VARCHAR(300)
 );
 
 
 CREATE TABLE Группы (
 -- Поля
-"ID" 				INTEGER,
+"ID" 				INTEGER			PRIMARY KEY			AUTOINCREMENT,
 "ID объединения" 	INTEGER,
 "ID преподавателя" 	INTEGER,
 "Номер группы"	   	VARCHAR(30),
 
 -- Параметры
-PRIMARY KEY ("ID"),
 FOREIGN KEY ("ID объединения") 		REFERENCES Объединения("ID")
 FOREIGN KEY ("ID преподавателя")	REFERENCES Преподаватели("ID")
 );
