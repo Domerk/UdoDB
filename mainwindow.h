@@ -58,7 +58,6 @@ private slots:
     void deleteThis();
     void refreshTable();
     void repeatLastSelect();
-    void headerClicked(int);
     void rowClicked(int);
     //void changeTableMask();
 

@@ -36,7 +36,6 @@ MainWindow::MainWindow(QWidget *parent) :
     //ui->mainToolBar->addAction(tr("Расширенный поиск"), this, SLOT(showSearchForm()));
 
 
-    connect(ui->tableWidget->horizontalHeader(), SIGNAL(sectionClicked(int)), this, SLOT(headerClicked(int)));
     connect(ui->tableWidget->verticalHeader(), SIGNAL(sectionClicked(int)), this, SLOT(rowClicked(int)));
 
 
@@ -235,6 +234,7 @@ void MainWindow::deleteThis()
                     QString str = "DELETE FROM " + *currentTable + " WHERE ID = " + ui->tableWidget->item(ui->tableWidget->verticalHeader()->currentIndex().row(), 0)->text() + " ;";
                     query.exec(str);        // Выполняем запрос
                     repeatLastSelect();     // Повторяеи последний Select
+                    clearMoreInfoForm();    // Чистим поле с подробностями
 
                     ui->lblStatus->setText(str);
             }
@@ -304,14 +304,6 @@ void MainWindow::on_treeWidget_itemClicked(QTreeWidgetItem *item, int column)
     showTable(str);
 }
 
-// ============================================================
-// ============= Сортировка выбранного столбца ================
-// ============================================================
-
-void MainWindow::headerClicked(int index)
-{
-    ui->tableWidget->sortByColumn(index);
-}
 
 // ============================================================
 // ============== Вывод подробной инфы в форму ================
@@ -355,9 +347,50 @@ void MainWindow::showMoreInfo(int row)
 
        // ui->outDate->setDate(ui->tableWidget->item(row, 17)->text());     // Когда выбыл
 
-        // Чекбоксы - посмотреть, как установить их значения !!!!
-        //ui->checkBox->setChecked(ui->tableWidget->item(row, 18)->text());
+        // Чекбоксы - вероятно, имеет смысл предварительно засунуть их в вектор!!!
 
+        if (ui->tableWidget->item(row, 18)->text() == "true")
+            ui->checkBox->setChecked(true);
+        else
+            ui->checkBox->setChecked(false);
+
+        if (ui->tableWidget->item(row, 19)->text() == "true")
+            ui->checkBox_2->setChecked(true);
+        else
+            ui->checkBox_2->setChecked(false);
+
+        if (ui->tableWidget->item(row, 20)->text() == "true")
+            ui->checkBox_3->setChecked(true);
+        else
+            ui->checkBox_3->setChecked(false);
+
+        if (ui->tableWidget->item(row, 21)->text() == "true")
+            ui->checkBox_4->setChecked(true);
+        else
+            ui->checkBox_4->setChecked(false);
+
+        if (ui->tableWidget->item(row, 22)->text() == "true")
+            ui->checkBox_5->setChecked(true);
+        else
+            ui->checkBox_5->setChecked(false);
+
+        if (ui->tableWidget->item(row, 23)->text() == "true")
+            ui->checkBox_6->setChecked(true);
+        else
+            ui->checkBox_6->setChecked(false);
+
+        if (ui->tableWidget->item(row, 24)->text() == "true")
+            ui->checkBox_7->setChecked(true);
+        else
+            ui->checkBox_7->setChecked(false);
+
+        if (ui->tableWidget->item(row, 25)->text() == "true")
+            ui->checkBox_8->setChecked(true);
+        else
+            ui->checkBox_8->setChecked(false);
+
+        // Дополнительные сведенья
+        ui->studComments->setPlainText(ui->tableWidget->item(row, 26)->text());
 
 
     }
@@ -418,10 +451,23 @@ void MainWindow::clearMoreInfoForm()
 
         ui->eduForm->setCurrentIndex(0); // Форма обучения
 
+        ui->parents->clear();
+        ui->address->clear();
+        ui->studComments->clear();
+
+
        // ui->outDate->setDate(ui->tableWidget->item(row, 17)->text());     // Когда выбыл
 
         // Чекбоксы - посмотреть, как установить их значения !!!!
-        //ui->checkBox->setChecked(ui->tableWidget->item(row, 18)->text());
+
+        ui->checkBox->setChecked(false);
+        ui->checkBox_2->setChecked(false);
+        ui->checkBox_3->setChecked(false);
+        ui->checkBox_4->setChecked(false);
+        ui->checkBox_5->setChecked(false);
+        ui->checkBox_6->setChecked(false);
+        ui->checkBox_7->setChecked(false);
+        ui->checkBox_8->setChecked(false);
 
     }
 
@@ -525,7 +571,7 @@ void MainWindow::on_saveButton_clicked()
                 // Пока, вероятно, стоит написать функцию, вычисляющую значение ID на стороне клиента
                 // В данный момент инфы об ID в запросе НЕТ, так что работать он не будет
 
-                strQuery = "INSERT INTO Объединения (Название, Направленность, Отдел, Описание) VALUES ('" + name + "', '" + direct + "', '" + otd  + "', '" + desc + "';";
+                strQuery = "INSERT INTO Объединения (Название, Направленность, Отдел, Описание) VALUES ('" + name + "', '" + direct + "', '" + otd  + "', '" + desc + "');";
             }
             else
             {
@@ -563,7 +609,7 @@ void MainWindow::on_saveButton_clicked()
                 // Пока, вероятно, стоит написать функцию, вычисляющую значение ID на стороне клиента
                 // В данный момент инфы об ID в запросе НЕТ, так что работать он не будет
 
-                strQuery = "INSERT INTO Преподаватели (Имя, Фамилия, Отчество, Паспорт, Отдел) VALUES ('" + name + "', '" + surname + "', '" + patrname + "', '" + numpass + "', '" + otd + "';";
+                strQuery = "INSERT INTO Преподаватели (Имя, Фамилия, Отчество, Паспорт, Отдел) VALUES ('" + name + "', '" + surname + "', '" + patrname + "', '" + numpass + "', '" + otd + "');";
             }
             else
             {
@@ -610,6 +656,7 @@ void MainWindow::on_saveButton_clicked()
         }
     }
 
+    ui->lblStatus->setText(strQuery);
     QSqlQuery query;
     query.exec(strQuery);
     repeatLastSelect();

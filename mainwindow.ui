@@ -52,6 +52,12 @@
        <property name="editTriggers">
         <set>QAbstractItemView::NoEditTriggers</set>
        </property>
+       <property name="sortingEnabled">
+        <bool>true</bool>
+       </property>
+       <attribute name="horizontalHeaderStretchLastSection">
+        <bool>true</bool>
+       </attribute>
       </widget>
       <widget class="QWidget" name="verticalLayoutWidget">
        <layout class="QVBoxLayout" name="verticalLayout">
@@ -70,7 +76,7 @@
            </sizepolicy>
           </property>
           <property name="currentIndex">
-           <number>2</number>
+           <number>1</number>
           </property>
           <widget class="QWidget" name="alliance">
            <layout class="QVBoxLayout" name="verticalLayout_7">
@@ -109,8 +115,8 @@
                 <rect>
                  <x>0</x>
                  <y>0</y>
-                 <width>169</width>
-                 <height>207</height>
+                 <width>314</width>
+                 <height>316</height>
                 </rect>
                </property>
                <layout class="QVBoxLayout" name="verticalLayout_8">
@@ -122,7 +128,7 @@
                   <item row="0" column="0">
                    <widget class="QLabel" name="alID">
                     <property name="text">
-                     <string>ID</string>
+                     <string/>
                     </property>
                    </widget>
                   </item>
@@ -205,8 +211,8 @@
                 <rect>
                  <x>0</x>
                  <y>0</y>
-                 <width>166</width>
-                 <height>163</height>
+                 <width>305</width>
+                 <height>307</height>
                 </rect>
                </property>
                <layout class="QVBoxLayout" name="verticalLayout_6">
@@ -227,7 +233,7 @@
                   <item row="0" column="0">
                    <widget class="QLabel" name="teachID">
                     <property name="text">
-                     <string>ID</string>
+                     <string/>
                     </property>
                    </widget>
                   </item>
@@ -325,7 +331,7 @@
                <property name="geometry">
                 <rect>
                  <x>0</x>
-                 <y>-581</y>
+                 <y>0</y>
                  <width>297</width>
                  <height>897</height>
                 </rect>
@@ -345,7 +351,7 @@
                   <item row="0" column="0">
                    <widget class="QLabel" name="studID">
                     <property name="text">
-                     <string>ID</string>
+                     <string/>
                     </property>
                    </widget>
                   </item>
