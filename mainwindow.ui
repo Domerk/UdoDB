@@ -76,7 +76,7 @@
            </sizepolicy>
           </property>
           <property name="currentIndex">
-           <number>1</number>
+           <number>2</number>
           </property>
           <widget class="QWidget" name="alliance">
            <layout class="QVBoxLayout" name="verticalLayout_7">
@@ -331,7 +331,7 @@
                <property name="geometry">
                 <rect>
                  <x>0</x>
-                 <y>0</y>
+                 <y>-371</y>
                  <width>297</width>
                  <height>897</height>
                 </rect>
@@ -475,9 +475,6 @@
                     </item>
                    </widget>
                   </item>
-                  <item row="7" column="1">
-                   <widget class="QDateEdit" name="studBirthday"/>
-                  </item>
                   <item row="8" column="1">
                    <widget class="QLineEdit" name="areaSchools"/>
                   </item>
@@ -486,6 +483,9 @@
                   </item>
                   <item row="10" column="1">
                    <widget class="QLineEdit" name="grade"/>
+                  </item>
+                  <item row="7" column="1">
+                   <widget class="QLineEdit" name="studBirthday"/>
                   </item>
                  </layout>
                 </item>
@@ -555,9 +555,6 @@
                   <item row="1" column="1">
                    <widget class="QLineEdit" name="email"/>
                   </item>
-                  <item row="2" column="1">
-                   <widget class="QDateEdit" name="admissDate"/>
-                  </item>
                   <item row="3" column="1">
                    <widget class="QComboBox" name="eduForm">
                     <item>
@@ -568,61 +565,64 @@
                    </widget>
                   </item>
                   <item row="4" column="1">
-                   <widget class="QDateEdit" name="outDate"/>
+                   <widget class="QLineEdit" name="outDate"/>
+                  </item>
+                  <item row="2" column="1">
+                   <widget class="QLineEdit" name="admissDate"/>
                   </item>
                  </layout>
                 </item>
                 <item>
-                 <widget class="QCheckBox" name="checkBox">
+                 <widget class="QCheckBox" name="weackHealth">
                   <property name="text">
                    <string>С ослабленным здоровьем</string>
                   </property>
                  </widget>
                 </item>
                 <item>
-                 <widget class="QCheckBox" name="checkBox_2">
+                 <widget class="QCheckBox" name="orphan">
                   <property name="text">
                    <string>Сирота</string>
                   </property>
                  </widget>
                 </item>
                 <item>
-                 <widget class="QCheckBox" name="checkBox_3">
+                 <widget class="QCheckBox" name="invalid">
                   <property name="text">
                    <string>Инвалид</string>
                   </property>
                  </widget>
                 </item>
                 <item>
-                 <widget class="QCheckBox" name="checkBox_4">
+                 <widget class="QCheckBox" name="accountInPolice">
                   <property name="text">
-                   <string>На учёте в милиции</string>
+                   <string>На учёте в полиции</string>
                   </property>
                  </widget>
                 </item>
                 <item>
-                 <widget class="QCheckBox" name="checkBox_5">
+                 <widget class="QCheckBox" name="large">
                   <property name="text">
                    <string>Многодетная семья</string>
                   </property>
                  </widget>
                 </item>
                 <item>
-                 <widget class="QCheckBox" name="checkBox_6">
+                 <widget class="QCheckBox" name="incompleteFamily">
                   <property name="text">
                    <string>Неполная семья</string>
                   </property>
                  </widget>
                 </item>
                 <item>
-                 <widget class="QCheckBox" name="checkBox_7">
+                 <widget class="QCheckBox" name="lowIncome">
                   <property name="text">
                    <string>Малообеспеченная семья</string>
                   </property>
                  </widget>
                 </item>
                 <item>
-                 <widget class="QCheckBox" name="checkBox_8">
+                 <widget class="QCheckBox" name="migrants">
                   <property name="text">
                    <string>Мигранты</string>
                   </property>
@@ -750,9 +750,15 @@
     <addaction name="actionNewStr"/>
     <addaction name="actionDeleteStr"/>
    </widget>
+   <widget class="QMenu" name="menu">
+    <property name="title">
+     <string>Справка</string>
+    </property>
+   </widget>
    <addaction name="menuFile"/>
    <addaction name="menuTab"/>
    <addaction name="menuStr"/>
+   <addaction name="menu"/>
   </widget>
   <widget class="QToolBar" name="mainToolBar">
    <property name="movable">

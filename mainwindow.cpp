@@ -12,10 +12,13 @@ MainWindow::MainWindow(QWidget *parent) :
     lastSelect = new QString();
     currentTable = new QString();
 
-
     // ------------------------- Всякая красота ----------------------------
 
     this->setWindowTitle(tr("Тут будет содержательное название"));
+
+    ui->alID->hide();
+    ui->studID->hide();
+    ui->teachID->hide();
 
     // -------------------------------- Меню --------------------------------
 
@@ -29,10 +32,13 @@ MainWindow::MainWindow(QWidget *parent) :
 
     // --------------------------- Main ToolBar ----------------------------
 
-    ui->mainToolBar->addAction(tr("Новая запись"), this, SLOT(clearFormForAdd()));
-    ui->mainToolBar->addAction(tr("Удалить запись"), this, SLOT(deleteThis()));
-    ui->mainToolBar->addAction(tr("Перезагрузить таблицу"), this, SLOT(refreshTable()));
-    ui->mainToolBar->addAction(tr("Повторить последний запрос"), this, SLOT(repeatLastSelect()));
+    // Иконки: http://www.flaticon.com/packs/web-application-ui/4
+
+    ui->mainToolBar->addAction(QIcon(":/icons/Icons/home.png"), tr("Перезагрузить таблицу"), this, SLOT(refreshTable()));
+    ui->mainToolBar->addAction(QIcon(":/icons/Icons/repeat.png"), tr("Обновить таблицу"), this, SLOT(repeatLastSelect()));
+    ui->mainToolBar->addAction(QIcon(":/icons/Icons/new.png"),tr("Новая запись"), this, SLOT(clearFormForAdd()));
+    ui->mainToolBar->addAction(QIcon(":/icons/Icons/delete.png"),tr("Удалить запись"), this, SLOT(deleteThis()));
+
     //ui->mainToolBar->addAction(tr("Расширенный поиск"), this, SLOT(showSearchForm()));
 
 
@@ -179,7 +185,7 @@ void MainWindow::drawHeaders(QSqlQuery query)
     }
 
     ui->tableWidget->setHorizontalHeaderLabels(qsl);    // Устанавливаем названия столбцов в таблице
-    //ui->tableWidget->setColumnHidden(0, true);        // Прячем служебное поле с ID
+    ui->tableWidget->setColumnHidden(0, true);          // Прячем служебное поле с ID
 }
 
 // ============================================================
@@ -325,13 +331,12 @@ void MainWindow::showMoreInfo(int row)
 
         ui->studNumDoc->setText(ui->tableWidget->item(row, 5)->text()); // Номер документа
 
-        if (ui->tableWidget->item(row, 6)->text() == "Жен") // Пол
-            ui->studGender->setCurrentIndex(2);                // Жен
+        if (ui->tableWidget->item(row, 6)->text() == "Жен")     // Пол
+            ui->studGender->setCurrentIndex(2);                 // Жен
         else
-            ui->studGender->setCurrentIndex(1);                // Муж
+            ui->studGender->setCurrentIndex(1);                 // Муж
 
-        // Переписать эту строку, потому что QDate()
-        //ui->studBirthday->setDate(ui->tableWidget->item(row, 7)->text());   // Год рождения
+        ui->studBirthday->setText(ui->tableWidget->item(row, 7)->text());   // Год рождения
 
         ui->areaSchools->setText(ui->tableWidget->item(row, 8)->text());    // Район школы
         ui->school->setText(ui->tableWidget->item(row, 9)->text());         // Школа
@@ -341,58 +346,58 @@ void MainWindow::showMoreInfo(int row)
         ui->phone->setText(ui->tableWidget->item(row, 13)->text());         // Телефон
         ui->email->setText(ui->tableWidget->item(row, 14)->text());         // email
 
-       // ui->admissDate->setDate(ui->tableWidget->item(row, 15)->text());  // Дата подачи заявления
+        ui->admissDate->setText(ui->tableWidget->item(row, 15)->text());    // Дата подачи заявления
 
         ui->eduForm->setCurrentText(ui->tableWidget->item(row, 16)->text()); // Форма обучения
 
-       // ui->outDate->setDate(ui->tableWidget->item(row, 17)->text());     // Когда выбыл
+        ui->outDate->setText(ui->tableWidget->item(row, 17)->text());     // Когда выбыл
+
+
 
         // Чекбоксы - вероятно, имеет смысл предварительно засунуть их в вектор!!!
 
-        if (ui->tableWidget->item(row, 18)->text() == "true")
-            ui->checkBox->setChecked(true);
+        if (ui->tableWidget->item(row, 18)->text() == "true")       // С ослабленным здоровьем
+            ui->weackHealth->setChecked(true);
         else
-            ui->checkBox->setChecked(false);
+            ui->weackHealth->setChecked(false);
 
-        if (ui->tableWidget->item(row, 19)->text() == "true")
-            ui->checkBox_2->setChecked(true);
+        if (ui->tableWidget->item(row, 19)->text() == "true")       // Сирота
+            ui->orphan->setChecked(true);
         else
-            ui->checkBox_2->setChecked(false);
+            ui->orphan->setChecked(false);
 
-        if (ui->tableWidget->item(row, 20)->text() == "true")
-            ui->checkBox_3->setChecked(true);
+        if (ui->tableWidget->item(row, 20)->text() == "true")       // Инвалид
+            ui->invalid->setChecked(true);
         else
-            ui->checkBox_3->setChecked(false);
+            ui->invalid->setChecked(false);
 
-        if (ui->tableWidget->item(row, 21)->text() == "true")
-            ui->checkBox_4->setChecked(true);
+        if (ui->tableWidget->item(row, 21)->text() == "true")       // На учёте в милиции
+            ui->accountInPolice->setChecked(true);
         else
-            ui->checkBox_4->setChecked(false);
+            ui->accountInPolice->setChecked(false);
 
-        if (ui->tableWidget->item(row, 22)->text() == "true")
-            ui->checkBox_5->setChecked(true);
+        if (ui->tableWidget->item(row, 22)->text() == "true")       // Многодетные
+            ui->large->setChecked(true);
         else
-            ui->checkBox_5->setChecked(false);
+            ui->large->setChecked(false);
 
-        if (ui->tableWidget->item(row, 23)->text() == "true")
-            ui->checkBox_6->setChecked(true);
+        if (ui->tableWidget->item(row, 23)->text() == "true")       // Неполная семья
+            ui->incompleteFamily->setChecked(true);
         else
-            ui->checkBox_6->setChecked(false);
+            ui->incompleteFamily->setChecked(false);
 
-        if (ui->tableWidget->item(row, 24)->text() == "true")
-            ui->checkBox_7->setChecked(true);
+        if (ui->tableWidget->item(row, 24)->text() == "true")       // Малообеспеченная семья
+            ui->lowIncome->setChecked(true);
         else
-            ui->checkBox_7->setChecked(false);
+            ui->lowIncome->setChecked(false);
 
-        if (ui->tableWidget->item(row, 25)->text() == "true")
-            ui->checkBox_8->setChecked(true);
+        if (ui->tableWidget->item(row, 25)->text() == "true")       // Мигранты
+            ui->migrants->setChecked(true);
         else
-            ui->checkBox_8->setChecked(false);
+            ui->migrants->setChecked(false);
 
         // Дополнительные сведенья
         ui->studComments->setPlainText(ui->tableWidget->item(row, 26)->text());
-
-
     }
 
     if (*currentTable == "Преподаватели")
@@ -425,49 +430,41 @@ void MainWindow::clearMoreInfoForm()
 {
     if (*currentTable == "Учащиеся")
     {
+        // Line Edit
         ui->studID->clear();
         ui->studSurname->clear();
         ui->studName->clear();
         ui->studPatr->clear();
-
-        // ui->studDoc-> ??
-
         ui->studNumDoc->clear();
-
-        ui->studGender->setCurrentIndex(0);
-
-        // Переписать эту строку, потому что QDate()
-        //ui->studBirthday->   // Год рождения
-
         ui->areaSchools->clear();   // Район школы
         ui->school->clear();        // Школа
         ui->grade->clear();         // Класс
-        ui->parents->clear();       // Родители
-        ui->address->clear();       // Адрес
         ui->phone->clear();         // Телефон
         ui->email->clear();         // email
 
-       // ui->admissDate->  // Дата подачи заявления
+        ui->studBirthday->clear();  // Год рождения
+        ui->admissDate->clear();    // Дата подачи заявления
+        ui->outDate->clear();       // Когда выбыл
 
+        // Combo Box
+        ui->studDoc->setCurrentIndex(0);
+        ui->studGender->setCurrentIndex(0);
         ui->eduForm->setCurrentIndex(0); // Форма обучения
 
-        ui->parents->clear();
-        ui->address->clear();
+        // Text Edit
+        ui->parents->clear();       // Родители
+        ui->address->clear();       // Адрес
         ui->studComments->clear();
 
-
-       // ui->outDate->setDate(ui->tableWidget->item(row, 17)->text());     // Когда выбыл
-
-        // Чекбоксы - посмотреть, как установить их значения !!!!
-
-        ui->checkBox->setChecked(false);
-        ui->checkBox_2->setChecked(false);
-        ui->checkBox_3->setChecked(false);
-        ui->checkBox_4->setChecked(false);
-        ui->checkBox_5->setChecked(false);
-        ui->checkBox_6->setChecked(false);
-        ui->checkBox_7->setChecked(false);
-        ui->checkBox_8->setChecked(false);
+        // Check Box
+        ui->accountInPolice->setChecked(false);
+        ui->incompleteFamily->setChecked(false);
+        ui->invalid->setChecked(false);
+        ui->large->setChecked(false);
+        ui->lowIncome->setChecked(false);
+        ui->migrants->setChecked(false);
+        ui->orphan->setChecked(false);
+        ui->weackHealth->setChecked(false);
 
     }
 
@@ -567,11 +564,8 @@ void MainWindow::on_saveButton_clicked()
 
             if (id.isEmpty())
             {
-                // То, как будет проставлять ID, зависит от СУБД, иногда там бывают специальные типы для этого.
-                // Пока, вероятно, стоит написать функцию, вычисляющую значение ID на стороне клиента
-                // В данный момент инфы об ID в запросе НЕТ, так что работать он не будет
-
                 strQuery = "INSERT INTO Объединения (Название, Направленность, Отдел, Описание) VALUES ('" + name + "', '" + direct + "', '" + otd  + "', '" + desc + "');";
+                clearMoreInfoForm();
             }
             else
             {
@@ -605,11 +599,9 @@ void MainWindow::on_saveButton_clicked()
 
             if (id.isEmpty())
             {
-                // То, как будет проставлять ID, зависит от СУБД, иногда там бывают специальные типы для этого.
-                // Пока, вероятно, стоит написать функцию, вычисляющую значение ID на стороне клиента
-                // В данный момент инфы об ID в запросе НЕТ, так что работать он не будет
 
                 strQuery = "INSERT INTO Преподаватели (Имя, Фамилия, Отчество, Паспорт, Отдел) VALUES ('" + name + "', '" + surname + "', '" + patrname + "', '" + numpass + "', '" + otd + "');";
+                clearMoreInfoForm();
             }
             else
             {
@@ -620,13 +612,13 @@ void MainWindow::on_saveButton_clicked()
         }
         case 2:     // Учащийся
         {
-            QString id = ui->studID->text();               // ID
-            QString surname = ui->studSurname->text();     // Фамилия
-            QString name = ui->studName->text();           // Имя
+            QString id = ui->studID->text();                // ID
+            QString surname = ui->studSurname->text();      // Фамилия
+            QString name = ui->studName->text();            // Имя
 
-            QString docType = ui->studDoc->currentText();
-            QString docNum = ui->studNumDoc->text();
-            QString gender = ui->studGender->currentText();
+            QString docType = ui->studDoc->currentText();   // Тип документа
+            QString docNum = ui->studNumDoc->text();        // Номер документа
+            QString gender = ui->studGender->currentText(); // Пол
 
             if (name.isEmpty() || surname.isEmpty() || docType == "" || docNum.isEmpty() || gender == "")
             {
@@ -643,20 +635,83 @@ void MainWindow::on_saveButton_clicked()
 
             // Если обязательные поля заполнены, можно собирать информацию об остальных полях.
 
+            QString patr = ui->studPatr->text();
+            QString arSchool = ui->areaSchools->text();     // Район школы
+            QString school = ui->school->text();            // Школа
+            QString grad = ui->grade->text();               // Класс
+            QString phone = ui->phone->text();              // Телефон
+            QString email = ui->email->text();              // email
+
+            QString birthday = ui->studBirthday->text();    // Год рождения
+            QString admiss = ui->admissDate->text();        // Дата подачи заявления
+            QString out = ui->outDate->text();              // Когда выбыл
+
+            // Combo Box
+            QString eduForm = ui->eduForm->currentText(); // Форма обучения
+
+            QString comments = ui->studComments->toPlainText();
+            QString parents = ui->parents->toPlainText();   // Родители
+            QString address = ui->address->toPlainText();   // Адрес
+
+            // Check Box
+
+            QString accountInPolice = "false";
+            QString incompleteFamily  = "false";
+            QString invalid  = "false";
+            QString large  = "false";
+            QString lowIncome  = "false";
+            QString migrants  = "false";
+            QString orphan  = "false";
+            QString weackHealth  = "false";
+
+            if (ui->accountInPolice->isChecked())
+                accountInPolice = "true";
+
+            if (ui->incompleteFamily->isChecked())
+                incompleteFamily = "true";
+
+            if (ui->invalid->isChecked())
+                 invalid = "true";
+
+            if (ui->large->isChecked())
+                large = "true";
+
+            if (ui->lowIncome->isChecked())
+                lowIncome = "true";
+
+            if (ui->migrants->isChecked())
+                migrants = "true";
+
+            if (ui->orphan->isChecked())
+                orphan = "true";
+
+            if (ui->weackHealth->isChecked())
+                weackHealth = "true";
+
             if (id.isEmpty())
             {
+                // INSERT
+                strQuery = "INSERT INTO Учащиеся(";
+                strQuery.append("'Фамилия', 'Имя', 'Отчество', 'Тип документа', 'Номер документа', 'Пол', 'Год рождения', ");
+                strQuery.append("'Район школы', 'Школа', 'Класс', 'Родители', 'Домашний адрес', 'Телефон', 'e-mail', 'Дата заявления', 'Форма обучения', ");
+                strQuery.append("'Когда выбыл', 'С ослабленным здоровьем', 'Сирота', 'Инвалид', 'На учёте в милиции', 'Многодетная семья', ");
+                strQuery.append("'Неполная семья', 'Малообеспеченная семья', 'Мигранты', 'Примечания') VALUES ('");
+                strQuery.append(surname + "', '" + name  + "', '" + patr  + "', '" + docType  + "', '" + docNum  + "', '" + gender  + "', '" + birthday  + "', '");
+                strQuery.append(arSchool  + "', '" + school  + "', '" + grad  + "', '" + parents  + "', '" + address  + "', '" + phone  + "', '" + email  + "', '" + admiss  + "', '" + eduForm  + "', '");
+                strQuery.append(out  + "', '" + weackHealth  + "', '" + orphan  + "', '" + invalid  + "', '" + accountInPolice + "', '" + large  + "', '");
+                strQuery.append(incompleteFamily  + "', '" + lowIncome  + "', '" + migrants  + "', '" + comments  + "');");
+                clearMoreInfoForm();
 
             }
             else
             {
-
+                // UPDATE
             }
 
             break;
         }
     }
 
-    ui->lblStatus->setText(strQuery);
     QSqlQuery query;
     query.exec(strQuery);
     repeatLastSelect();

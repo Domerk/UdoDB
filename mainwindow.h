@@ -29,6 +29,8 @@ private:
     Ui::MainWindow *ui;
     QSqlDatabase myDB;
 
+    // Имеет смысл ввести функцию "Шаг назад"
+
     int rowCount;
     int columnCount;
     QString *lastSelect;
