@@ -51,7 +51,7 @@ MainWindow::MainWindow(QWidget *parent) :
 
    /* queryStud.append("SELECT 'ID', 'Фамилия', 'Имя', 'Отчество', 'Тип документа', 'Номер документа', 'Пол', 'Год рождения', ");
     queryStud.append("'Район школы', 'Школа', 'Класс', 'Родители', 'Домашний адрес', 'Телефон', 'e-mail', 'Дата заявления', 'Форма обучения', ");
-    queryStud.append("'Когда выбыл', 'С ослабленным здоровьем', 'Сирота', 'Инвалид', 'На учёте в милиции', 'Многодетная семья', ");
+    queryStud.append("'Когда выбыл', 'С ослабленным здоровьем', 'Сирота', 'Инвалид', 'На учёте в полиции', 'Многодетная семья', ");
     queryStud.append("'Неполная семья', 'Малообеспеченная семья', 'Мигранты', 'Примечания' FROM Учащиеся;");
 */
 
@@ -371,7 +371,7 @@ void MainWindow::showMoreInfo(int row)
         else
             ui->invalid->setChecked(false);
 
-        if (ui->tableWidget->item(row, 21)->text() == "true")       // На учёте в милиции
+        if (ui->tableWidget->item(row, 21)->text() == "true")       // На учёте в полиции
             ui->accountInPolice->setChecked(true);
         else
             ui->accountInPolice->setChecked(false);
@@ -694,7 +694,7 @@ void MainWindow::on_saveButton_clicked()
                 strQuery = "INSERT INTO Учащиеся(";
                 strQuery.append("'Фамилия', 'Имя', 'Отчество', 'Тип документа', 'Номер документа', 'Пол', 'Год рождения', ");
                 strQuery.append("'Район школы', 'Школа', 'Класс', 'Родители', 'Домашний адрес', 'Телефон', 'e-mail', 'Дата заявления', 'Форма обучения', ");
-                strQuery.append("'Когда выбыл', 'С ослабленным здоровьем', 'Сирота', 'Инвалид', 'На учёте в милиции', 'Многодетная семья', ");
+                strQuery.append("'Когда выбыл', 'С ослабленным здоровьем', 'Сирота', 'Инвалид', 'На учёте в полиции', 'Многодетная семья', ");
                 strQuery.append("'Неполная семья', 'Малообеспеченная семья', 'Мигранты', 'Примечания') VALUES ('");
                 strQuery.append(surname + "', '" + name  + "', '" + patr  + "', '" + docType  + "', '" + docNum  + "', '" + gender  + "', '" + birthday  + "', '");
                 strQuery.append(arSchool  + "', '" + school  + "', '" + grad  + "', '" + parents  + "', '" + address  + "', '" + phone  + "', '" + email  + "', '" + admiss  + "', '" + eduForm  + "', '");
@@ -706,6 +706,13 @@ void MainWindow::on_saveButton_clicked()
             else
             {
                 // UPDATE
+                // Здесь: поправить изменение bool-значений!!! Пока что оно не очень хочет работать.
+
+                strQuery.append("UPDATE Учащиеся SET Фамилия = '" + surname + "', Имя = '" + name  + "', Отчество = '" + patr  + "', 'Тип документа' = '" + docType  + "', 'Номер документа' = '" + docNum  + "', 'Пол' = '" + gender  + "', 'Год рождения' = '" + birthday  + "', ");
+                strQuery.append("'Район школы' = '" + arSchool  + "', 'Школа' = '" + school  + "', 'Класс' = '" + grad  + "', 'Родители' = '" + parents  + "', 'Домашний адрес' = '" + address  + "', 'Телефон' = '" + phone  + "', 'e-mail' = '" + email  + "', 'Дата заявления' = '" + admiss  + "', 'Форма обучения' = '" + eduForm  + "', ");
+                strQuery.append("'Когда выбыл' = '" + out  + "', 'С ослабленным здоровьем' = " + weackHealth  + ", 'Сирота' = " + orphan  + ", 'Инвалид' = " + invalid  + ", 'На учёте в полиции' = " + accountInPolice + ", 'Многодетная семья' = " + large  + ", ");
+                strQuery.append("'Неполная семья' = " + incompleteFamily  + ", 'Малообеспеченная семья' = " + lowIncome  + ", 'Мигранты' = " + migrants  + ", 'Примечания' = '" + comments  + "' ");
+                strQuery.append("'WHERE ID = " + id + ";");
             }
 
             break;
