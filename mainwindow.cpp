@@ -207,6 +207,18 @@ void MainWindow::drawRows(QSqlQuery query)
             for (int i = 0; i<columnCount; i++)     // Для всех полей таблицы
             {
                 // Создаём ячейку в текущем поле текущей строки и заносим туда инфу
+
+                if (query.value(i).toString() == "true")
+                {
+                    ui->tableWidget->setItem(rowCount, i, new QTableWidgetItem("Да"));
+                    continue;
+                }
+                if (query.value(i).toString() == "false")
+                {
+                    ui->tableWidget->setItem(rowCount, i, new QTableWidgetItem(""));
+                    continue;
+                }
+
                 ui->tableWidget->setItem(rowCount, i, new QTableWidgetItem(query.value(i).toString()));
             }
             rowCount ++;    // Увеличиваем количество строк
@@ -356,42 +368,42 @@ void MainWindow::showMoreInfo(int row)
 
         // Чекбоксы - вероятно, имеет смысл предварительно засунуть их в вектор!!!
 
-        if (ui->tableWidget->item(row, 18)->text() == "true")       // С ослабленным здоровьем
+        if (ui->tableWidget->item(row, 18)->text() == "Да")       // С ослабленным здоровьем
             ui->weackHealth->setChecked(true);
         else
             ui->weackHealth->setChecked(false);
 
-        if (ui->tableWidget->item(row, 19)->text() == "true")       // Сирота
+        if (ui->tableWidget->item(row, 19)->text() == "Да")       // Сирота
             ui->orphan->setChecked(true);
         else
             ui->orphan->setChecked(false);
 
-        if (ui->tableWidget->item(row, 20)->text() == "true")       // Инвалид
+        if (ui->tableWidget->item(row, 20)->text() == "Да")       // Инвалид
             ui->invalid->setChecked(true);
         else
             ui->invalid->setChecked(false);
 
-        if (ui->tableWidget->item(row, 21)->text() == "true")       // На учёте в полиции
+        if (ui->tableWidget->item(row, 21)->text() == "Да")       // На учёте в полиции
             ui->accountInPolice->setChecked(true);
         else
             ui->accountInPolice->setChecked(false);
 
-        if (ui->tableWidget->item(row, 22)->text() == "true")       // Многодетные
+        if (ui->tableWidget->item(row, 22)->text() == "Да")       // Многодетные
             ui->large->setChecked(true);
         else
             ui->large->setChecked(false);
 
-        if (ui->tableWidget->item(row, 23)->text() == "true")       // Неполная семья
+        if (ui->tableWidget->item(row, 23)->text() == "Да")       // Неполная семья
             ui->incompleteFamily->setChecked(true);
         else
             ui->incompleteFamily->setChecked(false);
 
-        if (ui->tableWidget->item(row, 24)->text() == "true")       // Малообеспеченная семья
+        if (ui->tableWidget->item(row, 24)->text() == "Да")       // Малообеспеченная семья
             ui->lowIncome->setChecked(true);
         else
             ui->lowIncome->setChecked(false);
 
-        if (ui->tableWidget->item(row, 25)->text() == "true")       // Мигранты
+        if (ui->tableWidget->item(row, 25)->text() == "Да")       // Мигранты
             ui->migrants->setChecked(true);
         else
             ui->migrants->setChecked(false);
@@ -691,7 +703,7 @@ void MainWindow::on_saveButton_clicked()
             if (id.isEmpty())
             {
                 // INSERT
-                strQuery = "INSERT INTO Учащиеся(";
+                strQuery = "INSERT INTO Учащиеся (";
                 strQuery.append("'Фамилия', 'Имя', 'Отчество', 'Тип документа', 'Номер документа', 'Пол', 'Год рождения', ");
                 strQuery.append("'Район школы', 'Школа', 'Класс', 'Родители', 'Домашний адрес', 'Телефон', 'e-mail', 'Дата заявления', 'Форма обучения', ");
                 strQuery.append("'Когда выбыл', 'С ослабленным здоровьем', 'Сирота', 'Инвалид', 'На учёте в полиции', 'Многодетная семья', ");
@@ -706,21 +718,30 @@ void MainWindow::on_saveButton_clicked()
             else
             {
                 // UPDATE
-                // Здесь: поправить изменение bool-значений!!! Пока что оно не очень хочет работать.
+                // Запрос не работает !!! Из-за bool-значений. Выяснить, как их вводить.
 
-                strQuery.append("UPDATE Учащиеся SET Фамилия = '" + surname + "', Имя = '" + name  + "', Отчество = '" + patr  + "', 'Тип документа' = '" + docType  + "', 'Номер документа' = '" + docNum  + "', 'Пол' = '" + gender  + "', 'Год рождения' = '" + birthday  + "', ");
+                //strQuery.append("UPDATE Учащиеся SET 'Фамилия' = '" + surname + "', 'Имя' = '" + name  + "', 'Отчество' = '" + patr + "' ");
+
+                strQuery.append("UPDATE Учащиеся SET 'Фамилия' = '" + surname + "', 'Имя' = '" + name  + "', 'Отчество' = '" + patr  + "', 'Тип документа' = '" + docType  + "', 'Номер документа' = '" + docNum  + "', 'Пол' = '" + gender  + "', 'Год рождения' = '" + birthday  + "', ");
                 strQuery.append("'Район школы' = '" + arSchool  + "', 'Школа' = '" + school  + "', 'Класс' = '" + grad  + "', 'Родители' = '" + parents  + "', 'Домашний адрес' = '" + address  + "', 'Телефон' = '" + phone  + "', 'e-mail' = '" + email  + "', 'Дата заявления' = '" + admiss  + "', 'Форма обучения' = '" + eduForm  + "', ");
-                strQuery.append("'Когда выбыл' = '" + out  + "', 'С ослабленным здоровьем' = " + weackHealth  + ", 'Сирота' = " + orphan  + ", 'Инвалид' = " + invalid  + ", 'На учёте в полиции' = " + accountInPolice + ", 'Многодетная семья' = " + large  + ", ");
-                strQuery.append("'Неполная семья' = " + incompleteFamily  + ", 'Малообеспеченная семья' = " + lowIncome  + ", 'Мигранты' = " + migrants  + ", 'Примечания' = '" + comments  + "' ");
-                strQuery.append("'WHERE ID = " + id + ";");
+                strQuery.append("'Когда выбыл' = '" + out  + "', 'С ослабленным здоровьем' = '" + weackHealth  + "', 'Сирота' = '" + orphan  + "', 'Инвалид' = '" + invalid  + "', 'На учёте в полиции' = '" + accountInPolice + "', 'Многодетная семья' = '" + large  + "', ");
+                strQuery.append("'Неполная семья' = '" + incompleteFamily  + "', 'Малообеспеченная семья' = '" + lowIncome  + "', 'Мигранты' = '" + migrants  + "', 'Примечания' = '" + comments  + "' ");
+                strQuery.append("WHERE ID = " + id + ";");
             }
 
             break;
         }
     }
 
+    //ui->lblStatus->setText(strQuery);
     QSqlQuery query;
     query.exec(strQuery);
+
+    if (query.isValid())
+        ui->lblStatus->setText("Ok");
+    else
+        ui->lblStatus->setText("Error");
+
     repeatLastSelect();
 }
 
@@ -736,3 +757,4 @@ void MainWindow::hideColumnsFromMask(QVector<bool> mask)
             ui->tableWidget->setColumnHidden(i, mask[i]);
     }
 }
+
