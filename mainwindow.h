@@ -5,7 +5,10 @@
 #include <QtSql/QSql>
 #include <QtSql/QSqlDatabase>
 #include <QtSql/QtSql>
+#include <ActiveQt/QAxObject>
+#include <ActiveQt/QAxBase>
 #include <QFileInfo>
+#include <QFileDialog>
 #include <QTreeWidget>
 #include <QTreeWidgetItem>
 #include <QTableWidget>
@@ -28,8 +31,6 @@ public:
 private:
     Ui::MainWindow *ui;
     QSqlDatabase myDB;
-
-    // Имеет смысл ввести функцию "Шаг назад"
 
     int rowCount;
     int columnCount;
@@ -62,6 +63,8 @@ private slots:
     void repeatLastSelect();
     void rowClicked(int);
     //void changeTableMask();
+
+    void exportInExel();
 
     void on_treeWidget_itemClicked(QTreeWidgetItem *item, int column);
     void on_tableWidget_cellClicked(int row, int column);

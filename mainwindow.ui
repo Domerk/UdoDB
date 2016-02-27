@@ -76,7 +76,7 @@
            </sizepolicy>
           </property>
           <property name="currentIndex">
-           <number>2</number>
+           <number>0</number>
           </property>
           <widget class="QWidget" name="alliance">
            <layout class="QVBoxLayout" name="verticalLayout_7">
@@ -156,11 +156,47 @@
                   <item row="1" column="1">
                    <widget class="QLineEdit" name="alName"/>
                   </item>
-                  <item row="2" column="1">
-                   <widget class="QLineEdit" name="alDirect"/>
-                  </item>
                   <item row="3" column="1">
                    <widget class="QLineEdit" name="alOtd"/>
+                  </item>
+                  <item row="2" column="1">
+                   <widget class="QComboBox" name="alDirect">
+                    <item>
+                     <property name="text">
+                      <string/>
+                     </property>
+                    </item>
+                    <item>
+                     <property name="text">
+                      <string>Техническая</string>
+                     </property>
+                    </item>
+                    <item>
+                     <property name="text">
+                      <string>Художественная</string>
+                     </property>
+                    </item>
+                    <item>
+                     <property name="text">
+                      <string>Физкультурно-спортивная</string>
+                     </property>
+                    </item>
+                    <item>
+                     <property name="text">
+                      <string>Социально-педагогическая</string>
+                     </property>
+                    </item>
+                    <item>
+                     <property name="text">
+                      <string>Туристско-краеведческая</string>
+                     </property>
+                    </item>
+                    <item>
+                     <property name="text">
+                      <string>Естественно-научная</string>
+                     </property>
+                    </item>
+                   </widget>
                   </item>
                  </layout>
                 </item>
@@ -211,8 +247,8 @@
                 <rect>
                  <x>0</x>
                  <y>0</y>
-                 <width>305</width>
-                 <height>307</height>
+                 <width>166</width>
+                 <height>163</height>
                 </rect>
                </property>
                <layout class="QVBoxLayout" name="verticalLayout_6">
@@ -331,7 +367,7 @@
                <property name="geometry">
                 <rect>
                  <x>0</x>
-                 <y>-371</y>
+                 <y>0</y>
                  <width>297</width>
                  <height>897</height>
                 </rect>
@@ -734,6 +770,9 @@
     <property name="title">
      <string>Файл</string>
     </property>
+    <addaction name="action_2"/>
+    <addaction name="actionExel"/>
+    <addaction name="separator"/>
     <addaction name="exit"/>
    </widget>
    <widget class="QMenu" name="menuTab">
@@ -794,6 +833,16 @@
   <action name="actionRepeatLastSelect">
    <property name="text">
     <string>Повторить последний запрос</string>
+   </property>
+  </action>
+  <action name="actionExel">
+   <property name="text">
+    <string>Экспорт в Exel...</string>
+   </property>
+  </action>
+  <action name="action_2">
+   <property name="text">
+    <string>Соединение</string>
    </property>
   </action>
  </widget>

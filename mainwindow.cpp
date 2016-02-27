@@ -23,6 +23,7 @@ MainWindow::MainWindow(QWidget *parent) :
     // -------------------------------- Меню --------------------------------
 
     connect(ui->exit, SIGNAL(triggered()), this, SLOT(close()));
+    connect(ui->actionExel, SIGNAL(triggered()), this, SLOT(exportInExel()));
 
     connect(ui->actionRefreshTab, SIGNAL(triggered()), this, SLOT(refreshTable()));
     connect(ui->actionRepeatLastSelect, SIGNAL(triggered()), this, SLOT(repeatLastSelect()));
@@ -41,7 +42,6 @@ MainWindow::MainWindow(QWidget *parent) :
 
     //ui->mainToolBar->addAction(tr("Расширенный поиск"), this, SLOT(showSearchForm()));
 
-
     connect(ui->tableWidget->verticalHeader(), SIGNAL(sectionClicked(int)), this, SLOT(rowClicked(int)));
 
 
@@ -58,10 +58,24 @@ MainWindow::MainWindow(QWidget *parent) :
     queryStud.append("SELECT * FROM Учащиеся");
 
     queryTeach.append("SELECT ID, Фамилия, Имя, Отчество, Паспорт, Отдел FROM Преподаватели;");
-    //queryTeach.append("SELECT * FROM Преподаватели;");
-
 
     queryAllians.append("SELECT ID, Название, Направленность, Отдел, Описание FROM Объединения;");
+
+    // -------------------- Маски для скрытия колонок в таблицах ---------------
+
+    studTableMask.append(true);
+    for (int i = 1; i<11; i++)
+        studTableMask.append(false);
+    for (int i = 11; i<27; i++)
+        studTableMask.append(true);
+
+    teachTableMask.append(true);
+    for (int i = 1; i<6; i++)
+        teachTableMask.append(false);
+
+    alliansTableMask.append(true);
+    for (int i = 1; i<5; i++)
+        alliansTableMask.append(false);
 
     // ----------------------------- DataBase ------------------------------
 
@@ -133,6 +147,14 @@ void MainWindow::showTable(QString table)
         query.exec(queryStud);
         lastSelect->append(queryStud);
         ui->stackedWidget->setCurrentIndex(2);
+
+        // Сохраняем инфу о текущей таблице
+        currentTable->append(table);
+
+        // Отображаем заголовки и строки таблицы
+        drawHeaders(query);
+        drawRows(query);
+        hideColumnsFromMask(studTableMask);
     }
 
     if (table == "Преподаватели")
@@ -140,6 +162,14 @@ void MainWindow::showTable(QString table)
         query.exec(queryTeach);
         lastSelect->append(queryTeach);
         ui->stackedWidget->setCurrentIndex(1);
+
+        // Сохраняем инфу о текущей таблице
+        currentTable->append(table);
+
+        // Отображаем заголовки и строки таблицы
+        drawHeaders(query);
+        drawRows(query);
+        hideColumnsFromMask(teachTableMask);
     }
 
     if (table == "Объединения")
@@ -147,14 +177,15 @@ void MainWindow::showTable(QString table)
         query.exec(queryAllians);
         lastSelect->append(queryAllians);
         ui->stackedWidget->setCurrentIndex(0);
+
+        // Сохраняем инфу о текущей таблице
+        currentTable->append(table);
+
+        // Отображаем заголовки и строки таблицы
+        drawHeaders(query);
+        drawRows(query);
+        hideColumnsFromMask(alliansTableMask);
     }
-
-    // Сохраняем инфу о текущей таблице
-    currentTable->append(table);
-
-    // Отображаем заголовки и строки таблицы
-    drawHeaders(query);
-    drawRows(query);
 
     return;
 }
@@ -185,7 +216,6 @@ void MainWindow::drawHeaders(QSqlQuery query)
     }
 
     ui->tableWidget->setHorizontalHeaderLabels(qsl);    // Устанавливаем названия столбцов в таблице
-    ui->tableWidget->setColumnHidden(0, true);          // Прячем служебное поле с ID
 }
 
 // ============================================================
@@ -427,7 +457,7 @@ void MainWindow::showMoreInfo(int row)
     {
         ui->alID->setText(ui->tableWidget->item(row, 0)->text());           // ID
         ui->alName->setText(ui->tableWidget->item(row, 1)->text());         // Описание
-        ui->alDirect->setText(ui->tableWidget->item(row, 2)->text());       // Напавленность
+        ui->alDirect->setCurrentText(ui->tableWidget->item(row, 2)->text());       // Напавленность
         ui->alOtd->setText(ui->tableWidget->item(row, 3)->text());          // Отдел
         ui->alDescript->setText(ui->tableWidget->item(row, 4)->text());     // Описание
 
@@ -494,7 +524,7 @@ void MainWindow::clearMoreInfoForm()
     {
         ui->alID->clear();           // ID
         ui->alName->clear();         // Название
-        ui->alDirect->clear();       // Напавленность
+        ui->alDirect->setCurrentIndex(0);       // Напавленность
         ui->alOtd->clear();          // Отдел
         ui->alDescript->clear();     // Описание
     }
@@ -554,11 +584,11 @@ void MainWindow::on_saveButton_clicked()
     {
         case 0:     // Объединение
         {
-            QString id = ui->alID->text();              // ID
-            QString name = ui->alName->text();          // Название
-            QString direct = ui->alDirect->text();      // Напавленность
-            QString otd = ui->alOtd->text();            // Отдел
-            QString desc = ui->alDescript->toPlainText();     // Описание
+            QString id = ui->alID->text();                                 // ID
+            QString name = ui->alName->text().replace("--", "-");          // Название
+            QString direct = ui->alDirect->currentText();                  // Напавленность
+            QString otd = ui->alOtd->text().replace("--", "-");            // Отдел
+            QString desc = ui->alDescript->toPlainText().replace("--", "-");     // Описание
 
             if (name.isEmpty() || direct.isEmpty() || otd.isEmpty())
             {
@@ -590,11 +620,11 @@ void MainWindow::on_saveButton_clicked()
         {
 
             QString id = ui->teachID->text();               // ID
-            QString surname = ui->teachSurname->text();     // Фамилия
-            QString name = ui->teachName->text();           // Имя
-            QString patrname = ui->teachPatr->text();       // Отчество
-            QString numpass = ui->teachNumPass->text();     // Номер паспорта
-            QString otd = ui->teachOtd->text();             // Отдел
+            QString surname = ui->teachSurname->text().replace("--", "-");     // Фамилия
+            QString name = ui->teachName->text().replace("--", "-");           // Имя
+            QString patrname = ui->teachPatr->text().replace("--", "-");       // Отчество
+            QString numpass = ui->teachNumPass->text().replace("--", "-");     // Номер паспорта
+            QString otd = ui->teachOtd->text().replace("--", "-");             // Отдел
 
             if (name.isEmpty() || surname.isEmpty() || numpass.isEmpty())
             {
@@ -624,13 +654,13 @@ void MainWindow::on_saveButton_clicked()
         }
         case 2:     // Учащийся
         {
-            QString id = ui->studID->text();                // ID
-            QString surname = ui->studSurname->text();      // Фамилия
-            QString name = ui->studName->text();            // Имя
+            QString id = ui->studID->text();                                    // ID
+            QString surname = ui->studSurname->text().replace("--", "-");       // Фамилия
+            QString name = ui->studName->text().replace("--", "-");             // Имя
 
-            QString docType = ui->studDoc->currentText();   // Тип документа
-            QString docNum = ui->studNumDoc->text();        // Номер документа
-            QString gender = ui->studGender->currentText(); // Пол
+            QString docType = ui->studDoc->currentText();                       // Тип документа
+            QString docNum = ui->studNumDoc->text().replace("--", "-");         // Номер документа
+            QString gender = ui->studGender->currentText();                     // Пол
 
             if (name.isEmpty() || surname.isEmpty() || docType == "" || docNum.isEmpty() || gender == "")
             {
@@ -647,12 +677,12 @@ void MainWindow::on_saveButton_clicked()
 
             // Если обязательные поля заполнены, можно собирать информацию об остальных полях.
 
-            QString patr = ui->studPatr->text();
-            QString arSchool = ui->areaSchools->text();     // Район школы
-            QString school = ui->school->text();            // Школа
-            QString grad = ui->grade->text();               // Класс
-            QString phone = ui->phone->text();              // Телефон
-            QString email = ui->email->text();              // email
+            QString patr = ui->studPatr->text().replace("--", "-");
+            QString arSchool = ui->areaSchools->text().replace("--", "-");     // Район школы
+            QString school = ui->school->text().replace("--", "-");            // Школа
+            QString grad = ui->grade->text().replace("--", "-");               // Класс
+            QString phone = ui->phone->text().replace("--", "-");              // Телефон
+            QString email = ui->email->text().replace("--", "-");              // email
 
             QString birthday = ui->studBirthday->text();    // Год рождения
             QString admiss = ui->admissDate->text();        // Дата подачи заявления
@@ -661,9 +691,9 @@ void MainWindow::on_saveButton_clicked()
             // Combo Box
             QString eduForm = ui->eduForm->currentText(); // Форма обучения
 
-            QString comments = ui->studComments->toPlainText();
-            QString parents = ui->parents->toPlainText();   // Родители
-            QString address = ui->address->toPlainText();   // Адрес
+            QString comments = ui->studComments->toPlainText().replace("--", "-");
+            QString parents = ui->parents->toPlainText().replace("--", "-");   // Родители
+            QString address = ui->address->toPlainText().replace("--", "-");   // Адрес
 
             // Check Box
 
@@ -718,10 +748,6 @@ void MainWindow::on_saveButton_clicked()
             else
             {
                 // UPDATE
-                // Запрос не работает !!! Из-за bool-значений. Выяснить, как их вводить.
-
-                //strQuery.append("UPDATE Учащиеся SET 'Фамилия' = '" + surname + "', 'Имя' = '" + name  + "', 'Отчество' = '" + patr + "' ");
-
                 strQuery.append("UPDATE Учащиеся SET 'Фамилия' = '" + surname + "', 'Имя' = '" + name  + "', 'Отчество' = '" + patr  + "', 'Тип документа' = '" + docType  + "', 'Номер документа' = '" + docNum  + "', 'Пол' = '" + gender  + "', 'Год рождения' = '" + birthday  + "', ");
                 strQuery.append("'Район школы' = '" + arSchool  + "', 'Школа' = '" + school  + "', 'Класс' = '" + grad  + "', 'Родители' = '" + parents  + "', 'Домашний адрес' = '" + address  + "', 'Телефон' = '" + phone  + "', 'e-mail' = '" + email  + "', 'Дата заявления' = '" + admiss  + "', 'Форма обучения' = '" + eduForm  + "', ");
                 strQuery.append("'Когда выбыл' = '" + out  + "', 'С ослабленным здоровьем' = '" + weackHealth  + "', 'Сирота' = '" + orphan  + "', 'Инвалид' = '" + invalid  + "', 'На учёте в полиции' = '" + accountInPolice + "', 'Многодетная семья' = '" + large  + "', ");
@@ -733,7 +759,6 @@ void MainWindow::on_saveButton_clicked()
         }
     }
 
-    //ui->lblStatus->setText(strQuery);
     QSqlQuery query;
     query.exec(strQuery);
 
@@ -753,8 +778,73 @@ void MainWindow::hideColumnsFromMask(QVector<bool> mask)
 {
     if (mask.size() == ui->tableWidget->columnCount())
     {
-        for (int i = 1; i < mask.size(); i++)
+        for (int i = 0; i < mask.size(); i++)
             ui->tableWidget->setColumnHidden(i, mask[i]);
     }
 }
 
+// ============================================================
+// ==================== Экспорт в Exel ========================
+// ============================================================
+
+void MainWindow::exportInExel()
+{
+    // Открываем QFileDialog
+    QFileDialog fileDialog;
+    QString fileName = fileDialog.getOpenFileName(0, tr("Экспортировать в..."), "", "*.xls *.xlsx");
+    if (!fileName.isEmpty())
+    {
+        ui->lblStatus->setText(tr("Экспорт..."));
+
+        // https://wiki.qt.io/Using_ActiveX_Object_in_QT
+        // http://wiki.crossplatform.ru/index.php/%D0%A0%D0%B0%D0%B1%D0%BE%D1%82%D0%B0_%D1%81_MS_Office_%D1%81_%D0%BF%D0%BE%D0%BC%D0%BE%D1%89%D1%8C%D1%8E_ActiveQt
+
+        QAxObject* excel = new QAxObject("Excel.Application", 0);
+        QAxObject* workbooks = excel->querySubObject("Workbooks");
+        QAxObject* workbook = workbooks->querySubObject("Open(const QString&)", fileName);
+        QAxObject* sheets = workbook->querySubObject("Worksheets");
+
+        // Вставка значения в отдельную ячейку
+
+        QAxObject* StatSheet = sheets->querySubObject("Item( int )", 1);
+
+       for (int col = 1; col < ui->tableWidget->columnCount(); col++)        // Запись заголовков
+        {
+            // получение указателя на ячейку [row][col] ((!)нумерация с единицы)
+            QAxObject* cell = StatSheet->querySubObject("Cells(QVariant,QVariant)", 1, col);
+            // вставка значения переменной в полученную ячейку
+            cell->setProperty("Value", QVariant(ui->tableWidget->horizontalHeaderItem(col)->text()));
+            // освобождение памяти
+            delete cell;
+        }
+
+        for (int row = 1; row < ui->tableWidget->rowCount(); row++)
+        {
+            for (int col = 1; col < ui->tableWidget->columnCount(); col++)
+            {
+                // получение указателя на ячейку [row][col] ((!)нумерация с единицы)
+                QAxObject* cell = StatSheet->querySubObject("Cells(QVariant,QVariant)", row+1, col);
+                // вставка значения переменной в полученную ячейку
+                cell->setProperty("Value", QVariant(ui->tableWidget->item(row-1, col)->text()));
+                // освобождение памяти
+                delete cell;
+            }
+        }
+
+        excel->dynamicCall("Save()");       // Сохраняем - в примерах почему-то этого нет, но надо
+        workbook->dynamicCall("Close()");   // Закрываем
+        excel->dynamicCall("Quit()");       // Выходим
+
+        delete StatSheet;
+        delete sheets;
+        delete workbook;
+        delete workbooks;
+        delete excel;
+
+        ui->lblStatus->setText(tr("Экспорт завершён"));
+
+    }
+}
+
+// ============================================================
+// ============================================================
