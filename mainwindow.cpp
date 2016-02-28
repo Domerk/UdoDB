@@ -27,6 +27,7 @@ MainWindow::MainWindow(QWidget *parent) :
 
     connect(ui->actionRefreshTab, SIGNAL(triggered()), this, SLOT(refreshTable()));
     connect(ui->actionRepeatLastSelect, SIGNAL(triggered()), this, SLOT(repeatLastSelect()));
+    connect (ui->actionForMask, SIGNAL(triggered()), this, SLOT(changeTableMask()));
 
     connect(ui->actionNewStr, SIGNAL(triggered()), this, SLOT(clearFormForAdd()));
     connect(ui->actionDeleteStr, SIGNAL(triggered()), this, SLOT(deleteThis()));
@@ -86,6 +87,7 @@ MainWindow::MainWindow(QWidget *parent) :
     }
 }
 
+// ============================================================
 // ============================================================
 
 MainWindow::~MainWindow()
@@ -147,14 +149,7 @@ void MainWindow::showTable(QString table)
         query.exec(queryStud);
         lastSelect->append(queryStud);
         ui->stackedWidget->setCurrentIndex(2);
-
-        // Сохраняем инфу о текущей таблице
-        currentTable->append(table);
-
-        // Отображаем заголовки и строки таблицы
-        drawHeaders(query);
-        drawRows(query);
-        hideColumnsFromMask(studTableMask);
+        currentMask = studTableMask;
     }
 
     if (table == "Преподаватели")
@@ -162,14 +157,7 @@ void MainWindow::showTable(QString table)
         query.exec(queryTeach);
         lastSelect->append(queryTeach);
         ui->stackedWidget->setCurrentIndex(1);
-
-        // Сохраняем инфу о текущей таблице
-        currentTable->append(table);
-
-        // Отображаем заголовки и строки таблицы
-        drawHeaders(query);
-        drawRows(query);
-        hideColumnsFromMask(teachTableMask);
+        currentMask = teachTableMask;
     }
 
     if (table == "Объединения")
@@ -177,15 +165,17 @@ void MainWindow::showTable(QString table)
         query.exec(queryAllians);
         lastSelect->append(queryAllians);
         ui->stackedWidget->setCurrentIndex(0);
-
-        // Сохраняем инфу о текущей таблице
-        currentTable->append(table);
-
-        // Отображаем заголовки и строки таблицы
-        drawHeaders(query);
-        drawRows(query);
-        hideColumnsFromMask(alliansTableMask);
+        currentMask = alliansTableMask;
     }
+
+
+    // Сохраняем инфу о текущей таблице
+    currentTable->append(table);
+
+    // Отображаем заголовки и строки таблицы
+    drawHeaders(query);
+    drawRows(query);
+    hideColumnsFromMask(currentMask);
 
     return;
 }
@@ -201,7 +191,6 @@ void MainWindow::drawHeaders(QSqlQuery query)
     columnCount = ui->tableWidget->columnCount();
     for(int i = 0; i < columnCount; i++ )
              ui->tableWidget->removeColumn(0);
-
 
     columnCount = 0;
     QStringList qsl;
@@ -641,7 +630,6 @@ void MainWindow::on_saveButton_clicked()
 
             if (id.isEmpty())
             {
-
                 strQuery = "INSERT INTO Преподаватели (Имя, Фамилия, Отчество, Паспорт, Отдел) VALUES ('" + name + "', '" + surname + "', '" + patrname + "', '" + numpass + "', '" + otd + "');";
                 clearMoreInfoForm();
             }
@@ -771,6 +759,7 @@ void MainWindow::on_saveButton_clicked()
 }
 
 // ============================================================
+// ================= Скрытие полей по маске ===================
 // ============================================================
 
 
@@ -784,7 +773,64 @@ void MainWindow::hideColumnsFromMask(QVector<bool> mask)
 }
 
 // ============================================================
-// ==================== Экспорт в Exel ========================
+// ============================================================
+
+void MainWindow::changeTableMask()
+{
+    QVector<QCheckBox*> vct;
+    QDialog *wgt = new QDialog();
+    QVBoxLayout *layout = new QVBoxLayout();
+    QGridLayout *gl = new QGridLayout();
+
+    int colCount = ui->tableWidget->columnCount();
+    int row = 0;
+    int col = 0;
+
+    for (int i = 0; i < colCount; i++)        // Запись заголовков
+    {
+        vct.append(new QCheckBox(ui->tableWidget->horizontalHeaderItem(i)->text()));
+        vct[i]->setChecked(!currentMask[i]);
+        gl->addWidget(vct[i], row, col);
+
+        row++;
+        if (row>10)
+        {
+            row=0;
+            col++;
+        }
+    }
+
+    wgt->setLayout(gl);
+    wgt->setModal(true);
+    wgt->setWindowTitle(tr("Скрыть / Показать поля"));
+    if (wgt->exec() == QDialog::Accepted)
+    {
+        for(int i = 0; i < colCount; i++)
+            currentMask[i] = !vct[i]->isChecked();
+
+        hideColumnsFromMask(currentMask);
+
+        if (*currentTable == "Учащиеся")
+        {
+            studTableMask = currentMask;
+        }
+
+        if (*currentTable == "Преподаватели")
+        {
+            teachTableMask = studTableMask;
+        }
+
+        if (*currentTable == "Объединения")
+        {
+            alliansTableMask = studTableMask;
+        }
+
+
+    }
+}
+
+// ============================================================
+// ==================== Экспорт в Exсel =======================
 // ============================================================
 
 void MainWindow::exportInExel()

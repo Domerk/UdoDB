@@ -368,7 +368,7 @@
                 <rect>
                  <x>0</x>
                  <y>0</y>
-                 <width>297</width>
+                 <width>292</width>
                  <height>897</height>
                 </rect>
                </property>
@@ -781,6 +781,7 @@
     </property>
     <addaction name="actionRefreshTab"/>
     <addaction name="actionRepeatLastSelect"/>
+    <addaction name="actionForMask"/>
    </widget>
    <widget class="QMenu" name="menuStr">
     <property name="title">
@@ -843,6 +844,11 @@
   <action name="action_2">
    <property name="text">
     <string>Соединение</string>
+   </property>
+  </action>
+  <action name="actionForMask">
+   <property name="text">
+    <string>Скрыть / Показать поля</string>
    </property>
   </action>
  </widget>

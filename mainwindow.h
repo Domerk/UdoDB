@@ -28,6 +28,14 @@ public:
     explicit MainWindow(QWidget *parent = 0);
     ~MainWindow();
 
+    struct Connection
+    {
+        QString hostName;
+        QString dbName;
+        QString userName;
+        QString passwd;
+    };
+
 private:
     Ui::MainWindow *ui;
     QSqlDatabase myDB;
@@ -48,6 +56,8 @@ private:
     QVector<bool> teachTableMask;
     QVector<bool> alliansTableMask;
 
+    QVector<bool> currentMask;
+
     bool connectDB(QString pathToDB);
     void showTable(QString table);
     void drawHeaders(QSqlQuery query);
@@ -62,7 +72,7 @@ private slots:
     void refreshTable();
     void repeatLastSelect();
     void rowClicked(int);
-    //void changeTableMask();
+    void changeTableMask();
 
     void exportInExel();
 
