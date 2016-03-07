@@ -41,7 +41,8 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->mainToolBar->addAction(QIcon(":/icons/Icons/new.png"),tr("Новая запись"), this, SLOT(clearFormForAdd()));
     ui->mainToolBar->addAction(QIcon(":/icons/Icons/delete.png"),tr("Удалить запись"), this, SLOT(deleteThis()));
 
-    //ui->mainToolBar->addAction(tr("Расширенный поиск"), this, SLOT(showSearchForm()));
+    ui->mainToolBar->addAction(tr("Расширенный поиск"), this, SLOT(globalSearch()));
+    //ui->mainToolBar->actions()[ToolButton::...]->setDisabled(true);
 
     connect(ui->tableWidget->verticalHeader(), SIGNAL(sectionClicked(int)), this, SLOT(rowClicked(int)));
 
@@ -85,6 +86,7 @@ MainWindow::MainWindow(QWidget *parent) :
     {
         showTable("Учащиеся");
     }
+
 }
 
 // ============================================================
@@ -773,12 +775,13 @@ void MainWindow::hideColumnsFromMask(QVector<bool> mask)
 }
 
 // ============================================================
+// ===================== Измнение маски =======================
 // ============================================================
 
 void MainWindow::changeTableMask()
 {
     QVector<QCheckBox*> vct;
-    QDialog *wgt = new QDialog();
+    QDialog *wgt = new QDialog(this);
     QVBoxLayout *layout = new QVBoxLayout();
     QGridLayout *gl = new QGridLayout();
 
@@ -894,3 +897,11 @@ void MainWindow::exportInExel()
 
 // ============================================================
 // ============================================================
+
+
+void MainWindow::globalSearch()
+{
+    SearchDialog *dialog;
+    dialog = new SearchDialog();
+    dialog->exec();
+}

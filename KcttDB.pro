@@ -13,11 +13,14 @@ TEMPLATE = app
 
 
 SOURCES += main.cpp\
-        mainwindow.cpp
+        mainwindow.cpp \
+    searchdialog.cpp
 
-HEADERS  += mainwindow.h
+HEADERS  += mainwindow.h \
+    searchdialog.h
 
-FORMS    += mainwindow.ui
+FORMS    += mainwindow.ui \
+    searchdialog.ui
 
 QMAKE_CXXFLAGS += -std=gnu++0x
 

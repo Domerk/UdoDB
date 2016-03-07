@@ -2,6 +2,7 @@ PRAGMA foreign_keys = ON;
 
 DROP TABLE IF EXISTS Учащиеся;
 DROP TABLE IF EXISTS Преподаватели;
+DROP TABLE IF EXISTS Направленности;
 DROP TABLE IF EXISTS Объединения;
 DROP TABLE IF EXISTS Группы;
 DROP TABLE IF EXISTS Нагрузка;
@@ -53,14 +54,20 @@ CREATE TABLE Преподаватели (
 "Отдел"     		VARCHAR(60)
 );
 
+CREATE TABLE Направленности (
+"ID" 			INTEGER				PRIMARY KEY			AUTOINCREMENT,
+"Название направленности"	VARCHAR(60)		NOT NULL
+);
 
 CREATE TABLE Объединения (
 -- Поля
 "ID" 			INTEGER				PRIMARY KEY			AUTOINCREMENT,
 "Название"		VARCHAR(60)		NOT NULL,
-"Направленность"	VARCHAR(60)		NOT NULL,
 "Отдел"			  	VARCHAR(60)		NOT NULL,
-"Описание"		VARCHAR(300)
+"Описание"		VARCHAR(300),
+"ID Направленности" INTEGER,
+
+FOREIGN KEY ("ID Направленности")	REFERENCES Направленности("ID")
 );
 
 
@@ -70,12 +77,12 @@ CREATE TABLE Группы (
 "ID объединения" 	INTEGER,
 "ID преподавателя" 	INTEGER,
 "Номер группы"	   	VARCHAR(30),
+"Год обучения"		INTEGER,
 
 -- Параметры
 FOREIGN KEY ("ID объединения") 		REFERENCES Объединения("ID")
 FOREIGN KEY ("ID преподавателя")	REFERENCES Преподаватели("ID")
 );
-
 
 CREATE TABLE Нагрузка (
 -- Поля

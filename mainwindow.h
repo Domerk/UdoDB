@@ -16,6 +16,8 @@
 #include <QMessageBox>
 #include <QMap>
 
+#include "searchdialog.h"
+
 namespace Ui {
 class MainWindow;
 }
@@ -37,6 +39,14 @@ public:
     };
 
 private:
+    enum MainToolButton : int {
+               Home = 0,
+               Repeat,
+               New,
+               Delete
+           };
+
+
     Ui::MainWindow *ui;
     QSqlDatabase myDB;
 
@@ -73,6 +83,8 @@ private slots:
     void repeatLastSelect();
     void rowClicked(int);
     void changeTableMask();
+
+    void globalSearch();
 
     void exportInExel();
 
