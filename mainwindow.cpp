@@ -6,6 +6,7 @@ MainWindow::MainWindow(QWidget *parent) :
     ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
+    this->setWindowState(Qt::WindowMaximized); // Главное окно разворачивается на весь экран
 
     rowCount = 0;
     columnCount = 0;
@@ -13,6 +14,10 @@ MainWindow::MainWindow(QWidget *parent) :
     currentTable = new QString();
 
     connectDialog = new ConnectionDialog();
+
+    // Регулярное выражение для проверки имён, фамилий и отчеств.
+    // Разобраться, в чём проблема с буквой ё
+    names = new QRegularExpression("^[А-Я]{1}[а-я]*(-[А-Я]{1}[а-я]*)?$");
 
     // ------------------------- Всякая красота ----------------------------
 
@@ -39,12 +44,13 @@ MainWindow::MainWindow(QWidget *parent) :
 
     // Иконки: http://www.flaticon.com/packs/web-application-ui/4
 
-    ui->mainToolBar->addAction(QIcon(":/icons/Icons/home.png"), tr("Перезагрузить таблицу"), this, SLOT(refreshTable()));
-    ui->mainToolBar->addAction(QIcon(":/icons/Icons/repeat.png"), tr("Обновить таблицу"), this, SLOT(repeatLastSelect()));
+   // ui->mainToolBar->addAction(QIcon(":/icons/Icons/home.png"), tr("Перезагрузить таблицу"), this, SLOT(refreshTable()));
+   // ui->mainToolBar->addAction(QIcon(":/icons/Icons/repeat.png"), tr("Обновить таблицу"), this, SLOT(repeatLastSelect()));
     ui->mainToolBar->addAction(QIcon(":/icons/Icons/new.png"),tr("Новая запись"), this, SLOT(clearFormForAdd()));
     ui->mainToolBar->addAction(QIcon(":/icons/Icons/delete.png"),tr("Удалить запись"), this, SLOT(deleteThis()));
 
     ui->mainToolBar->addAction(tr("Расширенный поиск"), this, SLOT(globalSearch()));
+    ui->mainToolBar->addAction(tr("Скрыть/Показать поля"), this, SLOT(changeTableMask()));
     //ui->mainToolBar->actions()[ToolButton::...]->setDisabled(true);
 
     connect(ui->tableWidget->verticalHeader(), SIGNAL(sectionClicked(int)), this, SLOT(rowClicked(int)));
@@ -87,6 +93,7 @@ MainWindow::MainWindow(QWidget *parent) :
     // Временная строчка - указан путь к базе.
     if (connectDB("D:/Domerk/GUAP/Diplom/kcttDB.sqlite"))
     {
+        drawTree();
         showTable("Учащиеся");
     }
 
@@ -575,6 +582,10 @@ void MainWindow::on_saveButton_clicked()
     int currentIndex = ui->stackedWidget->currentIndex();
     QString strQuery;
 
+    bool isName = true;
+    bool isSurname = true;
+    bool isPatrName = true;
+
     switch (currentIndex)
     {
         case 0:     // Объединение
@@ -634,6 +645,30 @@ void MainWindow::on_saveButton_clicked()
                 return;
             }
 
+            QRegularExpressionMatch match = names->match(name);
+            isName = match.hasMatch();
+
+            match = names->match(surname);
+            isSurname = match.hasMatch();
+
+            if (!patrname.isEmpty())
+            {
+                match = names->match(patrname);
+                isPatrName = match.hasMatch();
+            }
+
+            if (!isName || !isSurname || !isPatrName)
+            {
+                QMessageBox messageBox(QMessageBox::Information,
+                                       tr("Сохранение"),
+                                       tr("Ошибка сохранения: Одно или несколько полей заполнены неверно!"),
+                                       QMessageBox::Yes,
+                                       this);
+                messageBox.setButtonText(QMessageBox::Yes, tr("ОК"));
+                messageBox.exec();
+                return;
+            }
+
             if (id.isEmpty())
             {
                 strQuery = "INSERT INTO Преподаватели (Имя, Фамилия, Отчество, Паспорт, Отдел) VALUES ('" + name + "', '" + surname + "', '" + patrname + "', '" + numpass + "', '" + otd + "');";
@@ -677,6 +712,32 @@ void MainWindow::on_saveButton_clicked()
             QString grad = ui->grade->text().replace("--", "-");               // Класс
             QString phone = ui->phone->text().replace("--", "-");              // Телефон
             QString email = ui->email->text().replace("--", "-");              // email
+
+
+            QRegularExpressionMatch match = names->match(name);
+            isName = match.hasMatch();
+
+            match = names->match(surname);
+            isSurname = match.hasMatch();
+
+            if (!patr.isEmpty())
+            {
+                match = names->match(patr);
+                isPatrName = match.hasMatch();
+            }
+
+            if (!isName || !isSurname || !isPatrName)
+            {
+                QMessageBox messageBox(QMessageBox::Information,
+                                       tr("Сохранение"),
+                                       tr("Ошибка сохранения: Одно или несколько полей заполнены неверно!"),
+                                       QMessageBox::Yes,
+                                       this);
+                messageBox.setButtonText(QMessageBox::Yes, tr("ОК"));
+                messageBox.exec();
+                return;
+            }
+
 
             QString birthday = ui->studBirthday->text();    // Год рождения
             QString admiss = ui->admissDate->text();        // Дата подачи заявления
@@ -912,12 +973,21 @@ void MainWindow::exportInExel()
 }
 
 // ============================================================
+// ================ Запуск глобального поиска =================
 // ============================================================
-
 
 void MainWindow::globalSearch()
 {
     SearchDialog *dialog;
     dialog = new SearchDialog();
     dialog->exec();
+}
+
+// ============================================================
+// ===================== Рисование дерева =====================
+// ============================================================
+
+void MainWindow::drawTree()
+{
+
 }

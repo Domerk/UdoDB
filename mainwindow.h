@@ -17,6 +17,7 @@
 #include <QMap>
 #include <QPushButton>
 #include <QDialogButtonBox>
+#include <QRegularExpression>
 
 #include "searchdialog.h"
 #include "connectiondialog.h"
@@ -68,6 +69,8 @@ private:
 
     QVector<bool> currentMask;
 
+    QRegularExpression *names;
+
     bool connectDB(QString pathToDB);
     void showTable(QString table);
     void drawHeaders(QSqlQuery query);
@@ -75,6 +78,7 @@ private:
     void showMoreInfo(int row);
     void clearMoreInfoForm();
     void hideColumnsFromMask(QVector<bool> mask);
+    void drawTree();
 
 private slots:
     void clearFormForAdd();
