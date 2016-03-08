@@ -15,8 +15,11 @@
 #include <QTableWidgetItem>
 #include <QMessageBox>
 #include <QMap>
+#include <QPushButton>
+#include <QDialogButtonBox>
 
 #include "searchdialog.h"
+#include "connectiondialog.h"
 
 namespace Ui {
 class MainWindow;
@@ -30,14 +33,6 @@ public:
     explicit MainWindow(QWidget *parent = 0);
     ~MainWindow();
 
-    struct Connection
-    {
-        QString hostName;
-        QString dbName;
-        QString userName;
-        QString passwd;
-    };
-
 private:
     enum MainToolButton : int {
                Home = 0,
@@ -49,6 +44,11 @@ private:
 
     Ui::MainWindow *ui;
     QSqlDatabase myDB;
+
+    QMap<QString, QString> mainBase;
+    QMap<QString, QString> tempBase;
+
+    ConnectionDialog *connectDialog;
 
     int rowCount;
     int columnCount;
@@ -83,7 +83,6 @@ private slots:
     void repeatLastSelect();
     void rowClicked(int);
     void changeTableMask();
-
     void globalSearch();
 
     void exportInExel();

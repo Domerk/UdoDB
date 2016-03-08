@@ -770,7 +770,7 @@
     <property name="title">
      <string>Файл</string>
     </property>
-    <addaction name="action_2"/>
+    <addaction name="actionConnect"/>
     <addaction name="actionExel"/>
     <addaction name="separator"/>
     <addaction name="exit"/>
@@ -841,7 +841,7 @@
     <string>Экспорт в Exel...</string>
    </property>
   </action>
-  <action name="action_2">
+  <action name="actionConnect">
    <property name="text">
     <string>Соединение</string>
    </property>

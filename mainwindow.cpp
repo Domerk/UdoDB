@@ -12,6 +12,8 @@ MainWindow::MainWindow(QWidget *parent) :
     lastSelect = new QString();
     currentTable = new QString();
 
+    connectDialog = new ConnectionDialog();
+
     // ------------------------- Всякая красота ----------------------------
 
     this->setWindowTitle(tr("Тут будет содержательное название"));
@@ -22,6 +24,7 @@ MainWindow::MainWindow(QWidget *parent) :
 
     // -------------------------------- Меню --------------------------------
 
+    connect (ui->actionConnect, SIGNAL(triggered()), connectDialog, SLOT(exec()));
     connect(ui->exit, SIGNAL(triggered()), this, SLOT(close()));
     connect(ui->actionExel, SIGNAL(triggered()), this, SLOT(exportInExel()));
 
@@ -97,6 +100,7 @@ MainWindow::~MainWindow()
     if (myDB.isOpen())
         myDB.close();
 
+    delete connectDialog;
     delete lastSelect;
     delete currentTable;
     delete ui;
@@ -784,6 +788,15 @@ void MainWindow::changeTableMask()
     QDialog *wgt = new QDialog(this);
     QVBoxLayout *layout = new QVBoxLayout();
     QGridLayout *gl = new QGridLayout();
+    QDialogButtonBox *buttonBox;
+    buttonBox = new QDialogButtonBox(QDialogButtonBox::Ok
+                                     | QDialogButtonBox::Cancel);
+
+    connect(buttonBox, SIGNAL(accepted()), wgt, SLOT(accept()));
+    connect(buttonBox, SIGNAL(rejected()), wgt, SLOT(reject()));
+
+    buttonBox->button(QDialogButtonBox::Ok)->setText(tr("Применить"));
+    buttonBox->button(QDialogButtonBox::Cancel)->setText(tr("Отмена"));
 
     int colCount = ui->tableWidget->columnCount();
     int row = 0;
@@ -803,7 +816,10 @@ void MainWindow::changeTableMask()
         }
     }
 
-    wgt->setLayout(gl);
+    layout->addLayout(gl);
+    layout->addWidget(buttonBox);
+
+    wgt->setLayout(layout);
     wgt->setModal(true);
     wgt->setWindowTitle(tr("Скрыть / Показать поля"));
     if (wgt->exec() == QDialog::Accepted)
