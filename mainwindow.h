@@ -71,7 +71,7 @@ private:
 
     QRegularExpression *names;
 
-    bool connectDB(QString pathToDB);
+    bool connectDB(QString nameDB);
     void showTable(QString table);
     void drawHeaders(QSqlQuery query);
     void drawRows(QSqlQuery query);
@@ -94,6 +94,9 @@ private slots:
     void on_treeWidget_itemClicked(QTreeWidgetItem *item, int column);
     void on_tableWidget_cellClicked(int row, int column);
     void on_saveButton_clicked();
+
+public slots:
+    void connectReconfigSlot();
 };
 
 #endif // MAINWINDOW_H

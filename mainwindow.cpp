@@ -7,6 +7,7 @@ MainWindow::MainWindow(QWidget *parent) :
 {
     ui->setupUi(this);
     this->setWindowState(Qt::WindowMaximized); // Главное окно разворачивается на весь экран
+    ui->splitter->setSizes(QList <int> () << 100 << 350 << 200);
 
     rowCount = 0;
     columnCount = 0;
@@ -14,10 +15,10 @@ MainWindow::MainWindow(QWidget *parent) :
     currentTable = new QString();
 
     connectDialog = new ConnectionDialog();
+    connect(connectDialog, SIGNAL(connectReconfig()), this, SLOT(connectReconfigSlot()));
 
     // Регулярное выражение для проверки имён, фамилий и отчеств.
-    // Разобраться, в чём проблема с буквой ё
-    names = new QRegularExpression("^[А-Я]{1}[а-я]*(-[А-Я]{1}[а-я]*)?$");
+    names = new QRegularExpression("^[А-ЯЁ]{1}[а-яё]*(-[А-ЯЁ]{1}[а-яё]*)?$");
 
     // ------------------------- Всякая красота ----------------------------
 
@@ -91,7 +92,7 @@ MainWindow::MainWindow(QWidget *parent) :
     // ----------------------------- DataBase ------------------------------
 
     // Временная строчка - указан путь к базе.
-    if (connectDB("D:/Domerk/GUAP/Diplom/kcttDB.sqlite"))
+    if (connectDB("MainDB"))
     {
         drawTree();
         showTable("Учащиеся");
@@ -117,8 +118,39 @@ MainWindow::~MainWindow()
 // ============== Установка соединения с базой ================
 // ============================================================
 
-bool MainWindow::connectDB(QString pathToDB)
+bool MainWindow::connectDB(QString nameDB)
 {
+    if (myDB.isOpen())
+    {
+        myDB.close();
+    }
+    else
+    {
+        myDB = QSqlDatabase::addDatabase("QSQLITE");    // Указываем СУБД
+    }
+
+    QSettings settings ("Kctt", "KcttDB");
+    settings.beginGroup(nameDB);
+    myDB.setHostName(settings.value("hostname", "localhost").toString());
+    myDB.setDatabaseName(settings.value("dbname", "kcttDB").toString());
+    myDB.setUserName(settings.value("username").toString());
+    myDB.setPassword(settings.value("password").toString());
+    settings.endGroup();
+
+
+    if (myDB.open())                            // Открываем соединение
+    {
+        ui->lblStatus->setText(tr("Соединение установлено")); // Выводим сообщение
+        return true;                 // Возвращаем true
+    }
+    else
+    {
+        ui->lblStatus->setText(tr("Ошибка соединения: соединение не установлено"));
+    }
+
+    return false;
+
+    /*
     myDB = QSqlDatabase::addDatabase("QSQLITE");    // Указываем СУБД
     myDB.setDatabaseName(pathToDB);                 // Задаём полное имя базы
 
@@ -140,7 +172,13 @@ bool MainWindow::connectDB(QString pathToDB)
     {
         ui->lblStatus->setText(tr("Ошибка соединения: отсутсвует файл базы данных"));
     }
-    return false;
+    return false; */
+}
+
+void MainWindow::connectReconfigSlot()
+{
+    connectDB("MainDB");
+
 }
 
 // ============================================================
@@ -862,11 +900,12 @@ void MainWindow::changeTableMask()
     int colCount = ui->tableWidget->columnCount();
     int row = 0;
     int col = 0;
+    //vct.append(true);
 
-    for (int i = 0; i < colCount; i++)        // Запись заголовков
+    for (int i = 0; i < colCount-1; i++)        // Запись заголовков
     {
-        vct.append(new QCheckBox(ui->tableWidget->horizontalHeaderItem(i)->text()));
-        vct[i]->setChecked(!currentMask[i]);
+        vct.append(new QCheckBox(ui->tableWidget->horizontalHeaderItem(i+1)->text()));
+        vct[i]->setChecked(!currentMask[i+1]);
         gl->addWidget(vct[i], row, col);
 
         row++;
@@ -885,8 +924,8 @@ void MainWindow::changeTableMask()
     wgt->setWindowTitle(tr("Скрыть / Показать поля"));
     if (wgt->exec() == QDialog::Accepted)
     {
-        for(int i = 0; i < colCount; i++)
-            currentMask[i] = !vct[i]->isChecked();
+        for(int i = 1; i < colCount; i++)
+            currentMask[i] = !vct[i-1]->isChecked();
 
         hideColumnsFromMask(currentMask);
 
