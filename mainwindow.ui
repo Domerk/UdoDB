@@ -40,18 +40,33 @@
        </column>
        <item>
         <property name="text">
-         <string>Учащиеся</string>
+         <string>Общее</string>
         </property>
-       </item>
-       <item>
-        <property name="text">
-         <string>Преподаватели</string>
-        </property>
-       </item>
-       <item>
-        <property name="text">
-         <string>Объединения</string>
-        </property>
+        <item>
+         <property name="text">
+          <string>Учащиеся</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Преподаватели</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Направленности</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Объединения</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Группы</string>
+         </property>
+        </item>
        </item>
       </widget>
       <widget class="QTableWidget" name="tableWidget">
@@ -82,7 +97,7 @@
            </sizepolicy>
           </property>
           <property name="currentIndex">
-           <number>1</number>
+           <number>0</number>
           </property>
           <widget class="QWidget" name="alliance">
            <layout class="QVBoxLayout" name="verticalLayout_7">

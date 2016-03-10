@@ -16,6 +16,7 @@ MainWindow::MainWindow(QWidget *parent) :
 
     connectDialog = new ConnectionDialog();
     connect(connectDialog, SIGNAL(connectReconfig()), this, SLOT(connectReconfigSlot()));
+    connect(ui->tableWidget->verticalHeader(), SIGNAL(sectionClicked(int)), this, SLOT(rowClicked(int)));
 
     // Регулярное выражение для проверки имён, фамилий и отчеств.
     names = new QRegularExpression("^[А-ЯЁ]{1}[а-яё]*(-[А-ЯЁ]{1}[а-яё]*)?$");
@@ -27,6 +28,8 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->alID->hide();
     ui->studID->hide();
     ui->teachID->hide();
+
+    ui->treeWidget->setColumnCount(1);
 
     // -------------------------------- Меню --------------------------------
 
@@ -45,16 +48,12 @@ MainWindow::MainWindow(QWidget *parent) :
 
     // Иконки: http://www.flaticon.com/packs/web-application-ui/4
 
-   // ui->mainToolBar->addAction(QIcon(":/icons/Icons/home.png"), tr("Перезагрузить таблицу"), this, SLOT(refreshTable()));
-   // ui->mainToolBar->addAction(QIcon(":/icons/Icons/repeat.png"), tr("Обновить таблицу"), this, SLOT(repeatLastSelect()));
     ui->mainToolBar->addAction(QIcon(":/icons/Icons/new.png"),tr("Новая запись"), this, SLOT(clearFormForAdd()));
     ui->mainToolBar->addAction(QIcon(":/icons/Icons/delete.png"),tr("Удалить запись"), this, SLOT(deleteThis()));
 
     ui->mainToolBar->addAction(tr("Расширенный поиск"), this, SLOT(globalSearch()));
     ui->mainToolBar->addAction(tr("Скрыть/Показать поля"), this, SLOT(changeTableMask()));
     //ui->mainToolBar->actions()[ToolButton::...]->setDisabled(true);
-
-    connect(ui->tableWidget->verticalHeader(), SIGNAL(sectionClicked(int)), this, SLOT(rowClicked(int)));
 
 
     // ------------------ Запросы на вывод основных таблиц -----------------
@@ -91,7 +90,6 @@ MainWindow::MainWindow(QWidget *parent) :
 
     // ----------------------------- DataBase ------------------------------
 
-    // Временная строчка - указан путь к базе.
     if (connectDB("MainDB"))
     {
         drawTree();
@@ -178,6 +176,8 @@ bool MainWindow::connectDB(QString nameDB)
 void MainWindow::connectReconfigSlot()
 {
     connectDB("MainDB");
+    if (!currentTable->isEmpty())
+        refreshTable();
 
 }
 
@@ -658,6 +658,7 @@ void MainWindow::on_saveButton_clicked()
                 strQuery = "UPDATE Объединения SET Название = '" + name + "', Направленность = '" + direct + "', Отдел = '" + otd + "', Описание = '" + desc + "' WHERE ID = " + id + ";";
             }
 
+            drawTree(); // Перерисовываем дерево
             break;
         }
         case 1:     // Преподаватель
@@ -1028,5 +1029,65 @@ void MainWindow::globalSearch()
 
 void MainWindow::drawTree()
 {
+   QStringList *directions = new QStringList();
+   QStringList *association = new QStringList();
+
+   QTreeWidgetItem *direct= new QTreeWidgetItem(ui->treeWidget);
+   direct->setText(0, "Направленности");
+
+   // Получаем список направленностей
+
+   QString strQuery = "SELECT Название FROM Направленности ;";
+   QSqlQuery query;
+   query.exec(strQuery);
+   while (query.next())    // Пока есть результаты запроса
+   {
+       directions->append(query.value(0).toString());
+   }
+
+   ui->alDirect->clear();
+   ui->alDirect->addItems(*directions);
+
+   for (QString & dir: *directions)
+   {
+       // Получаем список объединений данной направленности
+
+       QTreeWidgetItem *treeDir = new QTreeWidgetItem();
+       treeDir->setText(0, dir);
+
+       strQuery.clear();
+       strQuery.append("SELECT Объединения.Название FROM Объединения, Направленности  WHERE Направленности.ID = Объединения.`ID Направленности` AND Направленности.Название = `");
+       strQuery.append(dir + "`;");
+       query.exec(strQuery);
+       while (query.next())    // Пока есть результаты запроса
+       {
+           association->append(query.value(0).toString());
+       }
+
+       // Получаем список групп данного объединения данной направленности
+
+       for (QString & ass: *association)
+       {
+           QTreeWidgetItem *treeAss = new QTreeWidgetItem();
+           treeAss->setText(0, ass);
+
+           strQuery.clear();
+           strQuery.append("SELECT Группы.Номер, Группы.ID FROM Объединения, Направленности, Группы  WHERE Направленности.ID = Объединения.`ID Направленности` AND Объединения.ID = Группы.`ID объединения` AND Направленности.Название = `");
+           strQuery.append(dir + "`, Объединения.Название = `" + ass + "`;");
+           query.exec(strQuery);
+           while (query.next())    // Пока есть результаты запроса
+           {
+               QTreeWidgetItem *treeGroup = new QTreeWidgetItem();
+               treeGroup->setText(0, query.value(0).toString());
+               treeGroup->setText(1, query.value(1).toString());
+
+               treeAss->addChild(treeGroup);
+           }
+
+           treeDir->addChild(treeAss);
+       }
+
+       direct->addChild(treeDir);
+   }
 
 }
