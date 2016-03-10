@@ -36,14 +36,14 @@
       <property name="geometry">
        <rect>
         <x>0</x>
-        <y>-235</y>
-        <width>573</width>
+        <y>-252</y>
+        <width>584</width>
         <height>378</height>
        </rect>
       </property>
       <layout class="QGridLayout" name="gridLayout_4">
        <item row="12" column="4">
-        <widget class="QComboBox" name="comboBox_10">
+        <widget class="QComboBox" name="studNeedy">
          <item>
           <property name="text">
            <string>Не важно</string>
@@ -62,7 +62,7 @@
         </widget>
        </item>
        <item row="11" column="4">
-        <widget class="QComboBox" name="comboBox_9">
+        <widget class="QComboBox" name="studIncom">
          <item>
           <property name="text">
            <string>Не важно</string>
@@ -81,7 +81,7 @@
         </widget>
        </item>
        <item row="13" column="4">
-        <widget class="QComboBox" name="comboBox_11">
+        <widget class="QComboBox" name="studMigrants">
          <item>
           <property name="text">
            <string>Не важно</string>
@@ -100,28 +100,44 @@
         </widget>
        </item>
        <item row="13" column="1">
-        <widget class="QLineEdit" name="lineEdit_19"/>
+        <widget class="QLineEdit" name="studAdr"/>
        </item>
        <item row="11" column="1">
-        <widget class="QLineEdit" name="lineEdit_17"/>
+        <widget class="QLineEdit" name="studClass"/>
        </item>
        <item row="9" column="1">
-        <widget class="QLineEdit" name="lineEdit_15"/>
+        <widget class="QLineEdit" name="studSchoolReg"/>
        </item>
        <item row="12" column="1">
-        <widget class="QLineEdit" name="lineEdit_18"/>
+        <widget class="QLineEdit" name="studParents"/>
        </item>
        <item row="10" column="1">
-        <widget class="QLineEdit" name="lineEdit_16"/>
+        <widget class="QLineEdit" name="studSchool"/>
        </item>
        <item row="3" column="4">
-        <widget class="QComboBox" name="comboBox_3"/>
+        <widget class="QComboBox" name="studEduForm">
+         <item>
+          <property name="text">
+           <string/>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>Очная</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>Дистанционная</string>
+          </property>
+         </item>
+        </widget>
        </item>
        <item row="14" column="1">
-        <widget class="QLineEdit" name="lineEdit_20"/>
+        <widget class="QLineEdit" name="studPhone"/>
        </item>
        <item row="9" column="4">
-        <widget class="QComboBox" name="comboBox_7">
+        <widget class="QComboBox" name="studPolice">
          <item>
           <property name="text">
            <string>Не важно</string>
@@ -140,7 +156,7 @@
         </widget>
        </item>
        <item row="10" column="4">
-        <widget class="QComboBox" name="comboBox_8">
+        <widget class="QComboBox" name="studLarge">
          <item>
           <property name="text">
            <string>Не важно</string>
@@ -159,52 +175,52 @@
         </widget>
        </item>
        <item row="1" column="3">
-        <widget class="QCheckBox" name="checkBox_13">
+        <widget class="QCheckBox" name="studMail_ch">
          <property name="text">
           <string>e-mail</string>
          </property>
         </widget>
        </item>
        <item row="2" column="3">
-        <widget class="QCheckBox" name="checkBox_14">
+        <widget class="QCheckBox" name="studDataIn_ch">
          <property name="text">
           <string>Дата заявления</string>
          </property>
         </widget>
        </item>
        <item row="10" column="0">
-        <widget class="QCheckBox" name="checkBox_10">
+        <widget class="QCheckBox" name="studSchool_ch">
          <property name="text">
           <string>Школа</string>
          </property>
         </widget>
        </item>
        <item row="1" column="0">
-        <widget class="QCheckBox" name="checkBox">
+        <widget class="QCheckBox" name="studSurname_ch">
          <property name="text">
           <string>Фамилия</string>
          </property>
         </widget>
        </item>
        <item row="2" column="1">
-        <widget class="QLineEdit" name="lineEdit_2"/>
+        <widget class="QLineEdit" name="studName"/>
        </item>
        <item row="13" column="0">
-        <widget class="QCheckBox" name="checkBox_3">
+        <widget class="QCheckBox" name="studAdr_ch">
          <property name="text">
           <string>Адрес</string>
          </property>
         </widget>
        </item>
        <item row="2" column="0">
-        <widget class="QCheckBox" name="checkBox_2">
+        <widget class="QCheckBox" name="studName_cb">
          <property name="text">
           <string>Имя</string>
          </property>
         </widget>
        </item>
        <item row="1" column="1">
-        <widget class="QLineEdit" name="lineEdit"/>
+        <widget class="QLineEdit" name="studSurname"/>
        </item>
        <item row="1" column="2">
         <spacer name="horizontalSpacer">
@@ -220,131 +236,163 @@
         </spacer>
        </item>
        <item row="3" column="3">
-        <widget class="QCheckBox" name="checkBox_15">
+        <widget class="QCheckBox" name="studEduForm_ch">
          <property name="text">
           <string>Форма обучения</string>
          </property>
         </widget>
        </item>
        <item row="5" column="0">
-        <widget class="QCheckBox" name="checkBox_6">
+        <widget class="QCheckBox" name="studDocNum_ch">
          <property name="text">
           <string>Номер документа</string>
          </property>
         </widget>
        </item>
        <item row="1" column="4">
-        <widget class="QLineEdit" name="lineEdit_3"/>
+        <widget class="QLineEdit" name="studMail"/>
        </item>
        <item row="4" column="3">
-        <widget class="QCheckBox" name="checkBox_16">
+        <widget class="QCheckBox" name="studDataOut_ch">
          <property name="text">
           <string>Когда выбыл</string>
          </property>
         </widget>
        </item>
        <item row="6" column="0">
-        <widget class="QCheckBox" name="checkBox_7">
+        <widget class="QCheckBox" name="studGender_ch">
          <property name="text">
           <string>Пол</string>
          </property>
         </widget>
        </item>
        <item row="4" column="0">
-        <widget class="QCheckBox" name="checkBox_5">
+        <widget class="QCheckBox" name="studDocType_ch">
          <property name="text">
           <string>Тип документа</string>
          </property>
         </widget>
        </item>
        <item row="3" column="0">
-        <widget class="QCheckBox" name="checkBox_4">
+        <widget class="QCheckBox" name="studPatr_ch">
          <property name="text">
           <string>Отчество</string>
          </property>
         </widget>
        </item>
        <item row="7" column="0">
-        <widget class="QCheckBox" name="checkBox_8">
+        <widget class="QCheckBox" name="studBYear_ch">
          <property name="text">
           <string>Год рождения</string>
          </property>
         </widget>
        </item>
        <item row="9" column="0">
-        <widget class="QCheckBox" name="checkBox_9">
+        <widget class="QCheckBox" name="studSchoolReg_ch">
          <property name="text">
           <string>Район школы</string>
          </property>
         </widget>
        </item>
        <item row="9" column="3">
-        <widget class="QCheckBox" name="checkBox_20">
+        <widget class="QCheckBox" name="studPolice_ch">
          <property name="text">
           <string>На учёте в полиции</string>
          </property>
         </widget>
        </item>
        <item row="10" column="3">
-        <widget class="QCheckBox" name="checkBox_21">
+        <widget class="QCheckBox" name="studLarge_ch">
          <property name="text">
           <string>Многодетная семья</string>
          </property>
         </widget>
        </item>
        <item row="11" column="0">
-        <widget class="QCheckBox" name="checkBox_11">
+        <widget class="QCheckBox" name="studClass_ch">
          <property name="text">
           <string>Класс</string>
          </property>
         </widget>
        </item>
        <item row="11" column="3">
-        <widget class="QCheckBox" name="checkBox_23">
+        <widget class="QCheckBox" name="studIncom_ch">
          <property name="text">
           <string>Неполная семья</string>
          </property>
         </widget>
        </item>
        <item row="12" column="0">
-        <widget class="QCheckBox" name="checkBox_22">
+        <widget class="QCheckBox" name="studParents_ch">
          <property name="text">
           <string>Родители</string>
          </property>
         </widget>
        </item>
        <item row="12" column="3">
-        <widget class="QCheckBox" name="checkBox_24">
+        <widget class="QCheckBox" name="studNeedy_ch">
          <property name="text">
           <string>Малообеспеченная семья</string>
          </property>
         </widget>
        </item>
        <item row="13" column="3">
-        <widget class="QCheckBox" name="checkBox_25">
+        <widget class="QCheckBox" name="studMigrants_ch">
          <property name="text">
           <string>Мигранты</string>
          </property>
         </widget>
        </item>
        <item row="14" column="0">
-        <widget class="QCheckBox" name="checkBox_12">
+        <widget class="QCheckBox" name="studPhone_ch">
          <property name="text">
           <string>Телефон</string>
          </property>
         </widget>
        </item>
        <item row="4" column="1">
-        <widget class="QComboBox" name="comboBox"/>
+        <widget class="QComboBox" name="studDocType">
+         <item>
+          <property name="text">
+           <string/>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>Паспорт</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>Свидетельство о рождении</string>
+          </property>
+         </item>
+        </widget>
        </item>
        <item row="6" column="1">
-        <widget class="QComboBox" name="comboBox_2"/>
+        <widget class="QComboBox" name="studGender">
+         <item>
+          <property name="text">
+           <string/>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>Муж</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>Жен</string>
+          </property>
+         </item>
+        </widget>
        </item>
        <item row="3" column="1">
-        <widget class="QLineEdit" name="lineEdit_13"/>
+        <widget class="QLineEdit" name="studPatr"/>
        </item>
        <item row="5" column="1">
-        <widget class="QLineEdit" name="lineEdit_14"/>
+        <widget class="QLineEdit" name="studDocNum"/>
        </item>
        <item row="8" column="0">
         <layout class="QHBoxLayout" name="horizontalLayout">
@@ -368,12 +416,21 @@
           </widget>
          </item>
          <item>
-          <widget class="QSpinBox" name="spinBox_2">
+          <widget class="QSpinBox" name="studBYear_min">
            <property name="sizePolicy">
             <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
              <horstretch>0</horstretch>
              <verstretch>0</verstretch>
             </sizepolicy>
+           </property>
+           <property name="minimum">
+            <number>1980</number>
+           </property>
+           <property name="maximum">
+            <number>2100</number>
+           </property>
+           <property name="value">
+            <number>2000</number>
            </property>
           </widget>
          </item>
@@ -395,26 +452,35 @@
           </widget>
          </item>
          <item>
-          <widget class="QSpinBox" name="spinBox_3">
+          <widget class="QSpinBox" name="studBYear_max">
            <property name="sizePolicy">
             <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
              <horstretch>0</horstretch>
              <verstretch>0</verstretch>
             </sizepolicy>
            </property>
+           <property name="minimum">
+            <number>1980</number>
+           </property>
+           <property name="maximum">
+            <number>2100</number>
+           </property>
+           <property name="value">
+            <number>2000</number>
+           </property>
           </widget>
          </item>
         </layout>
        </item>
        <item row="8" column="3">
-        <widget class="QCheckBox" name="checkBox_19">
+        <widget class="QCheckBox" name="studInv_ch">
          <property name="text">
           <string>Инвалид</string>
          </property>
         </widget>
        </item>
        <item row="8" column="4">
-        <widget class="QComboBox" name="comboBox_6">
+        <widget class="QComboBox" name="studInv">
          <item>
           <property name="text">
            <string>Не важно</string>
@@ -433,14 +499,14 @@
         </widget>
        </item>
        <item row="7" column="3">
-        <widget class="QCheckBox" name="checkBox_18">
+        <widget class="QCheckBox" name="studOrph_ch">
          <property name="text">
           <string>Сирота</string>
          </property>
         </widget>
        </item>
        <item row="7" column="4">
-        <widget class="QComboBox" name="comboBox_5">
+        <widget class="QComboBox" name="studOrph">
          <item>
           <property name="text">
            <string>Не важно</string>
@@ -459,14 +525,14 @@
         </widget>
        </item>
        <item row="6" column="3">
-        <widget class="QCheckBox" name="checkBox_17">
+        <widget class="QCheckBox" name="studWhealth_ch">
          <property name="text">
           <string>С ослабленным здоровьем</string>
          </property>
         </widget>
        </item>
        <item row="6" column="4">
-        <widget class="QComboBox" name="comboBox_4">
+        <widget class="QComboBox" name="studWhealth">
          <item>
           <property name="text">
            <string>Не важно</string>
@@ -523,24 +589,24 @@
       </property>
       <layout class="QGridLayout" name="gridLayout_2">
        <item row="0" column="0">
-        <widget class="QCheckBox" name="checkBox_26">
+        <widget class="QCheckBox" name="grNum_ch">
          <property name="text">
           <string>Номер группы</string>
          </property>
         </widget>
        </item>
        <item row="0" column="1">
-        <widget class="QLineEdit" name="lineEdit_4"/>
+        <widget class="QLineEdit" name="grNum"/>
        </item>
        <item row="1" column="0">
-        <widget class="QCheckBox" name="checkBox_32">
+        <widget class="QCheckBox" name="grYear_ch">
          <property name="text">
           <string>Год обучения</string>
          </property>
         </widget>
        </item>
        <item row="1" column="1">
-        <widget class="QSpinBox" name="spinBox">
+        <widget class="QSpinBox" name="grYear">
          <property name="sizePolicy">
           <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
            <horstretch>0</horstretch>
@@ -604,31 +670,31 @@
       </property>
       <layout class="QGridLayout" name="gridLayout_5">
        <item row="0" column="0">
-        <widget class="QCheckBox" name="checkBox_33">
+        <widget class="QCheckBox" name="assName_ch">
          <property name="text">
           <string>Название</string>
          </property>
         </widget>
        </item>
        <item row="0" column="3">
-        <widget class="QCheckBox" name="checkBox_35">
+        <widget class="QCheckBox" name="assOtd_ch">
          <property name="text">
           <string>Отдел</string>
          </property>
         </widget>
        </item>
        <item row="1" column="0">
-        <widget class="QCheckBox" name="checkBox_34">
+        <widget class="QCheckBox" name="assDirect_ch">
          <property name="text">
           <string>Направленность</string>
          </property>
         </widget>
        </item>
        <item row="0" column="1">
-        <widget class="QLineEdit" name="lineEdit_10"/>
+        <widget class="QLineEdit" name="assName"/>
        </item>
        <item row="1" column="1">
-        <widget class="QLineEdit" name="lineEdit_11"/>
+        <widget class="QLineEdit" name="assDirect"/>
        </item>
        <item row="0" column="2">
         <spacer name="horizontalSpacer_4">
@@ -647,7 +713,7 @@
         </spacer>
        </item>
        <item row="0" column="4">
-        <widget class="QLineEdit" name="lineEdit_12"/>
+        <widget class="QLineEdit" name="assOtd"/>
        </item>
       </layout>
      </widget>
@@ -688,54 +754,54 @@
       </property>
       <layout class="QGridLayout" name="gridLayout_3">
        <item row="0" column="0">
-        <widget class="QCheckBox" name="checkBox_27">
+        <widget class="QCheckBox" name="teachSurname_ch">
          <property name="text">
           <string>Фамилия</string>
          </property>
         </widget>
        </item>
        <item row="0" column="1">
-        <widget class="QLineEdit" name="lineEdit_5"/>
+        <widget class="QLineEdit" name="teachSurname"/>
        </item>
        <item row="1" column="0">
-        <widget class="QCheckBox" name="checkBox_28">
+        <widget class="QCheckBox" name="teachName_ch">
          <property name="text">
           <string>Имя</string>
          </property>
         </widget>
        </item>
        <item row="1" column="1">
-        <widget class="QLineEdit" name="lineEdit_6"/>
+        <widget class="QLineEdit" name="teachName"/>
        </item>
        <item row="2" column="0">
-        <widget class="QCheckBox" name="checkBox_29">
+        <widget class="QCheckBox" name="teachPatrname_ch">
          <property name="text">
           <string>Отчество</string>
          </property>
         </widget>
        </item>
        <item row="0" column="3">
-        <widget class="QCheckBox" name="checkBox_30">
+        <widget class="QCheckBox" name="teachPass_ch">
          <property name="text">
           <string>Номер паспорта</string>
          </property>
         </widget>
        </item>
        <item row="1" column="3">
-        <widget class="QCheckBox" name="checkBox_31">
+        <widget class="QCheckBox" name="teachOtd_ch">
          <property name="text">
           <string>Отдел</string>
          </property>
         </widget>
        </item>
        <item row="2" column="1">
-        <widget class="QLineEdit" name="lineEdit_7"/>
+        <widget class="QLineEdit" name="teachPatrname"/>
        </item>
        <item row="0" column="4">
-        <widget class="QLineEdit" name="lineEdit_8"/>
+        <widget class="QLineEdit" name="teachPass"/>
        </item>
        <item row="1" column="4">
-        <widget class="QLineEdit" name="lineEdit_9"/>
+        <widget class="QLineEdit" name="teachOtd"/>
        </item>
        <item row="0" column="2">
         <spacer name="horizontalSpacer_3">
