@@ -4,5 +4,7 @@
         <file>Icons/new.png</file>
         <file>Icons/home.png</file>
         <file>Icons/repeat.png</file>
+        <file>Icons/options.png</file>
+        <file>Icons/optool.png</file>
     </qresource>
 </RCC>

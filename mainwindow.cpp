@@ -51,8 +51,9 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->mainToolBar->addAction(QIcon(":/icons/Icons/new.png"),tr("Новая запись"), this, SLOT(clearFormForAdd()));
     ui->mainToolBar->addAction(QIcon(":/icons/Icons/delete.png"),tr("Удалить запись"), this, SLOT(deleteThis()));
 
-    ui->mainToolBar->addAction(tr("Расширенный поиск"), this, SLOT(globalSearch()));
-    ui->mainToolBar->addAction(tr("Скрыть/Показать поля"), this, SLOT(changeTableMask()));
+    ui->mainToolBar->addAction(QIcon(":/icons/Icons/options.png"),tr("Скрыть/Показать поля"), this, SLOT(changeTableMask()));
+    ui->mainToolBar->addAction(QIcon(":/icons/Icons/optool.png"),tr("Расширенный поиск"), this, SLOT(globalSearch()));
+
     //ui->mainToolBar->actions()[ToolButton::...]->setDisabled(true);
 
 
