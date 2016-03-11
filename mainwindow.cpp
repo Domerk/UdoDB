@@ -648,10 +648,10 @@ void MainWindow::on_saveButton_clicked()
         case 0:     // Объединение
         {
             QString id = ui->alID->text();                                 // ID
-            QString name = ui->alName->text().replace("--", "-");          // Название
+            QString name = ui->alName->text().simplified().replace(QRegularExpression("-{2,}"), "-");          // Название
             QString direct = ui->alDirect->currentText();                  // Напавленность
-            QString otd = ui->alOtd->text().replace("--", "-");            // Отдел
-            QString desc = ui->alDescript->toPlainText().replace("--", "-");     // Описание
+            QString otd = ui->alOtd->text().simplified().replace(QRegularExpression("-{2,}"), "-");            // Отдел
+            QString desc = ui->alDescript->toPlainText().replace(QRegularExpression("-{2,}"), "-");     // Описание
 
             if (name.isEmpty() || direct.isEmpty() || otd.isEmpty())
             {
@@ -684,11 +684,11 @@ void MainWindow::on_saveButton_clicked()
         {
 
             QString id = ui->teachID->text();               // ID
-            QString surname = ui->teachSurname->text().replace("--", "-");     // Фамилия
-            QString name = ui->teachName->text().replace("--", "-");           // Имя
-            QString patrname = ui->teachPatr->text().replace("--", "-");       // Отчество
-            QString numpass = ui->teachNumPass->text().replace("--", "-");     // Номер паспорта
-            QString otd = ui->teachOtd->text().replace("--", "-");             // Отдел
+            QString surname = ui->teachSurname->text().simplified().replace(QRegularExpression("-{2,}"), "-");     // Фамилия
+            QString name = ui->teachName->text().simplified().replace(QRegularExpression("-{2,}"), "-");           // Имя
+            QString patrname = ui->teachPatr->text().simplified().replace(QRegularExpression("-{2,}"), "-");       // Отчество
+            QString numpass = ui->teachNumPass->text().simplified().replace(QRegularExpression("-{2,}"), "-");     // Номер паспорта
+            QString otd = ui->teachOtd->text().simplified().replace(QRegularExpression("-{2,}"), "-");             // Отдел
 
             if (name.isEmpty() || surname.isEmpty() || numpass.isEmpty())
             {
@@ -742,11 +742,11 @@ void MainWindow::on_saveButton_clicked()
         case 2:     // Учащийся
         {
             QString id = ui->studID->text();                                    // ID
-            QString surname = ui->studSurname->text().replace("--", "-");       // Фамилия
-            QString name = ui->studName->text().replace("--", "-");             // Имя
+            QString surname = ui->studSurname->text().simplified().replace(QRegularExpression("-{2,}"), "-");       // Фамилия
+            QString name = ui->studName->text().simplified().replace(QRegularExpression("-{2,}"), "-");             // Имя
 
             QString docType = ui->studDoc->currentText();                       // Тип документа
-            QString docNum = ui->studNumDoc->text().replace("--", "-");         // Номер документа
+            QString docNum = ui->studNumDoc->text().simplified().replace(QRegularExpression("-{2,}"), "-");         // Номер документа
             QString gender = ui->studGender->currentText();                     // Пол
 
             if (name.isEmpty() || surname.isEmpty() || docType == "" || docNum.isEmpty() || gender == "")
@@ -764,12 +764,12 @@ void MainWindow::on_saveButton_clicked()
 
             // Если обязательные поля заполнены, можно собирать информацию об остальных полях.
 
-            QString patr = ui->studPatr->text().replace("--", "-");
-            QString arSchool = ui->areaSchools->text().replace("--", "-");     // Район школы
-            QString school = ui->school->text().replace("--", "-");            // Школа
-            QString grad = ui->grade->text().replace("--", "-");               // Класс
-            QString phone = ui->phone->text().replace("--", "-");              // Телефон
-            QString email = ui->email->text().replace("--", "-");              // email
+            QString patr = ui->studPatr->text().simplified().replace(QRegularExpression("-{2,}"), "-");
+            QString arSchool = ui->areaSchools->text().simplified().replace(QRegularExpression("-{2,}"), "-");     // Район школы
+            QString school = ui->school->text().simplified().replace(QRegularExpression("-{2,}"), "-");            // Школа
+            QString grad = ui->grade->text().simplified().replace(QRegularExpression("-{2,}"), "-");               // Класс
+            QString phone = ui->phone->text().simplified().replace(QRegularExpression("-{2,}"), "-");              // Телефон
+            QString email = ui->email->text().simplified().replace(QRegularExpression("-{2,}"), "-");              // email
 
 
             QRegularExpressionMatch match = names->match(name);
@@ -804,9 +804,9 @@ void MainWindow::on_saveButton_clicked()
             // Combo Box
             QString eduForm = ui->eduForm->currentText(); // Форма обучения
 
-            QString comments = ui->studComments->toPlainText().replace("--", "-");
-            QString parents = ui->parents->toPlainText().replace("--", "-");   // Родители
-            QString address = ui->address->toPlainText().replace("--", "-");   // Адрес
+            QString comments = ui->studComments->toPlainText().replace(QRegularExpression("-{2,}"), "-");
+            QString parents = ui->parents->toPlainText().replace(QRegularExpression("-{2,}"), "-");   // Родители
+            QString address = ui->address->toPlainText().replace(QRegularExpression("-{2,}"), "-");   // Адрес
 
             // Check Box
 
@@ -1116,7 +1116,7 @@ void MainWindow::simpleSearch()
 {
     ui->searchToolBar->actions()[SearchToolButton::Start]->setDisabled(true);
     QString* searchText = new QString;
-    searchText->append(searchEdit->text().replace("--", "-").simplified());
+    searchText->append(searchEdit->text().simplified().replace(QRegularExpression("-{2,}"), "-"));
 
     if(searchText->isEmpty())
     {
