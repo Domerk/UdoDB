@@ -14,7 +14,6 @@
 #include <QTableWidget>
 #include <QTableWidgetItem>
 #include <QMessageBox>
-#include <QMap>
 #include <QPushButton>
 #include <QDialogButtonBox>
 #include <QRegularExpression>
@@ -42,12 +41,14 @@ private:
                Delete
            };
 
+    enum SearchToolButton : int {
+               Columns = 0,
+               Text,
+               Start
+           };
 
     Ui::MainWindow *ui;
     QSqlDatabase myDB;
-
-    QMap<QString, QString> mainBase;
-    QMap<QString, QString> tempBase;
 
     ConnectionDialog *connectDialog;
 
@@ -71,6 +72,9 @@ private:
 
     QRegularExpression *names;
 
+    QComboBox *searchBox;
+    QLineEdit *searchEdit;
+
     bool connectDB(QString nameDB);
     void showTable(QString table);
     void drawHeaders(QSqlQuery query);
@@ -88,6 +92,9 @@ private slots:
     void rowClicked(int);
     void changeTableMask();
     void globalSearch();
+    void simpleSearch();
+
+    void setSearchActive();
 
     void exportInExel();
 

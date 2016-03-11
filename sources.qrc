@@ -6,5 +6,6 @@
         <file>Icons/repeat.png</file>
         <file>Icons/options.png</file>
         <file>Icons/optool.png</file>
+        <file>Icons/search.png</file>
     </qresource>
 </RCC>

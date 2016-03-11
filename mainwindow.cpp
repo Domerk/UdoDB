@@ -57,6 +57,20 @@ MainWindow::MainWindow(QWidget *parent) :
     //ui->mainToolBar->actions()[ToolButton::...]->setDisabled(true);
 
 
+    // ------------------------- Search ToolBar ----------------------------
+
+    searchBox = new QComboBox();
+    searchEdit = new QLineEdit();
+    searchEdit->setFixedWidth(250);
+    ui->searchToolBar->addWidget(searchBox);
+    ui->searchToolBar->addWidget(searchEdit);
+    ui->searchToolBar->addAction(QIcon(":/icons/Icons/search.png"),tr("Поиск"), this, SLOT(simpleSearch()));
+    ui->searchToolBar->actions()[SearchToolButton::Start]->setDisabled(true);
+
+    connect(searchEdit, SIGNAL(textChanged(QString)), this, SLOT(setSearchActive()));
+    connect(searchEdit, SIGNAL(returnPressed()), this, SLOT(simpleSearch()));
+
+
     // ------------------ Запросы на вывод основных таблиц -----------------
 
     // Разобраться с ковычками. Возможно, читать запросы из файла.
@@ -257,6 +271,10 @@ void MainWindow::drawHeaders(QSqlQuery query)
     }
 
     ui->tableWidget->setHorizontalHeaderLabels(qsl);    // Устанавливаем названия столбцов в таблице
+    searchBox->clear();
+
+    qsl.removeFirst();          // Удаляем 0й элемент (ID)
+    searchBox->addItems(qsl);   // Задаём комбобоксу поиска
 }
 
 // ============================================================
@@ -1091,4 +1109,48 @@ void MainWindow::drawTree()
        direct->addChild(treeDir);
    }
 
+}
+
+
+void MainWindow::simpleSearch()
+{
+    ui->searchToolBar->actions()[SearchToolButton::Start]->setDisabled(true);
+    QString* searchText = new QString;
+    searchText->append(searchEdit->text().replace("--", "-").simplified());
+
+    if(searchText->isEmpty())
+    {
+        refreshTable();
+    }
+    else
+    {
+        // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+        // ВОТ ЗДЕСЬ
+        // Добавить проверку на то, может ли поиск осуществляться таким образом !!!!!
+        // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+        // + Для учащегося вставить фиксу на логические поля
+
+        QString *newSelect = new QString();
+
+        if (*currentTable == "Учащиеся")
+            newSelect->append(queryStud.replace(";", " ") + " WHERE `" + searchBox->currentText() + "` LIKE '%" + *searchText + "%';");
+
+        if (*currentTable == "Преподаватели")
+            newSelect->append(queryTeach.replace(";", " ") + " WHERE `" + searchBox->currentText() + "` LIKE '%" + *searchText + "%';");
+
+        if (*currentTable == "Объединения")
+            newSelect->append(queryAllians.replace(";", " ") + " WHERE `" + searchBox->currentText() + "` LIKE '%" + *searchText + "%';");
+
+        QSqlQuery query;
+        query.exec(*newSelect);
+        drawRows(query);
+        lastSelect = newSelect;
+    }
+
+}
+
+void MainWindow::setSearchActive()
+{
+    ui->searchToolBar->actions()[SearchToolButton::Start]->setDisabled(false);
 }
