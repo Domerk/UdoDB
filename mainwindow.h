@@ -42,9 +42,9 @@ private:
            };
 
     enum SearchToolButton : int {
-               Columns = 0,
+               Start = 0,
                Text,
-               Start
+               Columns
            };
 
     Ui::MainWindow *ui;
@@ -80,12 +80,11 @@ private:
     void drawHeaders(QSqlQuery query);
     void drawRows(QSqlQuery query);
     void showMoreInfo(int row);
-    void clearMoreInfoForm();
     void hideColumnsFromMask(QVector<bool> mask);
     void drawTree();
 
 private slots:
-    void clearFormForAdd();
+    void clearMoreInfoForm();
     void deleteThis();
     void refreshTable();
     void repeatLastSelect();

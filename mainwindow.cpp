@@ -41,14 +41,14 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->actionRepeatLastSelect, SIGNAL(triggered()), this, SLOT(repeatLastSelect()));
     connect (ui->actionForMask, SIGNAL(triggered()), this, SLOT(changeTableMask()));
 
-    connect(ui->actionNewStr, SIGNAL(triggered()), this, SLOT(clearFormForAdd()));
+    connect(ui->actionNewStr, SIGNAL(triggered()), this, SLOT(clearMoreInfoForm()));
     connect(ui->actionDeleteStr, SIGNAL(triggered()), this, SLOT(deleteThis()));
 
     // --------------------------- Main ToolBar ----------------------------
 
     // Иконки: http://www.flaticon.com/packs/web-application-ui/4
 
-    ui->mainToolBar->addAction(QIcon(":/icons/Icons/new.png"),tr("Новая запись"), this, SLOT(clearFormForAdd()));
+    ui->mainToolBar->addAction(QIcon(":/icons/Icons/new.png"),tr("Новая запись"), this, SLOT(clearMoreInfoForm()));
     ui->mainToolBar->addAction(QIcon(":/icons/Icons/delete.png"),tr("Удалить запись"), this, SLOT(deleteThis()));
 
     ui->mainToolBar->addAction(QIcon(":/icons/Icons/options.png"),tr("Скрыть/Показать поля"), this, SLOT(changeTableMask()));
@@ -62,9 +62,10 @@ MainWindow::MainWindow(QWidget *parent) :
     searchBox = new QComboBox();
     searchEdit = new QLineEdit();
     searchEdit->setFixedWidth(250);
-    ui->searchToolBar->addWidget(searchBox);
-    ui->searchToolBar->addWidget(searchEdit);
+    searchBox->setLayoutDirection(Qt::LeftToRight);     // Поскольку сам ТулБар RingToLeft, принудительно задаём комбобоку нормальный вид
     ui->searchToolBar->addAction(QIcon(":/icons/Icons/search.png"),tr("Поиск"), this, SLOT(simpleSearch()));
+    ui->searchToolBar->addWidget(searchEdit);
+    ui->searchToolBar->addWidget(searchBox);
     ui->searchToolBar->actions()[SearchToolButton::Start]->setDisabled(true);
 
     connect(searchEdit, SIGNAL(textChanged(QString)), this, SLOT(setSearchActive()));
@@ -196,6 +197,10 @@ void MainWindow::connectReconfigSlot()
 
 }
 
+// ----------------------------------------------------------------------------------------------------
+// -------------------------------------- Рисование таблиц --------------------------------------------
+// ----------------------------------------------------------------------------------------------------
+
 // ============================================================
 // ====================== Вывод таблицы =======================
 // ============================================================
@@ -273,7 +278,8 @@ void MainWindow::drawHeaders(QSqlQuery query)
     ui->tableWidget->setHorizontalHeaderLabels(qsl);    // Устанавливаем названия столбцов в таблице
     searchBox->clear();
 
-    qsl.removeFirst();          // Удаляем 0й элемент (ID)
+    if (qsl.size() > 1)
+        qsl.removeFirst();          // Удаляем 0й элемент (ID)
     searchBox->addItems(qsl);   // Задаём комбобоксу поиска
 }
 
@@ -315,6 +321,95 @@ void MainWindow::drawRows(QSqlQuery query)
 
     ui->tableWidget->insertRow(rowCount); // В конце добавляем пустую строку
 }
+
+// ============================================================
+// ================= Скрытие полей по маске ===================
+// ============================================================
+
+
+void MainWindow::hideColumnsFromMask(QVector<bool> mask)
+{
+    if (mask.size() == ui->tableWidget->columnCount())
+    {
+        for (int i = 0; i < mask.size(); i++)
+            ui->tableWidget->setColumnHidden(i, mask[i]);
+    }
+}
+
+// ============================================================
+// ===================== Измнение маски =======================
+// ============================================================
+
+void MainWindow::changeTableMask()
+{
+    QVector<QCheckBox*> vct;
+    QDialog *wgt = new QDialog(this);
+    QVBoxLayout *layout = new QVBoxLayout();
+    QGridLayout *gl = new QGridLayout();
+    QDialogButtonBox *buttonBox;
+    buttonBox = new QDialogButtonBox(QDialogButtonBox::Ok
+                                     | QDialogButtonBox::Cancel);
+
+    connect(buttonBox, SIGNAL(accepted()), wgt, SLOT(accept()));
+    connect(buttonBox, SIGNAL(rejected()), wgt, SLOT(reject()));
+
+    buttonBox->button(QDialogButtonBox::Ok)->setText(tr("Применить"));
+    buttonBox->button(QDialogButtonBox::Cancel)->setText(tr("Отмена"));
+
+    int colCount = ui->tableWidget->columnCount();
+    int row = 0;
+    int col = 0;
+    //vct.append(true);
+
+    for (int i = 0; i < colCount-1; i++)        // Запись заголовков
+    {
+        vct.append(new QCheckBox(ui->tableWidget->horizontalHeaderItem(i+1)->text()));
+        vct[i]->setChecked(!currentMask[i+1]);
+        gl->addWidget(vct[i], row, col);
+
+        row++;
+        if (row>10)
+        {
+            row=0;
+            col++;
+        }
+    }
+
+    layout->addLayout(gl);
+    layout->addWidget(buttonBox);
+
+    wgt->setLayout(layout);
+    wgt->setModal(true);
+    wgt->setWindowTitle(tr("Скрыть / Показать поля"));
+    if (wgt->exec() == QDialog::Accepted)
+    {
+        for(int i = 1; i < colCount; i++)
+            currentMask[i] = !vct[i-1]->isChecked();
+
+        hideColumnsFromMask(currentMask);
+
+        if (*currentTable == "Учащиеся")
+        {
+            studTableMask = currentMask;
+        }
+
+        if (*currentTable == "Преподаватели")
+        {
+            teachTableMask = studTableMask;
+        }
+
+        if (*currentTable == "Объединения")
+        {
+            alliansTableMask = studTableMask;
+        }
+
+
+    }
+}
+
+// ----------------------------------------------------------------------------------------------------
+// -------------------------------------------- Запросы -----------------------------------------------
+// ----------------------------------------------------------------------------------------------------
 
 // ============================================================
 // =================== Удаление строки ========================
@@ -399,235 +494,6 @@ void MainWindow::repeatLastSelect()
     QSqlQuery query;
     query.exec(*lastSelect);
     drawRows(query);
-}
-
-// ============================================================
-// =============== Выбрана таблица из дерева ==================
-// ============================================================
-
-void MainWindow::on_treeWidget_itemClicked(QTreeWidgetItem *item, int column)
-{
-    QString str = item->text(column);
-    showTable(str);
-}
-
-
-// ============================================================
-// ============== Вывод подробной инфы в форму ================
-// ============================================================
-
-void MainWindow::showMoreInfo(int row)
-{
-    if (*currentTable == "Учащиеся")
-    {
-        ui->studID->setText(ui->tableWidget->item(row, 0)->text());         // ID
-        ui->studSurname->setText(ui->tableWidget->item(row, 1)->text());    // Фамилия
-        ui->studName->setText(ui->tableWidget->item(row, 2)->text());       // Имя
-        ui->studPatr->setText(ui->tableWidget->item(row, 3)->text());       // Отчество
-
-        if (ui->tableWidget->item(row, 4)->text() == "Паспорт")     // Тип документа
-            ui->studDoc->setCurrentIndex(2);                        // Паспорт
-        else
-            ui->studDoc->setCurrentIndex(1);                        // Свидетельство о рождении
-
-        ui->studNumDoc->setText(ui->tableWidget->item(row, 5)->text()); // Номер документа
-
-        if (ui->tableWidget->item(row, 6)->text() == "Жен")     // Пол
-            ui->studGender->setCurrentIndex(2);                 // Жен
-        else
-            ui->studGender->setCurrentIndex(1);                 // Муж
-
-        ui->studBirthday->setText(ui->tableWidget->item(row, 7)->text());   // Год рождения
-
-        ui->areaSchools->setText(ui->tableWidget->item(row, 8)->text());    // Район школы
-        ui->school->setText(ui->tableWidget->item(row, 9)->text());         // Школа
-        ui->grade->setText(ui->tableWidget->item(row, 10)->text());         // Класс
-        ui->parents->setText(ui->tableWidget->item(row, 11)->text());       // Родители
-        ui->address->setText(ui->tableWidget->item(row, 12)->text());       // Адрес
-        ui->phone->setText(ui->tableWidget->item(row, 13)->text());         // Телефон
-        ui->email->setText(ui->tableWidget->item(row, 14)->text());         // email
-
-        ui->admissDate->setText(ui->tableWidget->item(row, 15)->text());    // Дата подачи заявления
-
-        ui->eduForm->setCurrentText(ui->tableWidget->item(row, 16)->text()); // Форма обучения
-
-        ui->outDate->setText(ui->tableWidget->item(row, 17)->text());     // Когда выбыл
-
-
-
-        // Чекбоксы - вероятно, имеет смысл предварительно засунуть их в вектор!!!
-
-        if (ui->tableWidget->item(row, 18)->text() == "Да")       // С ослабленным здоровьем
-            ui->weackHealth->setChecked(true);
-        else
-            ui->weackHealth->setChecked(false);
-
-        if (ui->tableWidget->item(row, 19)->text() == "Да")       // Сирота
-            ui->orphan->setChecked(true);
-        else
-            ui->orphan->setChecked(false);
-
-        if (ui->tableWidget->item(row, 20)->text() == "Да")       // Инвалид
-            ui->invalid->setChecked(true);
-        else
-            ui->invalid->setChecked(false);
-
-        if (ui->tableWidget->item(row, 21)->text() == "Да")       // На учёте в полиции
-            ui->accountInPolice->setChecked(true);
-        else
-            ui->accountInPolice->setChecked(false);
-
-        if (ui->tableWidget->item(row, 22)->text() == "Да")       // Многодетные
-            ui->large->setChecked(true);
-        else
-            ui->large->setChecked(false);
-
-        if (ui->tableWidget->item(row, 23)->text() == "Да")       // Неполная семья
-            ui->incompleteFamily->setChecked(true);
-        else
-            ui->incompleteFamily->setChecked(false);
-
-        if (ui->tableWidget->item(row, 24)->text() == "Да")       // Малообеспеченная семья
-            ui->lowIncome->setChecked(true);
-        else
-            ui->lowIncome->setChecked(false);
-
-        if (ui->tableWidget->item(row, 25)->text() == "Да")       // Мигранты
-            ui->migrants->setChecked(true);
-        else
-            ui->migrants->setChecked(false);
-
-        // Дополнительные сведенья
-        ui->studComments->setPlainText(ui->tableWidget->item(row, 26)->text());
-    }
-
-    if (*currentTable == "Преподаватели")
-    {
-
-        ui->teachID->setText(ui->tableWidget->item(row, 0)->text());        // ID
-        ui->teachSurname->setText(ui->tableWidget->item(row, 1)->text());   // Фамилия
-        ui->teachName->setText(ui->tableWidget->item(row, 2)->text());      // Имя
-        ui->teachPatr->setText(ui->tableWidget->item(row, 3)->text());      // Отчество
-        ui->teachNumPass->setText(ui->tableWidget->item(row, 4)->text());   // Номер паспорта
-        ui->teachOtd->setText(ui->tableWidget->item(row, 5)->text());       // Отдел
-    }
-
-    if (*currentTable == "Объединения")
-    {
-        ui->alID->setText(ui->tableWidget->item(row, 0)->text());           // ID
-        ui->alName->setText(ui->tableWidget->item(row, 1)->text());         // Описание
-        ui->alDirect->setCurrentText(ui->tableWidget->item(row, 2)->text());       // Напавленность
-        ui->alOtd->setText(ui->tableWidget->item(row, 3)->text());          // Отдел
-        ui->alDescript->setText(ui->tableWidget->item(row, 4)->text());     // Описание
-
-    }
-}
-
-// ============================================================
-// ============= Очистка формы с подробной инфой ==============
-// ============================================================
-
-void MainWindow::clearMoreInfoForm()
-{
-    if (*currentTable == "Учащиеся")
-    {
-        // Line Edit
-        ui->studID->clear();
-        ui->studSurname->clear();
-        ui->studName->clear();
-        ui->studPatr->clear();
-        ui->studNumDoc->clear();
-        ui->areaSchools->clear();   // Район школы
-        ui->school->clear();        // Школа
-        ui->grade->clear();         // Класс
-        ui->phone->clear();         // Телефон
-        ui->email->clear();         // email
-
-        ui->studBirthday->clear();  // Год рождения
-        ui->admissDate->clear();    // Дата подачи заявления
-        ui->outDate->clear();       // Когда выбыл
-
-        // Combo Box
-        ui->studDoc->setCurrentIndex(0);
-        ui->studGender->setCurrentIndex(0);
-        ui->eduForm->setCurrentIndex(0); // Форма обучения
-
-        // Text Edit
-        ui->parents->clear();       // Родители
-        ui->address->clear();       // Адрес
-        ui->studComments->clear();
-
-        // Check Box
-        ui->accountInPolice->setChecked(false);
-        ui->incompleteFamily->setChecked(false);
-        ui->invalid->setChecked(false);
-        ui->large->setChecked(false);
-        ui->lowIncome->setChecked(false);
-        ui->migrants->setChecked(false);
-        ui->orphan->setChecked(false);
-        ui->weackHealth->setChecked(false);
-
-    }
-
-    if (*currentTable == "Преподаватели")
-    {
-        ui->teachID->clear();        // ID
-        ui->teachSurname->clear();   // Фамилия
-        ui->teachName->clear();      // Имя
-        ui->teachPatr->clear();      // Отчество
-        ui->teachNumPass->clear();   // Номер паспорта
-        ui->teachOtd->clear();       // Отдел
-    }
-
-    if (*currentTable == "Объединения")
-    {
-        ui->alID->clear();           // ID
-        ui->alName->clear();         // Название
-        ui->alDirect->setCurrentIndex(0);       // Напавленность
-        ui->alOtd->clear();          // Отдел
-        ui->alDescript->clear();     // Описание
-    }
-}
-
-// ============================================================
-// ========= Слот для сигнала Выбрана ячейка таблицы ==========
-// ============================================================
-
-void MainWindow::on_tableWidget_cellClicked(int row, int column)
-{
-    if (row < rowCount)
-    {
-        showMoreInfo(row);
-    }
-    else
-    {
-        clearMoreInfoForm();
-    }
-}
-
-// ============================================================
-// ========= Слот для сигнала Выбрана строка таблицы ==========
-// ============================================================
-
-void MainWindow::rowClicked(int row)
-{
-    if (row < rowCount)
-    {
-        showMoreInfo(row);
-    }
-    else
-    {
-        clearMoreInfoForm();
-    }
-}
-
-// ============================================================
-// ============== Слот для сигнала Очистить форму =============
-// ============================================================
-
-void MainWindow::clearFormForAdd()
-{
-    clearMoreInfoForm();
 }
 
 // ============================================================
@@ -884,163 +750,52 @@ void MainWindow::on_saveButton_clicked()
 }
 
 // ============================================================
-// ================= Скрытие полей по маске ===================
 // ============================================================
 
-
-void MainWindow::hideColumnsFromMask(QVector<bool> mask)
+void MainWindow::simpleSearch()
 {
-    if (mask.size() == ui->tableWidget->columnCount())
+    if (!ui->searchToolBar->actions()[SearchToolButton::Start]->isEnabled())
+        return;
+
+    ui->searchToolBar->actions()[SearchToolButton::Start]->setDisabled(true);
+    QString* searchText = new QString;
+    searchText->append(searchEdit->text().simplified().replace(QRegularExpression("-{2,}"), "-"));
+
+    if(searchText->isEmpty())
     {
-        for (int i = 0; i < mask.size(); i++)
-            ui->tableWidget->setColumnHidden(i, mask[i]);
+        refreshTable();
     }
-}
-
-// ============================================================
-// ===================== Измнение маски =======================
-// ============================================================
-
-void MainWindow::changeTableMask()
-{
-    QVector<QCheckBox*> vct;
-    QDialog *wgt = new QDialog(this);
-    QVBoxLayout *layout = new QVBoxLayout();
-    QGridLayout *gl = new QGridLayout();
-    QDialogButtonBox *buttonBox;
-    buttonBox = new QDialogButtonBox(QDialogButtonBox::Ok
-                                     | QDialogButtonBox::Cancel);
-
-    connect(buttonBox, SIGNAL(accepted()), wgt, SLOT(accept()));
-    connect(buttonBox, SIGNAL(rejected()), wgt, SLOT(reject()));
-
-    buttonBox->button(QDialogButtonBox::Ok)->setText(tr("Применить"));
-    buttonBox->button(QDialogButtonBox::Cancel)->setText(tr("Отмена"));
-
-    int colCount = ui->tableWidget->columnCount();
-    int row = 0;
-    int col = 0;
-    //vct.append(true);
-
-    for (int i = 0; i < colCount-1; i++)        // Запись заголовков
+    else
     {
-        vct.append(new QCheckBox(ui->tableWidget->horizontalHeaderItem(i+1)->text()));
-        vct[i]->setChecked(!currentMask[i+1]);
-        gl->addWidget(vct[i], row, col);
+        // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+        // ВОТ ЗДЕСЬ
+        // Добавить проверку на то, может ли поиск осуществляться таким образом !!!!!
+        // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-        row++;
-        if (row>10)
-        {
-            row=0;
-            col++;
-        }
-    }
+        // + Для учащегося вставить фиксу на логические поля
 
-    layout->addLayout(gl);
-    layout->addWidget(buttonBox);
-
-    wgt->setLayout(layout);
-    wgt->setModal(true);
-    wgt->setWindowTitle(tr("Скрыть / Показать поля"));
-    if (wgt->exec() == QDialog::Accepted)
-    {
-        for(int i = 1; i < colCount; i++)
-            currentMask[i] = !vct[i-1]->isChecked();
-
-        hideColumnsFromMask(currentMask);
+        QString *newSelect = new QString();
 
         if (*currentTable == "Учащиеся")
-        {
-            studTableMask = currentMask;
-        }
+            newSelect->append(queryStud.replace(";", " ") + " WHERE `" + searchBox->currentText() + "` LIKE '%" + *searchText + "%';");
 
         if (*currentTable == "Преподаватели")
-        {
-            teachTableMask = studTableMask;
-        }
+            newSelect->append(queryTeach.replace(";", " ") + " WHERE `" + searchBox->currentText() + "` LIKE '%" + *searchText + "%';");
 
         if (*currentTable == "Объединения")
-        {
-            alliansTableMask = studTableMask;
-        }
+            newSelect->append(queryAllians.replace(";", " ") + " WHERE `" + searchBox->currentText() + "` LIKE '%" + *searchText + "%';");
 
-
+        QSqlQuery query;
+        query.exec(*newSelect);
+        drawRows(query);
+        lastSelect = newSelect;
     }
+
 }
 
-// ============================================================
-// ==================== Экспорт в Exсel =======================
-// ============================================================
-
-void MainWindow::exportInExel()
-{
-    // Открываем QFileDialog
-    QFileDialog fileDialog;
-    QString fileName = fileDialog.getOpenFileName(0, tr("Экспортировать в..."), "", "*.xls *.xlsx");
-    if (!fileName.isEmpty())
-    {
-        ui->lblStatus->setText(tr("Экспорт..."));
-
-        // https://wiki.qt.io/Using_ActiveX_Object_in_QT
-        // http://wiki.crossplatform.ru/index.php/%D0%A0%D0%B0%D0%B1%D0%BE%D1%82%D0%B0_%D1%81_MS_Office_%D1%81_%D0%BF%D0%BE%D0%BC%D0%BE%D1%89%D1%8C%D1%8E_ActiveQt
-
-        QAxObject* excel = new QAxObject("Excel.Application", 0);
-        QAxObject* workbooks = excel->querySubObject("Workbooks");
-        QAxObject* workbook = workbooks->querySubObject("Open(const QString&)", fileName);
-        QAxObject* sheets = workbook->querySubObject("Worksheets");
-
-        // Вставка значения в отдельную ячейку
-
-        QAxObject* StatSheet = sheets->querySubObject("Item( int )", 1);
-
-       for (int col = 1; col < ui->tableWidget->columnCount(); col++)        // Запись заголовков
-        {
-            // получение указателя на ячейку [row][col] ((!)нумерация с единицы)
-            QAxObject* cell = StatSheet->querySubObject("Cells(QVariant,QVariant)", 1, col);
-            // вставка значения переменной в полученную ячейку
-            cell->setProperty("Value", QVariant(ui->tableWidget->horizontalHeaderItem(col)->text()));
-            // освобождение памяти
-            delete cell;
-        }
-
-        for (int row = 1; row < ui->tableWidget->rowCount(); row++)
-        {
-            for (int col = 1; col < ui->tableWidget->columnCount(); col++)
-            {
-                // получение указателя на ячейку [row][col] ((!)нумерация с единицы)
-                QAxObject* cell = StatSheet->querySubObject("Cells(QVariant,QVariant)", row+1, col);
-                // вставка значения переменной в полученную ячейку
-                cell->setProperty("Value", QVariant(ui->tableWidget->item(row-1, col)->text()));
-                // освобождение памяти
-                delete cell;
-            }
-        }
-
-        excel->dynamicCall("Save()");       // Сохраняем - в примерах почему-то этого нет, но надо
-        workbook->dynamicCall("Close()");   // Закрываем
-        excel->dynamicCall("Quit()");       // Выходим
-
-        delete StatSheet;
-        delete sheets;
-        delete workbook;
-        delete workbooks;
-        delete excel;
-
-        ui->lblStatus->setText(tr("Экспорт завершён"));
-
-    }
-}
-
-// ============================================================
-// ================ Запуск глобального поиска =================
-// ============================================================
-
-void MainWindow::globalSearch()
-{
-    SearchDialog *dialog;
-    dialog = new SearchDialog();
-    dialog->exec();
-}
+// ----------------------------------------------------------------------------------------------------
+// ------------------------------------------ Интерфейс -----------------------------------------------
+// ----------------------------------------------------------------------------------------------------
 
 // ============================================================
 // ===================== Рисование дерева =====================
@@ -1111,46 +866,317 @@ void MainWindow::drawTree()
 
 }
 
-
-void MainWindow::simpleSearch()
-{
-    ui->searchToolBar->actions()[SearchToolButton::Start]->setDisabled(true);
-    QString* searchText = new QString;
-    searchText->append(searchEdit->text().simplified().replace(QRegularExpression("-{2,}"), "-"));
-
-    if(searchText->isEmpty())
-    {
-        refreshTable();
-    }
-    else
-    {
-        // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-        // ВОТ ЗДЕСЬ
-        // Добавить проверку на то, может ли поиск осуществляться таким образом !!!!!
-        // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-        // + Для учащегося вставить фиксу на логические поля
-
-        QString *newSelect = new QString();
-
-        if (*currentTable == "Учащиеся")
-            newSelect->append(queryStud.replace(";", " ") + " WHERE `" + searchBox->currentText() + "` LIKE '%" + *searchText + "%';");
-
-        if (*currentTable == "Преподаватели")
-            newSelect->append(queryTeach.replace(";", " ") + " WHERE `" + searchBox->currentText() + "` LIKE '%" + *searchText + "%';");
-
-        if (*currentTable == "Объединения")
-            newSelect->append(queryAllians.replace(";", " ") + " WHERE `" + searchBox->currentText() + "` LIKE '%" + *searchText + "%';");
-
-        QSqlQuery query;
-        query.exec(*newSelect);
-        drawRows(query);
-        lastSelect = newSelect;
-    }
-
-}
+// ============================================================
+// ================ Активация кнопки Поиск ====================
+// ============================================================
 
 void MainWindow::setSearchActive()
 {
     ui->searchToolBar->actions()[SearchToolButton::Start]->setDisabled(false);
 }
+
+// ============================================================
+// ============== Вывод подробной инфы в форму ================
+// ============================================================
+
+void MainWindow::showMoreInfo(int row)
+{
+    if (*currentTable == "Учащиеся")
+    {
+        ui->studID->setText(ui->tableWidget->item(row, 0)->text());         // ID
+        ui->studSurname->setText(ui->tableWidget->item(row, 1)->text());    // Фамилия
+        ui->studName->setText(ui->tableWidget->item(row, 2)->text());       // Имя
+        ui->studPatr->setText(ui->tableWidget->item(row, 3)->text());       // Отчество
+
+        if (ui->tableWidget->item(row, 4)->text() == "Паспорт")     // Тип документа
+            ui->studDoc->setCurrentIndex(2);                        // Паспорт
+        else
+            ui->studDoc->setCurrentIndex(1);                        // Свидетельство о рождении
+
+        ui->studNumDoc->setText(ui->tableWidget->item(row, 5)->text()); // Номер документа
+
+        if (ui->tableWidget->item(row, 6)->text() == "Жен")     // Пол
+            ui->studGender->setCurrentIndex(2);                 // Жен
+        else
+            ui->studGender->setCurrentIndex(1);                 // Муж
+
+        ui->studBirthday->setText(ui->tableWidget->item(row, 7)->text());   // Год рождения
+
+        ui->areaSchools->setText(ui->tableWidget->item(row, 8)->text());    // Район школы
+        ui->school->setText(ui->tableWidget->item(row, 9)->text());         // Школа
+        ui->grade->setText(ui->tableWidget->item(row, 10)->text());         // Класс
+        ui->parents->setText(ui->tableWidget->item(row, 11)->text());       // Родители
+        ui->address->setText(ui->tableWidget->item(row, 12)->text());       // Адрес
+        ui->phone->setText(ui->tableWidget->item(row, 13)->text());         // Телефон
+        ui->email->setText(ui->tableWidget->item(row, 14)->text());         // email
+
+        ui->admissDate->setText(ui->tableWidget->item(row, 15)->text());    // Дата подачи заявления
+
+        ui->eduForm->setCurrentText(ui->tableWidget->item(row, 16)->text()); // Форма обучения
+
+        ui->outDate->setText(ui->tableWidget->item(row, 17)->text());     // Когда выбыл
+
+
+
+        // Чекбоксы - вероятно, имеет смысл предварительно засунуть их в вектор!!!
+
+        if (ui->tableWidget->item(row, 18)->text() == "Да")       // С ослабленным здоровьем
+            ui->weackHealth->setChecked(true);
+        else
+            ui->weackHealth->setChecked(false);
+
+        if (ui->tableWidget->item(row, 19)->text() == "Да")       // Сирота
+            ui->orphan->setChecked(true);
+        else
+            ui->orphan->setChecked(false);
+
+        if (ui->tableWidget->item(row, 20)->text() == "Да")       // Инвалид
+            ui->invalid->setChecked(true);
+        else
+            ui->invalid->setChecked(false);
+
+        if (ui->tableWidget->item(row, 21)->text() == "Да")       // На учёте в полиции
+            ui->accountInPolice->setChecked(true);
+        else
+            ui->accountInPolice->setChecked(false);
+
+        if (ui->tableWidget->item(row, 22)->text() == "Да")       // Многодетные
+            ui->large->setChecked(true);
+        else
+            ui->large->setChecked(false);
+
+        if (ui->tableWidget->item(row, 23)->text() == "Да")       // Неполная семья
+            ui->incompleteFamily->setChecked(true);
+        else
+            ui->incompleteFamily->setChecked(false);
+
+        if (ui->tableWidget->item(row, 24)->text() == "Да")       // Малообеспеченная семья
+            ui->lowIncome->setChecked(true);
+        else
+            ui->lowIncome->setChecked(false);
+
+        if (ui->tableWidget->item(row, 25)->text() == "Да")       // Мигранты
+            ui->migrants->setChecked(true);
+        else
+            ui->migrants->setChecked(false);
+
+        // Дополнительные сведенья
+        ui->studComments->setPlainText(ui->tableWidget->item(row, 26)->text());
+    }
+
+    if (*currentTable == "Преподаватели")
+    {
+
+        ui->teachID->setText(ui->tableWidget->item(row, 0)->text());        // ID
+        ui->teachSurname->setText(ui->tableWidget->item(row, 1)->text());   // Фамилия
+        ui->teachName->setText(ui->tableWidget->item(row, 2)->text());      // Имя
+        ui->teachPatr->setText(ui->tableWidget->item(row, 3)->text());      // Отчество
+        ui->teachNumPass->setText(ui->tableWidget->item(row, 4)->text());   // Номер паспорта
+        ui->teachOtd->setText(ui->tableWidget->item(row, 5)->text());       // Отдел
+    }
+
+    if (*currentTable == "Объединения")
+    {
+        ui->alID->setText(ui->tableWidget->item(row, 0)->text());           // ID
+        ui->alName->setText(ui->tableWidget->item(row, 1)->text());         // Описание
+        ui->alDirect->setCurrentText(ui->tableWidget->item(row, 2)->text());       // Напавленность
+        ui->alOtd->setText(ui->tableWidget->item(row, 3)->text());          // Отдел
+        ui->alDescript->setText(ui->tableWidget->item(row, 4)->text());     // Описание
+
+    }
+}
+
+// ============================================================
+// ============= Очистка формы с подробной инфой ==============
+// ============================================================
+
+void MainWindow::clearMoreInfoForm()
+{
+    if (*currentTable == "Учащиеся")
+    {
+        // Line Edit
+        ui->studID->clear();
+        ui->studSurname->clear();
+        ui->studName->clear();
+        ui->studPatr->clear();
+        ui->studNumDoc->clear();
+        ui->areaSchools->clear();   // Район школы
+        ui->school->clear();        // Школа
+        ui->grade->clear();         // Класс
+        ui->phone->clear();         // Телефон
+        ui->email->clear();         // email
+
+        ui->studBirthday->clear();  // Год рождения
+        ui->admissDate->clear();    // Дата подачи заявления
+        ui->outDate->clear();       // Когда выбыл
+
+        // Combo Box
+        ui->studDoc->setCurrentIndex(0);
+        ui->studGender->setCurrentIndex(0);
+        ui->eduForm->setCurrentIndex(0); // Форма обучения
+
+        // Text Edit
+        ui->parents->clear();       // Родители
+        ui->address->clear();       // Адрес
+        ui->studComments->clear();
+
+        // Check Box
+        ui->accountInPolice->setChecked(false);
+        ui->incompleteFamily->setChecked(false);
+        ui->invalid->setChecked(false);
+        ui->large->setChecked(false);
+        ui->lowIncome->setChecked(false);
+        ui->migrants->setChecked(false);
+        ui->orphan->setChecked(false);
+        ui->weackHealth->setChecked(false);
+
+    }
+
+    if (*currentTable == "Преподаватели")
+    {
+        ui->teachID->clear();        // ID
+        ui->teachSurname->clear();   // Фамилия
+        ui->teachName->clear();      // Имя
+        ui->teachPatr->clear();      // Отчество
+        ui->teachNumPass->clear();   // Номер паспорта
+        ui->teachOtd->clear();       // Отдел
+    }
+
+    if (*currentTable == "Объединения")
+    {
+        ui->alID->clear();           // ID
+        ui->alName->clear();         // Название
+        ui->alDirect->setCurrentIndex(0);       // Напавленность
+        ui->alOtd->clear();          // Отдел
+        ui->alDescript->clear();     // Описание
+    }
+}
+
+
+// ----------------------------------------------------------------------------------------------------
+// ------------------------------- Реакция на действия пользователя -----------------------------------
+// ----------------------------------------------------------------------------------------------------
+
+// ============================================================
+// ================ Запуск глобального поиска =================
+// ============================================================
+
+void MainWindow::globalSearch()
+{
+    SearchDialog *dialog;
+    dialog = new SearchDialog();
+    dialog->exec();
+}
+
+// ============================================================
+// =============== Выбрана таблица из дерева ==================
+// ============================================================
+
+void MainWindow::on_treeWidget_itemClicked(QTreeWidgetItem *item, int column)
+{
+    QString str = item->text(column);
+    showTable(str);
+}
+
+// ============================================================
+// ========= Слот для сигнала Выбрана ячейка таблицы ==========
+// ============================================================
+
+void MainWindow::on_tableWidget_cellClicked(int row, int column)
+{
+    if (row < rowCount)
+    {
+        showMoreInfo(row);
+    }
+    else
+    {
+        clearMoreInfoForm();
+    }
+}
+
+// ============================================================
+// ========= Слот для сигнала Выбрана строка таблицы ==========
+// ============================================================
+
+void MainWindow::rowClicked(int row)
+{
+    if (row < rowCount)
+    {
+        showMoreInfo(row);
+    }
+    else
+    {
+        clearMoreInfoForm();
+    }
+}
+
+// ----------------------------------------------------------------------------------------------------
+// ----------------------------------------------- Экспорт --------------------------------------------
+// ----------------------------------------------------------------------------------------------------
+
+// ============================================================
+// ==================== Экспорт в Exсel =======================
+// ============================================================
+
+void MainWindow::exportInExel()
+{
+    // Открываем QFileDialog
+    QFileDialog fileDialog;
+    QString fileName = fileDialog.getOpenFileName(0, tr("Экспортировать в..."), "", "*.xls *.xlsx");
+    if (!fileName.isEmpty())
+    {
+        ui->lblStatus->setText(tr("Экспорт..."));
+
+        // https://wiki.qt.io/Using_ActiveX_Object_in_QT
+        // http://wiki.crossplatform.ru/index.php/%D0%A0%D0%B0%D0%B1%D0%BE%D1%82%D0%B0_%D1%81_MS_Office_%D1%81_%D0%BF%D0%BE%D0%BC%D0%BE%D1%89%D1%8C%D1%8E_ActiveQt
+
+        QAxObject* excel = new QAxObject("Excel.Application", 0);
+        QAxObject* workbooks = excel->querySubObject("Workbooks");
+        QAxObject* workbook = workbooks->querySubObject("Open(const QString&)", fileName);
+        QAxObject* sheets = workbook->querySubObject("Worksheets");
+
+        // Вставка значения в отдельную ячейку
+
+        QAxObject* StatSheet = sheets->querySubObject("Item( int )", 1);
+
+       for (int col = 1; col < ui->tableWidget->columnCount(); col++)        // Запись заголовков
+        {
+            // получение указателя на ячейку [row][col] ((!)нумерация с единицы)
+            QAxObject* cell = StatSheet->querySubObject("Cells(QVariant,QVariant)", 1, col);
+            // вставка значения переменной в полученную ячейку
+            cell->setProperty("Value", QVariant(ui->tableWidget->horizontalHeaderItem(col)->text()));
+            // освобождение памяти
+            delete cell;
+        }
+
+        for (int row = 1; row < ui->tableWidget->rowCount(); row++)
+        {
+            for (int col = 1; col < ui->tableWidget->columnCount(); col++)
+            {
+                // получение указателя на ячейку [row][col] ((!)нумерация с единицы)
+                QAxObject* cell = StatSheet->querySubObject("Cells(QVariant,QVariant)", row+1, col);
+                // вставка значения переменной в полученную ячейку
+                cell->setProperty("Value", QVariant(ui->tableWidget->item(row-1, col)->text()));
+                // освобождение памяти
+                delete cell;
+            }
+        }
+
+        excel->dynamicCall("Save()");       // Сохраняем - в примерах почему-то этого нет, но надо
+        workbook->dynamicCall("Close()");   // Закрываем
+        excel->dynamicCall("Quit()");       // Выходим
+
+        delete StatSheet;
+        delete sheets;
+        delete workbook;
+        delete workbooks;
+        delete excel;
+
+        ui->lblStatus->setText(tr("Экспорт завершён"));
+
+    }
+}
+
+// ----------------------------------------------------------------------------------------------------
+// ----------------------------------------------------------------------------------------------------
+// ----------------------------------------------------------------------------------------------------
