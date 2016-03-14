@@ -28,6 +28,8 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->alID->hide();
     ui->studID->hide();
     ui->teachID->hide();
+    ui->directID->hide();
+    ui->groupID->hide();
 
     ui->treeWidget->setColumnCount(1);
 
@@ -239,6 +241,19 @@ void MainWindow::showTable(QString table)
         currentMask = alliansTableMask;
     }
 
+    if (table == "Направленности")
+    {
+
+        ui->stackedWidget->setCurrentIndex(3);
+
+    }
+
+    if (table == "Группы")
+    {
+
+        ui->stackedWidget->setCurrentIndex(4);
+
+    }
 
     // Сохраняем инфу о текущей таблице
     currentTable->append(table);
