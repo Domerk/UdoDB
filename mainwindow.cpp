@@ -76,19 +76,14 @@ MainWindow::MainWindow(QWidget *parent) :
 
     // ------------------ Запросы на вывод основных таблиц -----------------
 
-    // Разобраться с ковычками. Возможно, читать запросы из файла.
+    queryStud.append("SELECT `ID`, `Фамилия`, `Имя`, `Отчество`, `Тип документа`, `Номер документа`, `Пол`, `Год рождения`, ");
+    queryStud.append("`Район школы`, `Школа`, `Класс`, `Родители`, `Домашний адрес`, `Телефон`, `e-mail`, `Дата заявления`, `Форма обучения`, ");
+    queryStud.append("`Когда выбыл`, `С ослабленным здоровьем`, `Сирота`, `Инвалид`, `На учёте в полиции`, `Многодетная семья`, ");
+    queryStud.append("`Неполная семья`, `Малообеспеченная семья`, `Мигранты`, `Примечания` FROM Учащиеся;");
 
-   /* queryStud.append("SELECT 'ID', 'Фамилия', 'Имя', 'Отчество', 'Тип документа', 'Номер документа', 'Пол', 'Год рождения', ");
-    queryStud.append("'Район школы', 'Школа', 'Класс', 'Родители', 'Домашний адрес', 'Телефон', 'e-mail', 'Дата заявления', 'Форма обучения', ");
-    queryStud.append("'Когда выбыл', 'С ослабленным здоровьем', 'Сирота', 'Инвалид', 'На учёте в полиции', 'Многодетная семья', ");
-    queryStud.append("'Неполная семья', 'Малообеспеченная семья', 'Мигранты', 'Примечания' FROM Учащиеся;");
-*/
+    queryTeach.append("SELECT `ID`, `Фамилия`, `Имя`, `Отчество`, `Паспорт`, `Отдел` FROM Преподаватели;");
 
-    queryStud.append("SELECT * FROM Учащиеся");
-
-    queryTeach.append("SELECT ID, Фамилия, Имя, Отчество, Паспорт, Отдел FROM Преподаватели;");
-
-    queryAllians.append("SELECT ID, Название, Направленность, Отдел, Описание FROM Объединения;");
+    queryAllians.append("SELECT `ID`, `Название`, `Направленность`, `Отдел`, `Описание` FROM Объединения;");
 
     // -------------------- Маски для скрытия колонок в таблицах ---------------
 
@@ -311,6 +306,14 @@ void MainWindow::drawRows(QSqlQuery query)
              ui->tableWidget->removeRow(0);
 
     rowCount = 0;           // Нет ни одной строки
+
+    QSqlRecord rec;             // Объект данного типа содержит информацию о Select'е
+    rec = query.record();       // Получаем нужную инфу от запроса
+   // columnCount = rec.count();  // Узнаём количество столбцов
+
+    qDebug() << QString::number(columnCount);
+    qDebug() << QString::number(rec.count());
+
     while (query.next())    // Пока есть результаты запроса
         {
             ui->tableWidget->insertRow(rowCount);   // Добавляем строку в конец
@@ -765,6 +768,7 @@ void MainWindow::on_saveButton_clicked()
 }
 
 // ============================================================
+// ===================== Простой поиск ========================
 // ============================================================
 
 void MainWindow::simpleSearch()
@@ -800,8 +804,13 @@ void MainWindow::simpleSearch()
         if (*currentTable == "Объединения")
             newSelect->append(queryAllians.replace(";", " ") + " WHERE `" + searchBox->currentText() + "` LIKE '%" + *searchText + "%';");
 
+        qDebug() << *newSelect;
+
         QSqlQuery query;
         query.exec(*newSelect);
+
+        qDebug() << query.lastError();
+
         drawRows(query);
         lastSelect = newSelect;
     }
