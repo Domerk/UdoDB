@@ -313,6 +313,7 @@ void MainWindow::drawRows(QSqlQuery query)
 
     qDebug() << QString::number(columnCount);
     qDebug() << QString::number(rec.count());
+    ui->tableWidget->setSortingEnabled(false);
 
     while (query.next())    // Пока есть результаты запроса
         {
@@ -338,6 +339,7 @@ void MainWindow::drawRows(QSqlQuery query)
         }
 
     ui->tableWidget->insertRow(rowCount); // В конце добавляем пустую строку
+    ui->tableWidget->setSortingEnabled(true);
 }
 
 // ============================================================
@@ -792,6 +794,8 @@ void MainWindow::simpleSearch()
         // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
         // + Для учащегося вставить фиксу на логические поля
+
+        // + Убрать регистрозависимость
 
         QString *newSelect = new QString();
 
