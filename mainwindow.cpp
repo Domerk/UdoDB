@@ -7,7 +7,7 @@ MainWindow::MainWindow(QWidget *parent) :
 {
     ui->setupUi(this);
     this->setWindowState(Qt::WindowMaximized); // Главное окно разворачивается на весь экран
-    ui->splitter->setSizes(QList <int> () << 100 << 350 << 200);
+    ui->splitter->setSizes(QList <int> () << 100 << 750 << 200);
 
     rowCount = 0;
     columnCount = 0;
@@ -83,7 +83,15 @@ MainWindow::MainWindow(QWidget *parent) :
 
     queryTeach.append("SELECT `ID`, `Фамилия`, `Имя`, `Отчество`, `Паспорт`, `Отдел` FROM Преподаватели;");
 
-    queryAllians.append("SELECT `ID`, `Название`, `Направленность`, `Отдел`, `Описание` FROM Объединения;");
+    // !!!
+    // Вот здесь хорошо бы заменить обращения к таблицам на обращения к представлениям:
+    // !!!
+
+    queryAllians.append("SELECT `ID`, `ID Направленности`, `Название`, `Отдел`, `Описание` FROM Объединения;");
+
+    queryDirection.append("SELECT `ID`, `Название` FROM Направленности;");
+
+    queryGroup.append("SELECT `ID`, `ID объединения`, `ID преподавателя`, `Номер`, `Год обучения` FROM Группы;");
 
     // -------------------- Маски для скрытия колонок в таблицах ---------------
 
@@ -204,6 +212,12 @@ void MainWindow::connectReconfigSlot()
 
 void MainWindow::showTable(QString table)
 {
+
+    if (table == "Общее")
+    {
+        return;
+    }
+
     QSqlQuery query;        // Создаём запрос
     lastSelect->clear();    // Удаляем данные о последнем запросе
     currentTable->clear();  // И о текущей таблице
@@ -238,14 +252,16 @@ void MainWindow::showTable(QString table)
 
     if (table == "Направленности")
     {
-
+        query.exec(queryDirection);
+        lastSelect->append(queryDirection);
         ui->stackedWidget->setCurrentIndex(3);
 
     }
 
     if (table == "Группы")
     {
-
+        query.exec(queryGroup);
+        lastSelect->append(queryGroup);
         ui->stackedWidget->setCurrentIndex(4);
 
     }
@@ -307,13 +323,7 @@ void MainWindow::drawRows(QSqlQuery query)
 
     rowCount = 0;           // Нет ни одной строки
 
-    QSqlRecord rec;             // Объект данного типа содержит информацию о Select'е
-    rec = query.record();       // Получаем нужную инфу от запроса
-   // columnCount = rec.count();  // Узнаём количество столбцов
-
-    qDebug() << QString::number(columnCount);
-    qDebug() << QString::number(rec.count());
-    ui->tableWidget->setSortingEnabled(false);
+    ui->tableWidget->setSortingEnabled(false); // Временно запрещаем сортировку
 
     while (query.next())    // Пока есть результаты запроса
         {
@@ -329,7 +339,7 @@ void MainWindow::drawRows(QSqlQuery query)
                 }
                 if (query.value(i).toString() == "false")
                 {
-                    ui->tableWidget->setItem(rowCount, i, new QTableWidgetItem(""));
+                    ui->tableWidget->setItem(rowCount, i, new QTableWidgetItem("Нет"));
                     continue;
                 }
 
@@ -339,7 +349,7 @@ void MainWindow::drawRows(QSqlQuery query)
         }
 
     ui->tableWidget->insertRow(rowCount); // В конце добавляем пустую строку
-    ui->tableWidget->setSortingEnabled(true);
+    ui->tableWidget->setSortingEnabled(true); // Разрешаем сортировку
 }
 
 // ============================================================
@@ -800,7 +810,23 @@ void MainWindow::simpleSearch()
         QString *newSelect = new QString();
 
         if (*currentTable == "Учащиеся")
-            newSelect->append(queryStud.replace(";", " ") + " WHERE `" + searchBox->currentText() + "` LIKE '%" + *searchText + "%';");
+        {
+            if (searchBox->currentText() == "С ослабленным здоровьем" || searchBox->currentText() ==  "Сирота"
+                    || searchBox->currentText() == "Инвалид" || searchBox->currentText() == "На учёте в полиции"
+                    || searchBox->currentText() == "Многодетная семья" || searchBox->currentText() == "Неполная семья"
+                    || searchBox->currentText() == "Малообеспеченная семья" || searchBox->currentText() == "Мигранты")
+            {
+                newSelect->append(queryStud.replace(";", " ") + " WHERE `" + searchBox->currentText());
+                if (searchText->toLower() == "да")
+                    newSelect->append("` = 'true';");
+                else
+                    newSelect->append("` = 'false';");
+            }
+            else
+            {
+                newSelect->append(queryStud.replace(";", " ") + " WHERE `" + searchBox->currentText() + "` LIKE '%" + *searchText + "%';");
+            }
+        }
 
         if (*currentTable == "Преподаватели")
             newSelect->append(queryTeach.replace(";", " ") + " WHERE `" + searchBox->currentText() + "` LIKE '%" + *searchText + "%';");

@@ -63,6 +63,8 @@ private:
     QString queryStud;
     QString queryTeach;
     QString queryAllians;
+    QString queryDirection;
+    QString queryGroup;
 
     QVector<bool> studTableMask;
     QVector<bool> teachTableMask;
