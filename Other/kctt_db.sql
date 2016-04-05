@@ -3,7 +3,7 @@ PRAGMA foreign_keys = ON;
 DROP TABLE IF EXISTS Учащиеся;
 DROP TABLE IF EXISTS Преподаватели;
 DROP TABLE IF EXISTS Направленности;
-DROP TABLE IF EXISTS Объединения;
+DROP TABLE IF EXISTS Объединение;
 DROP TABLE IF EXISTS Группы;
 DROP TABLE IF EXISTS Нагрузка;
 
@@ -59,7 +59,7 @@ CREATE TABLE Направленности (
 "Название"	VARCHAR(60)		NOT NULL
 );
 
-CREATE TABLE Объединения (
+CREATE TABLE Объединение (
 -- Поля
 "ID" 			INTEGER				PRIMARY KEY			AUTOINCREMENT,
 "Название"		VARCHAR(60)		NOT NULL,
@@ -71,16 +71,16 @@ FOREIGN KEY ("ID Направленности")	REFERENCES Направленности("ID")
 );
 
 
-CREATE TABLE Группы (
+CREATE TABLE Группа (
 -- Поля
 "ID" 				INTEGER			PRIMARY KEY			AUTOINCREMENT,
 "ID объединения" 	INTEGER,
 "ID преподавателя" 	INTEGER,
-"Номер группы"	   	VARCHAR(30),
+"Номер"			   	VARCHAR(30),
 "Год обучения"		INTEGER,
 
 -- Параметры
-FOREIGN KEY ("ID объединения") 		REFERENCES Объединения("ID")
+FOREIGN KEY ("ID объединения") 		REFERENCES Объединение("ID")
 FOREIGN KEY ("ID преподавателя")	REFERENCES Преподаватели("ID")
 );
 
@@ -92,16 +92,28 @@ CREATE TABLE Нагрузка (
 -- Параметры
 PRIMARY KEY ("ID учащегося", "ID группы"),
 FOREIGN KEY ("ID учащегося") 	REFERENCES Учащиеся("ID")
-FOREIGN KEY ("ID группы")		REFERENCES Группы("ID")
+FOREIGN KEY ("ID группы")		REFERENCES Группа("ID")
 );
 
 
 -- Предстваления
 
+DROP VIEW IF EXISTS Объединения;
+CREATE VIEW Объединения AS
+	SELECT Объединение.`ID` `ID`, Направленности.`ID` `ID Направленности`, Объединение.`Название` `Название`, Направленности.`Название` `Направленность`, Объединение.`Отдел` `Отдел`,  Объединение.`Описание` `Описание`
+	FROM Объединение, Направленности
+	WHERE Объединение.`ID Направленности` = Направленности.`ID`
+;
+
+DROP VIEW IF EXISTS Группы;
+CREATE VIEW Группы AS 
+	SELECT Группа.`ID` `ID`, Группа.`ID преподавателя` `ID преподавателя`, Группа.`Номер` `Номер`, Группа.`Год обучения` `Год обучения`, Объединение.`ID` `ID объединения`, Объединение.`Название` `Объединение`
+	FROM Группа, Объединение
+	WHERE Группа.`ID объединения` = Объединение.`ID`
+;
+
+
 DROP VIEW IF EXISTS Состав_групп;
-DROP VIEW IF EXISTS Преподаватели_групп;
-
-
 CREATE VIEW Состав_групп AS
 	SELECT Группы."ID", Учащиеся."ID", Группы."Номер группы", Учащиеся."Фамилия", Учащиеся."Имя", Учащиеся."Отчество", Учащиеся."Телефон", Учащиеся."e-mail"
 	FROM Группы, Нагрузка, Учащиеся
@@ -110,6 +122,7 @@ CREATE VIEW Состав_групп AS
 	GROUP BY (Группы."Номер группы")
 ;
 
+DROP VIEW IF EXISTS Преподаватели_групп;
 CREATE VIEW Преподаватели_групп AS
 	SELECT Группы."ID", Преподаватели."ID", Группы."Номер группы", Преподаватели."Имя", Преподаватели."Фамилия", Преподаватели."Отчество", Преподаватели."Отдел" 
 	FROM Группы, Преподаватели
