@@ -1119,7 +1119,24 @@ void MainWindow::globalSearch()
 {
     SearchDialog *dialog;
     dialog = new SearchDialog();
+    connect (dialog, SIGNAL(signalQuery(QString)), this, SLOT(querySlot(QString)));
     dialog->exec();
+}
+
+void MainWindow::querySlot(QString textQuery)
+{
+    currentTable->clear();
+    currentTable->append("GlobalSearch");
+
+    lastSelect->clear();
+    lastSelect->append(textQuery);
+
+    QSqlQuery query;
+    query.exec(textQuery);
+    drawHeaders(query);
+    drawRows(query);
+
+    qDebug()<<textQuery;
 }
 
 // ============================================================

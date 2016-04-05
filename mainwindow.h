@@ -105,6 +105,7 @@ private slots:
 
 public slots:
     void connectReconfigSlot();
+    void querySlot(QString);
 };
 
 #endif // MAINWINDOW_H
