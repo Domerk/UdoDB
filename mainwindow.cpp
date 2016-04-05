@@ -9,8 +9,6 @@ MainWindow::MainWindow(QWidget *parent) :
     this->setWindowState(Qt::WindowMaximized); // Главное окно разворачивается на весь экран
     ui->splitter->setSizes(QList <int> () << 100 << 750 << 200);
 
-    rowCount = 0;
-    columnCount = 0;
     lastSelect = new QString();
     currentTable = new QString();
 
@@ -270,8 +268,8 @@ void MainWindow::showTable(QString table)
     currentTable->append(table);
 
     // Отображаем заголовки и строки таблицы
-    drawHeaders(query);
-    drawRows(query);
+    drawHeaders(query, ui->tableWidget, true);
+    drawRows(query, ui->tableWidget);
     hideColumnsFromMask(currentMask);
 
     return;
@@ -281,75 +279,83 @@ void MainWindow::showTable(QString table)
 // ============= Отрисовка заголовков таблицы =================
 // ============================================================
 
-void MainWindow::drawHeaders(QSqlQuery query)
+void MainWindow::drawHeaders(QSqlQuery query, QTableWidget *table, bool isMainTable)
 {
     // Удаляем столбцы, которые уже были нарисованы
 
-    columnCount = ui->tableWidget->columnCount();
+    int columnCount = table->columnCount();
     for(int i = 0; i < columnCount; i++ )
-             ui->tableWidget->removeColumn(0);
+             table->removeColumn(0);
 
     columnCount = 0;
     QStringList qsl;
     QSqlRecord rec;             // Объект данного типа содержит информацию о Select'е
     rec = query.record();       // Получаем нужную инфу от запроса
     columnCount = rec.count();  // Узнаём количество столбцов
-    ui->tableWidget->setColumnCount(columnCount);   // Задаём количество столбцов у таблицы
+    table->setColumnCount(columnCount);   // Задаём количество столбцов у таблицы
 
     for (int i = 0; i<columnCount; i++)     // Пока прочитали не все столбцы
     {
         qsl.append(rec.fieldName(i));       // Пишем их названия в стринглист
     }
 
-    ui->tableWidget->setHorizontalHeaderLabels(qsl);    // Устанавливаем названия столбцов в таблице
-    searchBox->clear();
+    table->setHorizontalHeaderLabels(qsl);    // Устанавливаем названия столбцов в таблице
 
-    if (qsl.size() > 1)
-        qsl.removeFirst();          // Удаляем 0й элемент (ID)
-    searchBox->addItems(qsl);   // Задаём комбобоксу поиска
+    if (isMainTable)
+    {
+        searchBox->clear();
+
+        if (qsl.size() > 1)
+            qsl.removeFirst();          // Удаляем 0й элемент (ID)
+        searchBox->addItems(qsl);   // Задаём комбобоксу поиска
+    }
 }
 
 // ============================================================
 // ================ Отрисовка строк таблицы ===================
 // ============================================================
 
-void MainWindow::drawRows(QSqlQuery query)
+void MainWindow::drawRows(QSqlQuery query, QTableWidget *table)
 {
+    QSqlRecord rec;             // Объект данного типа содержит информацию о Select'е
+    rec = query.record();       // Получаем нужную инфу от запроса
+    int columnCount = rec.count();  // Узнаём количество столбцов
+
     // Удаляем строки, которые уже были нарисованы
 
-    rowCount = ui->tableWidget->rowCount();
+    int rowCount = table->rowCount();
     for(int i = 0; i < rowCount; i++)
-             ui->tableWidget->removeRow(0);
+             table->removeRow(0);
 
     rowCount = 0;           // Нет ни одной строки
 
-    ui->tableWidget->setSortingEnabled(false); // Временно запрещаем сортировку
+    table->setSortingEnabled(false); // Временно запрещаем сортировку
 
     while (query.next())    // Пока есть результаты запроса
         {
-            ui->tableWidget->insertRow(rowCount);   // Добавляем строку в конец
+            table->insertRow(rowCount);   // Добавляем строку в конец
             for (int i = 0; i<columnCount; i++)     // Для всех полей таблицы
             {
                 // Создаём ячейку в текущем поле текущей строки и заносим туда инфу
 
                 if (query.value(i).toString() == "true")
                 {
-                    ui->tableWidget->setItem(rowCount, i, new QTableWidgetItem("Да"));
+                    table->setItem(rowCount, i, new QTableWidgetItem("Да"));
                     continue;
                 }
                 if (query.value(i).toString() == "false")
                 {
-                    ui->tableWidget->setItem(rowCount, i, new QTableWidgetItem("Нет"));
+                    table->setItem(rowCount, i, new QTableWidgetItem("Нет"));
                     continue;
                 }
 
-                ui->tableWidget->setItem(rowCount, i, new QTableWidgetItem(query.value(i).toString()));
+                table->setItem(rowCount, i, new QTableWidgetItem(query.value(i).toString()));
             }
             rowCount ++;    // Увеличиваем количество строк
         }
 
-    ui->tableWidget->insertRow(rowCount); // В конце добавляем пустую строку
-    ui->tableWidget->setSortingEnabled(true); // Разрешаем сортировку
+    table->insertRow(rowCount); // В конце добавляем пустую строку
+    table->setSortingEnabled(true); // Разрешаем сортировку
 }
 
 // ============================================================
@@ -512,7 +518,7 @@ void MainWindow::refreshTable()
         lastSelect->append(queryAllians);
     }
 
-    drawRows(query);
+    drawRows(query, ui->tableWidget);
 }
 
 // ============================================================
@@ -523,7 +529,7 @@ void MainWindow::repeatLastSelect()
 {
     QSqlQuery query;
     query.exec(*lastSelect);
-    drawRows(query);
+    drawRows(query, ui->tableWidget);
 }
 
 // ============================================================
@@ -841,7 +847,7 @@ void MainWindow::simpleSearch()
 
         qDebug() << query.lastError();
 
-        drawRows(query);
+        drawRows(query, ui->tableWidget);
         lastSelect = newSelect;
     }
 
@@ -1133,8 +1139,8 @@ void MainWindow::querySlot(QString textQuery)
 
     QSqlQuery query;
     query.exec(textQuery);
-    drawHeaders(query);
-    drawRows(query);
+    drawHeaders(query, ui->tableWidget, true);
+    drawRows(query, ui->tableWidget);
 
     qDebug()<<textQuery;
 }
@@ -1155,7 +1161,7 @@ void MainWindow::on_treeWidget_itemClicked(QTreeWidgetItem *item, int column)
 
 void MainWindow::on_tableWidget_cellClicked(int row, int column)
 {
-    if (row < rowCount)
+    if (row < ui->tableWidget->rowCount())
     {
         showMoreInfo(row);
     }
@@ -1171,7 +1177,7 @@ void MainWindow::on_tableWidget_cellClicked(int row, int column)
 
 void MainWindow::rowClicked(int row)
 {
-    if (row < rowCount)
+    if (row < ui->tableWidget->rowCount())
     {
         showMoreInfo(row);
     }

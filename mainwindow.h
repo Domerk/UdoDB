@@ -52,8 +52,6 @@ private:
 
     ConnectionDialog *connectDialog;
 
-    int rowCount;
-    int columnCount;
     QString *lastSelect;
     QString *currentTable;
 
@@ -79,8 +77,8 @@ private:
 
     bool connectDB(QString nameDB);
     void showTable(QString table);
-    void drawHeaders(QSqlQuery query);
-    void drawRows(QSqlQuery query);
+    void drawHeaders(QSqlQuery query, QTableWidget *table, bool isMainTable);
+    void drawRows(QSqlQuery query, QTableWidget *table);
     void showMoreInfo(int row);
     void hideColumnsFromMask(QVector<bool> mask);
     void drawTree();
