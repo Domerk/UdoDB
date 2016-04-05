@@ -36,7 +36,7 @@
       <property name="geometry">
        <rect>
         <x>0</x>
-        <y>-252</y>
+        <y>0</y>
         <width>584</width>
         <height>378</height>
        </rect>
@@ -213,7 +213,7 @@
         </widget>
        </item>
        <item row="2" column="0">
-        <widget class="QCheckBox" name="studName_cb">
+        <widget class="QCheckBox" name="studName_ch">
          <property name="text">
           <string>Имя</string>
          </property>
