@@ -31,6 +31,13 @@ MainWindow::MainWindow(QWidget *parent) :
 
     ui->treeWidget->setColumnCount(1);
 
+
+    ui->addAssInDirect->setIcon(QIcon(":/icons/Icons/add"));
+    ui->addStudInGroup->setIcon(QIcon(":/icons/Icons/add"));
+
+    ui->removeAssToDirect->setIcon(QIcon(":/icons/Icons/remove"));
+    ui->removeStudToGroup->setIcon(QIcon(":/icons/Icons/remove"));
+
     // -------------------------------- Меню --------------------------------
 
     connect (ui->actionConnect, SIGNAL(triggered()), connectDialog, SLOT(exec()));
@@ -81,15 +88,11 @@ MainWindow::MainWindow(QWidget *parent) :
 
     queryTeach.append("SELECT `ID`, `Фамилия`, `Имя`, `Отчество`, `Паспорт`, `Отдел` FROM Преподаватели;");
 
-    // !!!
-    // Вот здесь хорошо бы заменить обращения к таблицам на обращения к представлениям:
-    // !!!
-
-    queryAllians.append("SELECT `ID`, `ID Направленности`, `Название`, `Отдел`, `Описание` FROM Объединения;");
+    queryAllians.append("SELECT `ID`, `Название`, `Направленность`, `Отдел`, `Описание` FROM Объединения;");
 
     queryDirection.append("SELECT `ID`, `Название` FROM Направленности;");
 
-    queryGroup.append("SELECT `ID`, `ID объединения`, `ID преподавателя`, `Номер`, `Год обучения` FROM Группы;");
+    queryGroup.append("SELECT `ID`, `ID объединения`, `ID преподавателя`, `Номер`, `Год обучения`, `Фамилия преподавателя`, `Имя преподавателя`, `Отчество преподавателя` FROM Группы;");
 
     // -------------------- Маски для скрытия колонок в таблицах ---------------
 
@@ -804,14 +807,8 @@ void MainWindow::simpleSearch()
     }
     else
     {
-        // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-        // ВОТ ЗДЕСЬ
-        // Добавить проверку на то, может ли поиск осуществляться таким образом !!!!!
-        // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-        // + Для учащегося вставить фиксу на логические поля
-
-        // + Убрать регистрозависимость
+        // Убрать регистрозависимость
 
         QString *newSelect = new QString();
 
@@ -1037,13 +1034,24 @@ void MainWindow::showMoreInfo(int row)
 
     if (*currentTable == "Объединения")
     {
+        // SELECT `ID`, `Название`, `Направленность`, `Отдел`, `Описание` FROM Объединения;
         ui->alID->setText(ui->tableWidget->item(row, 0)->text());           // ID
         ui->alName->setText(ui->tableWidget->item(row, 1)->text());         // Описание
         ui->alDirect->setCurrentText(ui->tableWidget->item(row, 2)->text());       // Напавленность
         ui->alOtd->setText(ui->tableWidget->item(row, 3)->text());          // Отдел
         ui->alDescript->setText(ui->tableWidget->item(row, 4)->text());     // Описание
+    }
+
+    if (*currentTable == "Группы")
+    {
 
     }
+
+    if (*currentTable == "Направленности")
+    {
+
+    }
+
 }
 
 // ============================================================
@@ -1109,6 +1117,16 @@ void MainWindow::clearMoreInfoForm()
         ui->alDirect->setCurrentIndex(0);       // Напавленность
         ui->alOtd->clear();          // Отдел
         ui->alDescript->clear();     // Описание
+    }
+
+    if (*currentTable == "Группы")
+    {
+
+    }
+
+    if (*currentTable == "Направленности")
+    {
+
     }
 }
 
@@ -1257,3 +1275,66 @@ void MainWindow::exportInExel()
 // ----------------------------------------------------------------------------------------------------
 // ----------------------------------------------------------------------------------------------------
 // ----------------------------------------------------------------------------------------------------
+
+void MainWindow::on_addAssInDirect_clicked()
+{
+    TableOpt* to = new TableOpt();
+    to->setType("Ass");
+
+    QTableWidget *wgt = to->letTable();
+    QSqlQuery query;
+    query.exec("SELECT `ID`, `Название`, `Отдел`, `Описание` FROM Объединения;");
+    drawHeaders(query, wgt, false);
+    drawRows(query, wgt);
+    wgt->setColumnHidden(0, true);
+
+    to->exec();
+}
+
+
+void MainWindow::on_addStudInGroup_clicked()
+{
+    TableOpt* to = new TableOpt();
+    to->setType("Stud");
+
+    QTableWidget *wgt = to->letTable();
+    QSqlQuery query;
+    query.exec("SELECT `ID`, `Фамилия`, `Имя`, `Отчество`, `Тип документа`, `Номер документа`, `Пол`, `Год рождения` FROM Учащиеся");
+    drawHeaders(query, wgt, false);
+    drawRows(query, wgt);
+    wgt->setColumnHidden(0, true);
+
+    to->exec();
+}
+
+
+
+void MainWindow::on_addAssForGroup_clicked()
+{
+    TableOpt* to = new TableOpt();
+    to->setType("Ass");
+
+    QTableWidget *wgt = to->letTable();
+    QSqlQuery query;
+    query.exec("SELECT `ID`, `Название`, `Отдел`, `Описание` FROM Объединения;");
+    drawHeaders(query, wgt, false);
+    drawRows(query, wgt);
+    wgt->setColumnHidden(0, true);
+
+    to->exec();
+}
+
+void MainWindow::on_addTeachForGroup_clicked()
+{
+    TableOpt* to = new TableOpt();
+    to->setType("Teach");
+
+    QTableWidget *wgt = to->letTable();
+    QSqlQuery query;
+    query.exec("SELECT `ID`, `Фамилия`, `Имя`, `Отчество`, `Отдел` FROM Преподаватели");
+    drawHeaders(query, wgt, false);
+    drawRows(query, wgt);
+    wgt->setColumnHidden(0, true);
+
+    to->exec();
+}

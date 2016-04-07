@@ -20,6 +20,7 @@
 
 #include "searchdialog.h"
 #include "connectiondialog.h"
+#include "tableopt.h"
 
 namespace Ui {
 class MainWindow;
@@ -100,6 +101,15 @@ private slots:
     void on_treeWidget_itemClicked(QTreeWidgetItem *item, int column);
     void on_tableWidget_cellClicked(int row, int column);
     void on_saveButton_clicked();
+
+    void on_addAssInDirect_clicked();
+
+    void on_addStudInGroup_clicked();
+
+
+    void on_addAssForGroup_clicked();
+
+    void on_addTeachForGroup_clicked();
 
 public slots:
     void connectReconfigSlot();

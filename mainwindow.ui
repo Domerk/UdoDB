@@ -135,9 +135,9 @@
                <property name="geometry">
                 <rect>
                  <x>0</x>
-                 <y>-27</y>
-                 <width>297</width>
-                 <height>352</height>
+                 <y>0</y>
+                 <width>314</width>
+                 <height>316</height>
                 </rect>
                </property>
                <layout class="QVBoxLayout" name="verticalLayout_8">
@@ -252,44 +252,7 @@
                  </widget>
                 </item>
                 <item>
-                 <layout class="QHBoxLayout" name="horizontalLayout_2">
-                  <property name="leftMargin">
-                   <number>0</number>
-                  </property>
-                  <property name="topMargin">
-                   <number>10</number>
-                  </property>
-                  <item>
-                   <widget class="QPushButton" name="pushButton">
-                    <property name="text">
-                     <string>Добавить</string>
-                    </property>
-                   </widget>
-                  </item>
-                  <item>
-                   <widget class="QPushButton" name="pushButton_2">
-                    <property name="text">
-                     <string>Убрать</string>
-                    </property>
-                   </widget>
-                  </item>
-                  <item>
-                   <spacer name="horizontalSpacer_3">
-                    <property name="orientation">
-                     <enum>Qt::Horizontal</enum>
-                    </property>
-                    <property name="sizeHint" stdset="0">
-                     <size>
-                      <width>40</width>
-                      <height>20</height>
-                     </size>
-                    </property>
-                   </spacer>
-                  </item>
-                 </layout>
-                </item>
-                <item>
-                 <widget class="QTableWidget" name="tableWidget_2"/>
+                 <widget class="QTableWidget" name="groupInAl"/>
                 </item>
                </layout>
               </widget>
@@ -412,6 +375,29 @@
                   </item>
                  </layout>
                 </item>
+                <item>
+                 <widget class="Line" name="line_4">
+                  <property name="orientation">
+                   <enum>Qt::Horizontal</enum>
+                  </property>
+                 </widget>
+                </item>
+                <item>
+                 <widget class="QLabel" name="label_38">
+                  <property name="font">
+                   <font>
+                    <weight>75</weight>
+                    <bold>true</bold>
+                   </font>
+                  </property>
+                  <property name="text">
+                   <string>Список групп</string>
+                  </property>
+                 </widget>
+                </item>
+                <item>
+                 <widget class="QTableWidget" name="groupInTeach"/>
+                </item>
                </layout>
               </widget>
              </widget>
@@ -454,7 +440,7 @@
                <property name="geometry">
                 <rect>
                  <x>0</x>
-                 <y>0</y>
+                 <y>-244</y>
                  <width>297</width>
                  <height>897</height>
                 </rect>
@@ -861,19 +847,19 @@
                 <item>
                  <layout class="QHBoxLayout" name="horizontalLayout_3">
                   <property name="topMargin">
-                   <number>10</number>
+                   <number>0</number>
                   </property>
                   <item>
-                   <widget class="QPushButton" name="pushButton_3">
+                   <widget class="QPushButton" name="addAssInDirect">
                     <property name="text">
-                     <string>Добавить</string>
+                     <string/>
                     </property>
                    </widget>
                   </item>
                   <item>
-                   <widget class="QPushButton" name="pushButton_4">
+                   <widget class="QPushButton" name="removeAssToDirect">
                     <property name="text">
-                     <string>Удалить</string>
+                     <string/>
                     </property>
                    </widget>
                   </item>
@@ -893,7 +879,7 @@
                  </layout>
                 </item>
                 <item>
-                 <widget class="QTableWidget" name="tableWidget_3"/>
+                 <widget class="QTableWidget" name="alInDirect"/>
                 </item>
                </layout>
               </widget>
@@ -955,14 +941,14 @@
                   <item row="1" column="0">
                    <widget class="QLabel" name="label_39">
                     <property name="text">
-                     <string>Номер группы</string>
+                     <string>Номер группы *</string>
                     </property>
                    </widget>
                   </item>
                   <item row="2" column="0">
                    <widget class="QLabel" name="label_40">
                     <property name="text">
-                     <string>Год обучения</string>
+                     <string>Год обучения *</string>
                     </property>
                    </widget>
                   </item>
@@ -975,12 +961,82 @@
                   <item row="3" column="0">
                    <widget class="QLabel" name="label_42">
                     <property name="text">
-                     <string>Объединение</string>
+                     <string>Объединение *</string>
                     </property>
                    </widget>
                   </item>
+                  <item row="4" column="0">
+                   <widget class="QLabel" name="label_34">
+                    <property name="text">
+                     <string>Преподаватель</string>
+                    </property>
+                   </widget>
+                  </item>
+                  <item row="4" column="1">
+                   <layout class="QHBoxLayout" name="horizontalLayout_5">
+                    <property name="leftMargin">
+                     <number>0</number>
+                    </property>
+                    <property name="topMargin">
+                     <number>0</number>
+                    </property>
+                    <item>
+                     <widget class="QLineEdit" name="lineEdit_3">
+                      <property name="enabled">
+                       <bool>false</bool>
+                      </property>
+                      <property name="sizePolicy">
+                       <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+                        <horstretch>0</horstretch>
+                        <verstretch>0</verstretch>
+                       </sizepolicy>
+                      </property>
+                     </widget>
+                    </item>
+                    <item>
+                     <widget class="QPushButton" name="addTeachForGroup">
+                      <property name="sizePolicy">
+                       <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+                        <horstretch>0</horstretch>
+                        <verstretch>0</verstretch>
+                       </sizepolicy>
+                      </property>
+                      <property name="maximumSize">
+                       <size>
+                        <width>30</width>
+                        <height>16777215</height>
+                       </size>
+                      </property>
+                      <property name="text">
+                       <string>...</string>
+                      </property>
+                     </widget>
+                    </item>
+                   </layout>
+                  </item>
                   <item row="3" column="1">
-                   <widget class="QComboBox" name="comboBox"/>
+                   <layout class="QHBoxLayout" name="horizontalLayout_6">
+                    <item>
+                     <widget class="QLineEdit" name="lineEdit_4">
+                      <property name="enabled">
+                       <bool>false</bool>
+                      </property>
+                     </widget>
+                    </item>
+                    <item>
+                     <widget class="QPushButton" name="addAssForGroup">
+                      <property name="maximumSize">
+                       <size>
+                        <width>30</width>
+                        <height>16777215</height>
+                       </size>
+                      </property>
+                      <property name="text">
+                       <string>...</string>
+                      </property>
+                     </widget>
+                    </item>
+                   </layout>
                   </item>
                  </layout>
                 </item>
@@ -1007,19 +1063,19 @@
                 <item>
                  <layout class="QHBoxLayout" name="horizontalLayout_4">
                   <property name="topMargin">
-                   <number>10</number>
+                   <number>0</number>
                   </property>
                   <item>
-                   <widget class="QPushButton" name="pushButton_5">
+                   <widget class="QPushButton" name="addStudInGroup">
                     <property name="text">
-                     <string>Добавить</string>
+                     <string/>
                     </property>
                    </widget>
                   </item>
                   <item>
-                   <widget class="QPushButton" name="pushButton_6">
+                   <widget class="QPushButton" name="removeStudToGroup">
                     <property name="text">
-                     <string>Убрать</string>
+                     <string/>
                     </property>
                    </widget>
                   </item>
@@ -1039,7 +1095,7 @@
                  </layout>
                 </item>
                 <item>
-                 <widget class="QTableWidget" name="tableWidget_4"/>
+                 <widget class="QTableWidget" name="studsInGroupe"/>
                 </item>
                </layout>
               </widget>
