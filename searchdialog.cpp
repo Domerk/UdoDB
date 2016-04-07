@@ -407,12 +407,9 @@ void SearchDialog::on_buttonBox_accepted()
     if (ui->studEduForm->currentIndex() != 0)
     {
         QString str = ui->studEduForm->currentText();
-        if (!str.isEmpty())
-        {
-            whereStud->append("Форма обучения");
-            whereStud->append(str);
-            useTeach = true;
-        }
+        whereStud->append("Форма обучения");
+        whereStud->append(str);
+        useTeach = true;
     }
 
 
@@ -425,12 +422,9 @@ void SearchDialog::on_buttonBox_accepted()
     if (ui->studGender->currentIndex() != 0)
     {
         QString str = ui->studGender->currentText();
-        if (!str.isEmpty())
-        {
-            whereStud->append("Пол");
-            whereStud->append(str);
-            useTeach = true;
-        }
+        whereStud->append("Пол");
+        whereStud->append(str);
+        useTeach = true;
     }
 
 
@@ -443,12 +437,9 @@ void SearchDialog::on_buttonBox_accepted()
     if (ui->studIncom->currentIndex() != 0)
     {
         QString str = ui->studIncom->currentText();
-        if (!str.isEmpty())
-        {
-            whereStud->append("Неполная семья");
-            whereStud->append(str);
-            useTeach = true;
-        }
+        whereStud->append("Неполная семья");
+        whereStud->append(str);
+        useTeach = true;
     }
 
     if (ui->studInv_ch->isChecked())
@@ -460,12 +451,9 @@ void SearchDialog::on_buttonBox_accepted()
     if (ui->studInv->currentIndex() != 0)
     {
         QString str = ui->studInv->currentText();
-        if (!str.isEmpty())
-        {
-            whereStud->append("Инвалид");
-            whereStud->append(str);
-            useTeach = true;
-        }
+        whereStud->append("Инвалид");
+        whereStud->append(str);
+        useTeach = true;
     }
 
     if (ui->studLarge_ch->isChecked())
@@ -477,12 +465,9 @@ void SearchDialog::on_buttonBox_accepted()
     if (ui->studLarge->currentIndex() != 0)
     {
         QString str = ui->studLarge->currentText();
-        if (!str.isEmpty())
-        {
-            whereStud->append("Многодетная семья");
-            whereStud->append(str);
-            useTeach = true;
-        }
+        whereStud->append("Многодетная семья");
+        whereStud->append(str);
+        useTeach = true;
     }
 
     if (ui->studMail_ch->isChecked())
@@ -511,12 +496,9 @@ void SearchDialog::on_buttonBox_accepted()
     if (ui->studMigrants->currentIndex() != 0)
     {
         QString str = ui->studMigrants->currentText();
-        if (!str.isEmpty())
-        {
-            whereStud->append("Мигранты");
-            whereStud->append(str);
-            useTeach = true;
-        }
+        whereStud->append("Мигранты");
+        whereStud->append(str);
+        useTeach = true;
     }
 
     if (ui->studNeedy_ch->isChecked())
@@ -528,12 +510,9 @@ void SearchDialog::on_buttonBox_accepted()
     if (ui->studNeedy->currentIndex() != 0)
     {
         QString str = ui->studNeedy->currentText();
-        if (!str.isEmpty())
-        {
-            whereStud->append("Малообеспеченная семья");
-            whereStud->append(str);
-            useTeach = true;
-        }
+        whereStud->append("Малообеспеченная семья");
+        whereStud->append(str);
+        useTeach = true;
     }
 
     if (ui->studOrph_ch->isChecked())
@@ -545,12 +524,9 @@ void SearchDialog::on_buttonBox_accepted()
     if (ui->studOrph->currentIndex() != 0)
     {
         QString str = ui->studOrph->currentText();
-        if (!str.isEmpty())
-        {
-            whereStud->append("Сирота");
-            whereStud->append(str);
-            useTeach = true;
-        }
+        whereStud->append("Сирота");
+        whereStud->append(str);
+        useTeach = true;
     }
 
     if (ui->studParents_ch->isChecked())
@@ -596,12 +572,11 @@ void SearchDialog::on_buttonBox_accepted()
     if (ui->studPolice->currentIndex() != 0)
     {
         QString str = ui->studPolice->currentText();
-        if (!str.isEmpty())
-        {
-            whereStud->append("На учёте в полиции");
-            whereStud->append(str);
-            useTeach = true;
-        }
+
+        whereStud->append("На учёте в полиции");
+        whereStud->append(str);
+        useTeach = true;
+
     }
 
     if (ui->studSchoolReg_ch->isChecked())
@@ -647,26 +622,13 @@ void SearchDialog::on_buttonBox_accepted()
     if (ui->studWhealth->currentIndex() != 0)
     {
         QString str = ui->studWhealth->currentText();
-        if (!str.isEmpty())
-        {
-            whereStud->append("С ослабленным здоровьем");
-            whereStud->append(str);
-            useTeach = true;
-        }
+
+        whereStud->append("С ослабленным здоровьем");
+        whereStud->append(str);
+        useTeach = true;
     }
 
     // ---------------------------------------------------------------
-
-
-    if (useTeach)
-    {
-        from->append(" Преподаватели,");
-
-        for (QString & str : *fromTeach)
-        {
-            columns->append(" Преподаватели.`" + str + "`,");
-        }
-    }
 
     if (useStud)
     {
@@ -674,14 +636,19 @@ void SearchDialog::on_buttonBox_accepted()
 
         for (QString & str : *fromStud)
         {
-            columns->append(" Учащиеся.`" + str + "`,");
+            columns->append(" Учащиеся.`" + str + "` `Учащийся: " + str + "`,");
         }
     }
+
 
     if (useAss)
     {
         from->append(" Объединения, Направленности,");
-        where->append(" Направленности.`ID` = Объединения.`ID Направленности`,");
+
+        if (!where->isEmpty())
+            where->append(" AND");
+
+        where->append(" Направленности.`ID` = Объединения.`ID Направленности`");
     }
 
     if (useGroup)
@@ -689,24 +656,37 @@ void SearchDialog::on_buttonBox_accepted()
         from->append(" Группы,");
         if (useTeach)
         {
-            where->append(" Преподаватели.`ID` = Группы.`ID Преподавателя`,");
+            if (!where->isEmpty())
+                where->append(" AND");
+            where->append(" Преподаватели.`ID` = Группы.`ID преподавателя`");
         }
 
         if (useStud)
         {
             from->append(" Нагрузка,");
-            where->append(" Учащиеся.`ID` = Нагрузка.`ID учащегося`, Группы.`ID` = Нагрузка.`ID группы`,");
+            if (!where->isEmpty())
+                where->append(" AND");
+            where->append(" Учащиеся.`ID` = Нагрузка.`ID учащегося` AND Группы.`ID` = Нагрузка.`ID группы`");
         }
 
     }
 
+    if (useTeach)
+    {
+        from->append(" Преподаватели,");
+
+        for (QString & str : *fromTeach)
+        {
+            columns->append(" Преподаватели.`" + str + "` `Преподаватель: " + str + "`,");
+        }
+    }
 
 
-
+    // Убираем запятую в конце
+    columns->resize(columns->size()-1);
     // Убираем запятую в конце FROM
     from->resize(from->size()-1);
-    // Убираем запятую в конце WHERE
-    where->resize(where->size()-1);
+
 
     query->append("SELECT" + *columns + " FROM" + *from + " WHERE" + *where + ";");
     signalQuery(*query);
