@@ -7,5 +7,7 @@
         <file>Icons/options.png</file>
         <file>Icons/optool.png</file>
         <file>Icons/search.png</file>
+        <file>Icons/add.png</file>
+        <file>Icons/remove.png</file>
     </qresource>
 </RCC>

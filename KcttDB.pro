@@ -15,15 +15,18 @@ TEMPLATE = app
 SOURCES += main.cpp\
         mainwindow.cpp \
     searchdialog.cpp \
-    connectiondialog.cpp
+    connectiondialog.cpp \
+    tableopt.cpp
 
 HEADERS  += mainwindow.h \
     searchdialog.h \
-    connectiondialog.h
+    connectiondialog.h \
+    tableopt.h
 
 FORMS    += mainwindow.ui \
     searchdialog.ui \
-    connectiondialog.ui
+    connectiondialog.ui \
+    tableopt.ui
 
 QMAKE_CXXFLAGS += -std=gnu++0x
 
