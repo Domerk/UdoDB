@@ -29,6 +29,9 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->directID->hide();
     ui->groupID->hide();
 
+    ui->groupTeachID->hide();
+    ui->groupAssID->hide();
+
     ui->treeWidget->setColumnCount(1);
 
 
@@ -37,6 +40,12 @@ MainWindow::MainWindow(QWidget *parent) :
 
     ui->removeAssToDirect->setIcon(QIcon(":/icons/Icons/remove"));
     ui->removeStudToGroup->setIcon(QIcon(":/icons/Icons/remove"));
+
+
+    ui->groupInAl->setColumnHidden(0, true);
+    ui->groupInTeach->setColumnHidden(0, true);
+    ui->studsInGroupe->setColumnHidden(0, true);
+    ui->alInDirect->setColumnHidden(0, true);
 
     // -------------------------------- Меню --------------------------------
 
@@ -214,26 +223,28 @@ void MainWindow::connectReconfigSlot()
 void MainWindow::showTable(QString table)
 {
 
-    if (table == "Общее")
+    if (table == "Общее" || table == *currentTable)
     {
         return;
     }
 
     QSqlQuery query;        // Создаём запрос
     lastSelect->clear();    // Удаляем данные о последнем запросе
-    currentTable->clear();  // И о текущей таблице
+    currentTable->clear();  // О текущей таблице
+    currentMask.clear();   // И о её маске
 
     // Далее в зависимости от того, какую таблицу нцжно вывести
     // Выполняем соотвествующий запрос, сохраняем информацию о нём
     // И показываем соотвесттвующую страницу StackedWidget (форму)
 
-    if (table == "Учащиеся")
+    if (table == "Объединения")
     {
-        query.exec(queryStud);
-        lastSelect->append(queryStud);
-        ui->stackedWidget->setCurrentIndex(2);
-        currentMask = studTableMask;
+        query.exec(queryAllians);
+        lastSelect->append(queryAllians);
+        ui->stackedWidget->setCurrentIndex(0);
+        currentMask = alliansTableMask;
     }
+
 
     if (table == "Преподаватели")
     {
@@ -243,12 +254,12 @@ void MainWindow::showTable(QString table)
         currentMask = teachTableMask;
     }
 
-    if (table == "Объединения")
+    if (table == "Учащиеся")
     {
-        query.exec(queryAllians);
-        lastSelect->append(queryAllians);
-        ui->stackedWidget->setCurrentIndex(0);
-        currentMask = alliansTableMask;
+        query.exec(queryStud);
+        lastSelect->append(queryStud);
+        ui->stackedWidget->setCurrentIndex(2);
+        currentMask = studTableMask;
     }
 
     if (table == "Направленности")
@@ -1044,12 +1055,23 @@ void MainWindow::showMoreInfo(int row)
 
     if (*currentTable == "Группы")
     {
+        // SELECT `ID`, `ID объединения`, `ID преподавателя`, `Номер`, `Год обучения`,
+        // `Фамилия преподавателя`, `Имя преподавателя`, `Отчество преподавателя` FROM Группы;
+        ui->groupID->setText(ui->tableWidget->item(row, 0)->text());    // ID
+        ui->groupNum->setText(ui->tableWidget->item(row, 3)->text());
+        ui->groupYear->setValue(ui->tableWidget->item(row, 4)->text().toInt());
+        ui->groupTeach->setText(ui->tableWidget->item(row, 5)->text() + " " + ui->tableWidget->item(row, 6)->text()[0] + "." + ui->tableWidget->item(row, 7)->text()[0] + ".");
+
+        // Отрисовка таблички!!!
 
     }
 
     if (*currentTable == "Направленности")
     {
+        ui->directID->setText(ui->tableWidget->item(row, 0)->text());    // ID
+        ui->directName->setText(ui->tableWidget->item(row, 1)->text());    // Название
 
+        // Отрисовка таблички!!!
     }
 
 }
@@ -1121,12 +1143,29 @@ void MainWindow::clearMoreInfoForm()
 
     if (*currentTable == "Группы")
     {
+        ui->groupID->clear();
+        ui->groupAss->clear();
+        ui->groupTeach->clear();
+        ui->groupNum->clear();
+        ui->groupTeachID->clear();
+        ui->groupAssID->clear();
+
+        int rowCount = ui->studsInGroupe->rowCount();
+        for(int i = 0; i < rowCount; i++)
+                 ui->studsInGroupe->removeRow(0);
+
 
     }
 
     if (*currentTable == "Направленности")
     {
 
+        ui->directID->clear();
+        ui->directName->clear();
+
+        int rowCount = ui->alInDirect->rowCount();
+        for(int i = 0; i < rowCount; i++)
+                 ui->alInDirect->removeRow(0);
     }
 }
 
@@ -1288,7 +1327,13 @@ void MainWindow::on_addAssInDirect_clicked()
     drawRows(query, wgt);
     wgt->setColumnHidden(0, true);
 
-    to->exec();
+    if (to->exec() == QDialog::Accepted)
+    {
+        // Здесь - может быть выделено несколько строк!
+        int row = wgt->currentRow();
+        qDebug() << QString::number(row);
+
+    }
 }
 
 
@@ -1304,7 +1349,27 @@ void MainWindow::on_addStudInGroup_clicked()
     drawRows(query, wgt);
     wgt->setColumnHidden(0, true);
 
-    to->exec();
+    if (to->exec() == QDialog::Accepted)
+    {
+        // Здесь - может быть выделено несколько строк!
+        int row = wgt->currentRow();
+        qDebug() << QString::number(row);
+
+        if (row > -1) // Если есть выделенные строки
+        {
+            // Вот эта хрень не работает
+            // Потому что получаем все выделенные ячейки, среди которых нет скрытых
+            // А вытаскивать из них номера строк конечно можно
+            // Но это костыльно и геморно =/
+            QList<QTableWidgetItem *> selectedList = wgt->selectedItems();
+            for(QTableWidgetItem *item : selectedList)
+            {
+               if(item->column() == 0)
+                   qDebug()<<item->text();
+            }
+
+        }
+    }
 }
 
 
@@ -1321,7 +1386,16 @@ void MainWindow::on_addAssForGroup_clicked()
     drawRows(query, wgt);
     wgt->setColumnHidden(0, true);
 
-    to->exec();
+    if (to->exec() == QDialog::Accepted)
+    {
+        int row = wgt->currentRow();
+        qDebug() << QString::number(row);
+        if (row > -1)
+        {
+            ui->groupAssID->setText(wgt->item(row, 0)->text());
+            ui->groupAss->setText(wgt->item(row, 1)->text());
+        }
+    }
 }
 
 void MainWindow::on_addTeachForGroup_clicked()
@@ -1336,5 +1410,14 @@ void MainWindow::on_addTeachForGroup_clicked()
     drawRows(query, wgt);
     wgt->setColumnHidden(0, true);
 
-    to->exec();
+    if (to->exec() == QDialog::Accepted)
+    {
+        int row = wgt->currentRow();
+        qDebug() << QString::number(row);
+        if (row > -1)
+        {
+            ui->groupTeachID->setText(wgt->item(row, 0)->text());
+            ui->groupTeach->setText(wgt->item(row, 1)->text() + " " + wgt->item(row, 2)->text()[0] + "." + wgt->item(row, 3)->text()[0] + ".");
+        }
+    }
 }

@@ -136,8 +136,8 @@
                 <rect>
                  <x>0</x>
                  <y>0</y>
-                 <width>314</width>
-                 <height>316</height>
+                 <width>286</width>
+                 <height>312</height>
                 </rect>
                </property>
                <layout class="QVBoxLayout" name="verticalLayout_8">
@@ -252,7 +252,26 @@
                  </widget>
                 </item>
                 <item>
-                 <widget class="QTableWidget" name="groupInAl"/>
+                 <widget class="QTableWidget" name="groupInAl">
+                  <attribute name="horizontalHeaderStretchLastSection">
+                   <bool>true</bool>
+                  </attribute>
+                  <column>
+                   <property name="text">
+                    <string>ID</string>
+                   </property>
+                  </column>
+                  <column>
+                   <property name="text">
+                    <string>Номер</string>
+                   </property>
+                  </column>
+                  <column>
+                   <property name="text">
+                    <string>Год обучения</string>
+                   </property>
+                  </column>
+                 </widget>
                 </item>
                </layout>
               </widget>
@@ -297,8 +316,8 @@
                 <rect>
                  <x>0</x>
                  <y>0</y>
-                 <width>314</width>
-                 <height>316</height>
+                 <width>166</width>
+                 <height>268</height>
                 </rect>
                </property>
                <layout class="QVBoxLayout" name="verticalLayout_6">
@@ -396,7 +415,31 @@
                  </widget>
                 </item>
                 <item>
-                 <widget class="QTableWidget" name="groupInTeach"/>
+                 <widget class="QTableWidget" name="groupInTeach">
+                  <attribute name="horizontalHeaderStretchLastSection">
+                   <bool>true</bool>
+                  </attribute>
+                  <column>
+                   <property name="text">
+                    <string>ID</string>
+                   </property>
+                  </column>
+                  <column>
+                   <property name="text">
+                    <string>Объединение</string>
+                   </property>
+                  </column>
+                  <column>
+                   <property name="text">
+                    <string>Номер</string>
+                   </property>
+                  </column>
+                  <column>
+                   <property name="text">
+                    <string>Год обучения</string>
+                   </property>
+                  </column>
+                 </widget>
                 </item>
                </layout>
               </widget>
@@ -440,8 +483,8 @@
                <property name="geometry">
                 <rect>
                  <x>0</x>
-                 <y>-244</y>
-                 <width>297</width>
+                 <y>0</y>
+                 <width>292</width>
                  <height>897</height>
                 </rect>
                </property>
@@ -820,7 +863,7 @@
                    </widget>
                   </item>
                   <item row="1" column="1">
-                   <widget class="QLineEdit" name="lineEdit"/>
+                   <widget class="QLineEdit" name="directName"/>
                   </item>
                  </layout>
                 </item>
@@ -879,7 +922,21 @@
                  </layout>
                 </item>
                 <item>
-                 <widget class="QTableWidget" name="alInDirect"/>
+                 <widget class="QTableWidget" name="alInDirect">
+                  <attribute name="horizontalHeaderStretchLastSection">
+                   <bool>true</bool>
+                  </attribute>
+                  <column>
+                   <property name="text">
+                    <string>ID</string>
+                   </property>
+                  </column>
+                  <column>
+                   <property name="text">
+                    <string>Название</string>
+                   </property>
+                  </column>
+                 </widget>
                 </item>
                </layout>
               </widget>
@@ -953,10 +1010,10 @@
                    </widget>
                   </item>
                   <item row="1" column="1">
-                   <widget class="QLineEdit" name="lineEdit_2"/>
+                   <widget class="QLineEdit" name="groupNum"/>
                   </item>
                   <item row="2" column="1">
-                   <widget class="QSpinBox" name="spinBox"/>
+                   <widget class="QSpinBox" name="groupYear"/>
                   </item>
                   <item row="3" column="0">
                    <widget class="QLabel" name="label_42">
@@ -981,7 +1038,7 @@
                      <number>0</number>
                     </property>
                     <item>
-                     <widget class="QLineEdit" name="lineEdit_3">
+                     <widget class="QLineEdit" name="groupTeach">
                       <property name="enabled">
                        <bool>false</bool>
                       </property>
@@ -1017,7 +1074,7 @@
                   <item row="3" column="1">
                    <layout class="QHBoxLayout" name="horizontalLayout_6">
                     <item>
-                     <widget class="QLineEdit" name="lineEdit_4">
+                     <widget class="QLineEdit" name="groupAss">
                       <property name="enabled">
                        <bool>false</bool>
                       </property>
@@ -1037,6 +1094,20 @@
                      </widget>
                     </item>
                    </layout>
+                  </item>
+                  <item row="5" column="0">
+                   <widget class="QLabel" name="groupTeachID">
+                    <property name="text">
+                     <string/>
+                    </property>
+                   </widget>
+                  </item>
+                  <item row="5" column="1">
+                   <widget class="QLabel" name="groupAssID">
+                    <property name="text">
+                     <string/>
+                    </property>
+                   </widget>
                   </item>
                  </layout>
                 </item>
@@ -1095,7 +1166,41 @@
                  </layout>
                 </item>
                 <item>
-                 <widget class="QTableWidget" name="studsInGroupe"/>
+                 <widget class="QTableWidget" name="studsInGroupe">
+                  <attribute name="horizontalHeaderStretchLastSection">
+                   <bool>true</bool>
+                  </attribute>
+                  <column>
+                   <property name="text">
+                    <string>ID</string>
+                   </property>
+                  </column>
+                  <column>
+                   <property name="text">
+                    <string>Фамилия</string>
+                   </property>
+                  </column>
+                  <column>
+                   <property name="text">
+                    <string>Имя</string>
+                   </property>
+                  </column>
+                  <column>
+                   <property name="text">
+                    <string>Отчество</string>
+                   </property>
+                  </column>
+                  <column>
+                   <property name="text">
+                    <string>Телефон</string>
+                   </property>
+                  </column>
+                  <column>
+                   <property name="text">
+                    <string>e-mail</string>
+                   </property>
+                  </column>
+                 </widget>
                 </item>
                </layout>
               </widget>

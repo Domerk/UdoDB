@@ -16,6 +16,8 @@ TableOpt::TableOpt(QWidget *parent) :
     ui->buttonBox->button(QDialogButtonBox::Ok)->setText(tr("Добавить"));
     ui->buttonBox->button(QDialogButtonBox::Cancel)->setText(tr("Отмена"));
 
+    ui->tableWidget->setSelectionBehavior(QAbstractItemView::SelectRows);
+
 }
 
 TableOpt::~TableOpt()

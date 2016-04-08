@@ -4,6 +4,7 @@
 #include <QDialog>
 #include <QTableWidget>
 #include <QRegularExpression>
+#include <QVector>
 
 namespace Ui {
 class TableOpt;
@@ -27,6 +28,7 @@ private slots:
 private:
     Ui::TableOpt *ui;
     QString myType;
+    QVector <int> id;
 };
 
 #endif // TABLEOPT_H
