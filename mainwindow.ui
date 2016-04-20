@@ -97,7 +97,7 @@
            </sizepolicy>
           </property>
           <property name="currentIndex">
-           <number>4</number>
+           <number>2</number>
           </property>
           <widget class="QWidget" name="alliance">
            <layout class="QVBoxLayout" name="verticalLayout_7">
@@ -481,9 +481,9 @@
                <property name="geometry">
                 <rect>
                  <x>0</x>
-                 <y>0</y>
+                 <y>-102</y>
                  <width>297</width>
-                 <height>976</height>
+                 <height>962</height>
                 </rect>
                </property>
                <layout class="QVBoxLayout" name="verticalLayout_4">
@@ -622,7 +622,7 @@
                    </widget>
                   </item>
                   <item>
-                   <widget class="QComboBox" name="comboBox_2">
+                   <widget class="QComboBox" name="studBDay">
                     <property name="sizePolicy">
                      <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
                       <horstretch>0</horstretch>
@@ -805,7 +805,7 @@
                    </widget>
                   </item>
                   <item>
-                   <widget class="QComboBox" name="comboBox">
+                   <widget class="QComboBox" name="studBMon">
                     <property name="maximumSize">
                      <size>
                       <width>50</width>
@@ -887,7 +887,7 @@
                    </widget>
                   </item>
                   <item>
-                   <widget class="QSpinBox" name="spinBox">
+                   <widget class="QSpinBox" name="studBYear">
                     <property name="minimum">
                      <number>1990</number>
                     </property>
@@ -962,6 +962,13 @@
                  <widget class="QTextEdit" name="address"/>
                 </item>
                 <item>
+                 <widget class="QLabel" name="label_15">
+                  <property name="text">
+                   <string>Дата заявления:</string>
+                  </property>
+                 </widget>
+                </item>
+                <item>
                  <layout class="QHBoxLayout" name="horizontalLayout_7">
                   <property name="leftMargin">
                    <number>0</number>
@@ -977,7 +984,7 @@
                    </widget>
                   </item>
                   <item>
-                   <widget class="QComboBox" name="comboBox_3">
+                   <widget class="QComboBox" name="studInDay">
                     <item>
                      <property name="text">
                       <string/>
@@ -1148,7 +1155,7 @@
                    </widget>
                   </item>
                   <item>
-                   <widget class="QComboBox" name="comboBox_4">
+                   <widget class="QComboBox" name="studInMon">
                     <item>
                      <property name="text">
                       <string/>
@@ -1224,7 +1231,7 @@
                    </widget>
                   </item>
                   <item>
-                   <widget class="QSpinBox" name="spinBox_2">
+                   <widget class="QSpinBox" name="studInYear">
                     <property name="sizePolicy">
                      <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
                       <horstretch>0</horstretch>
@@ -1245,6 +1252,13 @@
                  </layout>
                 </item>
                 <item>
+                 <widget class="QLabel" name="label_16">
+                  <property name="text">
+                   <string>Когда выбыл:</string>
+                  </property>
+                 </widget>
+                </item>
+                <item>
                  <layout class="QHBoxLayout" name="horizontalLayout_8">
                   <property name="topMargin">
                    <number>0</number>
@@ -1257,7 +1271,7 @@
                    </widget>
                   </item>
                   <item>
-                   <widget class="QComboBox" name="comboBox_5">
+                   <widget class="QComboBox" name="studOutDay">
                     <item>
                      <property name="text">
                       <string/>
@@ -1428,7 +1442,7 @@
                    </widget>
                   </item>
                   <item>
-                   <widget class="QComboBox" name="comboBox_6">
+                   <widget class="QComboBox" name="studOutMon">
                     <item>
                      <property name="text">
                       <string/>
@@ -1504,7 +1518,7 @@
                    </widget>
                   </item>
                   <item>
-                   <widget class="QSpinBox" name="spinBox_3">
+                   <widget class="QSpinBox" name="studOutYear">
                     <property name="sizePolicy">
                      <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
                       <horstretch>0</horstretch>
@@ -1536,6 +1550,9 @@
                     </property>
                    </widget>
                   </item>
+                  <item row="0" column="1">
+                   <widget class="QLineEdit" name="phone"/>
+                  </item>
                   <item row="1" column="0">
                    <widget class="QLabel" name="label_14">
                     <property name="text">
@@ -1543,34 +1560,17 @@
                     </property>
                    </widget>
                   </item>
+                  <item row="1" column="1">
+                   <widget class="QLineEdit" name="email"/>
+                  </item>
                   <item row="2" column="0">
-                   <widget class="QLabel" name="label_15">
-                    <property name="text">
-                     <string>Дата заявления</string>
-                    </property>
-                   </widget>
-                  </item>
-                  <item row="4" column="0">
-                   <widget class="QLabel" name="label_16">
-                    <property name="text">
-                     <string>Когда выбыл</string>
-                    </property>
-                   </widget>
-                  </item>
-                  <item row="3" column="0">
                    <widget class="QLabel" name="label_17">
                     <property name="text">
                      <string>Форма обучения</string>
                     </property>
                    </widget>
                   </item>
-                  <item row="0" column="1">
-                   <widget class="QLineEdit" name="phone"/>
-                  </item>
-                  <item row="1" column="1">
-                   <widget class="QLineEdit" name="email"/>
-                  </item>
-                  <item row="3" column="1">
+                  <item row="2" column="1">
                    <widget class="QComboBox" name="eduForm">
                     <item>
                      <property name="text">
@@ -1583,12 +1583,6 @@
                      </property>
                     </item>
                    </widget>
-                  </item>
-                  <item row="4" column="1">
-                   <widget class="QLineEdit" name="outDate"/>
-                  </item>
-                  <item row="2" column="1">
-                   <widget class="QLineEdit" name="admissDate"/>
                   </item>
                  </layout>
                 </item>
@@ -1966,6 +1960,9 @@
                   </property>
                   <item>
                    <widget class="QPushButton" name="addStudInGroup">
+                    <property name="enabled">
+                     <bool>false</bool>
+                    </property>
                     <property name="text">
                      <string/>
                     </property>
@@ -1973,6 +1970,9 @@
                   </item>
                   <item>
                    <widget class="QPushButton" name="removeStudToGroup">
+                    <property name="enabled">
+                     <bool>false</bool>
+                    </property>
                     <property name="text">
                      <string/>
                     </property>

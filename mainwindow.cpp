@@ -710,10 +710,19 @@ void MainWindow::on_saveButton_clicked()
                 return;
             }
 
+            QString birthday;
+            QString admiss;
+            QString out;
 
-            //QString birthday = ui->studBirthday->text();    // Год рождения
-            QString admiss = ui->admissDate->text();        // Дата подачи заявления
-            QString out = ui->outDate->text();              // Когда выбыл
+
+            if (ui->studBDay->currentIndex() != 0 && ui->studBMon->currentIndex() != 0)
+                birthday = ui->studBDay->currentText() + "." + ui->studBMon->currentText() + "." + QString::number(ui->studBYear->value());    // Год рождения
+
+            if (ui->studInDay->currentIndex() != 0 && ui->studInMon->currentIndex() != 0)
+                admiss = ui->studInDay->currentText() + "." + ui->studInMon->currentText() + "." + QString::number(ui->studInYear->value());        // Дата подачи заявления
+
+            if (ui->studOutDay->currentIndex() != 0 && ui->studOutMon->currentIndex() != 0)
+            out = ui->studOutDay->currentText() + "." + ui->studOutMon->currentText() + "." + QString::number(ui->studOutYear->value());               // Когда выбыл
 
             // Combo Box
             QString eduForm = ui->eduForm->currentText(); // Форма обучения
@@ -765,7 +774,7 @@ void MainWindow::on_saveButton_clicked()
                 strQuery.append("'Район школы', 'Школа', 'Класс', 'Родители', 'Домашний адрес', 'Телефон', 'e-mail', 'Дата заявления', 'Форма обучения', ");
                 strQuery.append("'Когда выбыл', 'С ослабленным здоровьем', 'Сирота', 'Инвалид', 'На учёте в полиции', 'Многодетная семья', ");
                 strQuery.append("'Неполная семья', 'Малообеспеченная семья', 'Мигранты', 'Примечания') VALUES ('");
-                //strQuery.append(surname + "', '" + name  + "', '" + patr  + "', '" + docType  + "', '" + docNum  + "', '" + gender  + "', '" + birthday  + "', '");
+                strQuery.append(surname + "', '" + name  + "', '" + patr  + "', '" + docType  + "', '" + docNum  + "', '" + gender  + "', '" + birthday  + "', '");
                 strQuery.append(arSchool  + "', '" + school  + "', '" + grad  + "', '" + parents  + "', '" + address  + "', '" + phone  + "', '" + email  + "', '" + admiss  + "', '" + eduForm  + "', '");
                 strQuery.append(out  + "', '" + weackHealth  + "', '" + orphan  + "', '" + invalid  + "', '" + accountInPolice + "', '" + large  + "', '");
                 strQuery.append(incompleteFamily  + "', '" + lowIncome  + "', '" + migrants  + "', '" + comments  + "');");
@@ -775,7 +784,7 @@ void MainWindow::on_saveButton_clicked()
             else
             {
                 // UPDATE
-               // strQuery.append("UPDATE Учащиеся SET 'Фамилия' = '" + surname + "', 'Имя' = '" + name  + "', 'Отчество' = '" + patr  + "', 'Тип документа' = '" + docType  + "', 'Номер документа' = '" + docNum  + "', 'Пол' = '" + gender  + "', 'Год рождения' = '" + birthday  + "', ");
+                strQuery.append("UPDATE Учащиеся SET 'Фамилия' = '" + surname + "', 'Имя' = '" + name  + "', 'Отчество' = '" + patr  + "', 'Тип документа' = '" + docType  + "', 'Номер документа' = '" + docNum  + "', 'Пол' = '" + gender  + "', 'Год рождения' = '" + birthday  + "', ");
                 strQuery.append("'Район школы' = '" + arSchool  + "', 'Школа' = '" + school  + "', 'Класс' = '" + grad  + "', 'Родители' = '" + parents  + "', 'Домашний адрес' = '" + address  + "', 'Телефон' = '" + phone  + "', 'e-mail' = '" + email  + "', 'Дата заявления' = '" + admiss  + "', 'Форма обучения' = '" + eduForm  + "', ");
                 strQuery.append("'Когда выбыл' = '" + out  + "', 'С ослабленным здоровьем' = '" + weackHealth  + "', 'Сирота' = '" + orphan  + "', 'Инвалид' = '" + invalid  + "', 'На учёте в полиции' = '" + accountInPolice + "', 'Многодетная семья' = '" + large  + "', ");
                 strQuery.append("'Неполная семья' = '" + incompleteFamily  + "', 'Малообеспеченная семья' = '" + lowIncome  + "', 'Мигранты' = '" + migrants  + "', 'Примечания' = '" + comments  + "' ");
@@ -1040,6 +1049,19 @@ void MainWindow::showMoreInfo(int row)
             ui->studGender->setCurrentIndex(1);                 // Муж
 
         //ui->studBirthday->setText(ui->tableWidget->item(row, 7)->text());   // Год рождения
+        QStringList qsl = ui->tableWidget->item(row, 7)->text().split(".");
+        if (qsl.length() == 3)
+        {
+            ui->studBDay->setCurrentText(qsl[0]);
+            ui->studBMon->setCurrentText(qsl[1]);
+            ui->studBYear->setValue(qsl[2].toInt());
+        }
+        else
+        {
+            ui->studBDay->setCurrentIndex(0);
+            ui->studBMon->setCurrentIndex(0);
+            ui->studBYear->setValue(2000);
+        }
 
         ui->areaSchools->setText(ui->tableWidget->item(row, 8)->text());    // Район школы
         ui->school->setText(ui->tableWidget->item(row, 9)->text());         // Школа
@@ -1049,12 +1071,43 @@ void MainWindow::showMoreInfo(int row)
         ui->phone->setText(ui->tableWidget->item(row, 13)->text());         // Телефон
         ui->email->setText(ui->tableWidget->item(row, 14)->text());         // email
 
-        ui->admissDate->setText(ui->tableWidget->item(row, 15)->text());    // Дата подачи заявления
+        // Дата подачи заявления
+        qsl.clear();
+        qsl = ui->tableWidget->item(row, 15)->text().split(".");
+        if (qsl.length() == 3)
+        {
+            ui->studInDay->setCurrentText(qsl[0]);
+            ui->studInMon->setCurrentText(qsl[1]);
+            ui->studInYear->setValue(qsl[2].toInt());
+        }
+        else
+        {
+            ui->studInDay->setCurrentIndex(0);
+            ui->studInMon->setCurrentIndex(0);
+            ui->studInYear->setValue(2000);
+        }
+
+
 
         ui->eduForm->setCurrentText(ui->tableWidget->item(row, 16)->text()); // Форма обучения
 
-        ui->outDate->setText(ui->tableWidget->item(row, 17)->text());     // Когда выбыл
 
+        // Когда выбыл
+
+        qsl.clear();
+        qsl = ui->tableWidget->item(row, 17)->text().split(".");
+        if (qsl.length() == 3)
+        {
+            ui->studOutDay->setCurrentText(qsl[0]);
+            ui->studOutMon->setCurrentText(qsl[1]);
+            ui->studOutYear->setValue(qsl[2].toInt());
+        }
+        else
+        {
+            ui->studOutDay->setCurrentIndex(0);
+            ui->studOutMon->setCurrentIndex(0);
+            ui->studOutYear->setValue(2000);
+        }
 
 
         // Чекбоксы - вероятно, имеет смысл предварительно засунуть их в вектор!!!
@@ -1137,6 +1190,8 @@ void MainWindow::showMoreInfo(int row)
         ui->groupAss->setText(ui->tableWidget->item(row, 5)->text());
         ui->groupTeach->setText(ui->tableWidget->item(row, 6)->text() + " " + ui->tableWidget->item(row, 7)->text()[0] + "." + ui->tableWidget->item(row, 8)->text()[0] + ".");
 
+        ui->addStudInGroup->setEnabled(true);
+        ui->removeStudToGroup->setEnabled(true);
 
         // Отрисовка таблички!!!
         QString str = "SELECT `ID Учащегося`, `Фамилия`, `Имя`, `Отчество`, `Телефон`, `e-mail` FROM Состав_групп WHERE `ID Группы` = " + ui->groupID->text() + ";";
@@ -1178,9 +1233,18 @@ void MainWindow::clearMoreInfoForm()
         ui->phone->clear();         // Телефон
         ui->email->clear();         // email
 
-        //ui->studBirthday->clear();  // Год рождения
-        ui->admissDate->clear();    // Дата подачи заявления
-        ui->outDate->clear();       // Когда выбыл
+        ui->studBDay->setCurrentIndex(0);
+        ui->studBMon->setCurrentIndex(0);
+        ui->studBYear->setValue(2000);
+
+        ui->studInDay->setCurrentIndex(0);
+        ui->studInMon->setCurrentIndex(0);
+        ui->studInYear->setValue(2000);
+
+        ui->studInDay->setCurrentIndex(0);
+        ui->studInMon->setCurrentIndex(0);
+        ui->studInYear->setValue(2000);
+
 
         // Combo Box
         ui->studDoc->setCurrentIndex(0);
@@ -1233,6 +1297,9 @@ void MainWindow::clearMoreInfoForm()
         ui->groupTeachID->clear();
         ui->groupAssID->clear();
         ui->groupYear->setValue(0);
+
+        ui->addStudInGroup->setEnabled(false);
+        ui->removeStudToGroup->setEnabled(false);
 
         int rowCount = ui->studsInGroupe->rowCount();
         for(int i = 0; i < rowCount; i++)
