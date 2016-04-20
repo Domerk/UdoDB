@@ -65,4 +65,13 @@ void TableOpt::setType(QString type)
         ui->searchParam->setText(tr("Фамилия:"));
         ui->comments->setText(tr("Выберите преподавателя:"));
     }
+
+    if (myType == "Direct")
+    {
+        this->setWindowTitle(tr("Направленность"));
+        ui->searchParam->hide();
+        ui->buttonSearch->hide();
+        ui->lineSearch->hide();
+        ui->comments->setText(tr("Выберите направленность:"));
+    }
 }

@@ -32,13 +32,11 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->groupTeachID->hide();
     ui->groupAssID->hide();
 
+    ui->alDirectID->hide();
+
     ui->treeWidget->setColumnCount(1);
 
-
-    ui->addAssInDirect->setIcon(QIcon(":/icons/Icons/add"));
     ui->addStudInGroup->setIcon(QIcon(":/icons/Icons/add"));
-
-    ui->removeAssToDirect->setIcon(QIcon(":/icons/Icons/remove"));
     ui->removeStudToGroup->setIcon(QIcon(":/icons/Icons/remove"));
 
 
@@ -97,7 +95,7 @@ MainWindow::MainWindow(QWidget *parent) :
 
     queryTeach.append("SELECT `ID`, `Фамилия`, `Имя`, `Отчество`, `Паспорт`, `Отдел` FROM Преподаватели;");
 
-    queryAllians.append("SELECT `ID`, `Название`, `Направленность`, `Отдел`, `Описание` FROM Объединения;");
+    queryAllians.append("SELECT `ID`, `ID Направленности`, `Название`, `Направленность`, `Отдел`, `Описание` FROM Объединения;");
 
     queryDirection.append("SELECT `ID`, `Название` FROM Направленности;");
 
@@ -565,11 +563,11 @@ void MainWindow::on_saveButton_clicked()
         {
             QString id = ui->alID->text();                                 // ID
             QString name = ui->alName->text().simplified().replace(QRegularExpression("-{2,}"), "-");          // Название
-            QString direct = ui->alDirect->currentText();                  // Напавленность
+            QString directID = ui->alDirectID->text();                  // Напавленность
             QString otd = ui->alOtd->text().simplified().replace(QRegularExpression("-{2,}"), "-");            // Отдел
             QString desc = ui->alDescript->toPlainText().replace(QRegularExpression("-{2,}"), "-");     // Описание
 
-            if (name.isEmpty() || direct.isEmpty() || otd.isEmpty())
+            if (name.isEmpty() || otd.isEmpty())
             {
                 // Сообщаем пользователю, что обязательные поля не заполнены
                 QMessageBox messageBox(QMessageBox::Information,
@@ -585,15 +583,15 @@ void MainWindow::on_saveButton_clicked()
 
             if (id.isEmpty())
             {
-                strQuery = "INSERT INTO Объединения (Название, Направленность, Отдел, Описание) VALUES ('" + name + "', '" + direct + "', '" + otd  + "', '" + desc + "');";
+                strQuery = "INSERT INTO Объединение (`Название`, `ID Направленности`, `Отдел`, `Описание`) VALUES ('" + name + "', '" + directID + "', '" + otd  + "', '" + desc + "');";
                 clearMoreInfoForm();
             }
             else
             {
-                strQuery = "UPDATE Объединения SET Название = '" + name + "', Направленность = '" + direct + "', Отдел = '" + otd + "', Описание = '" + desc + "' WHERE ID = " + id + ";";
+                strQuery = "UPDATE Объединение SET `Название` = '" + name + "', `ID Направленности` = '" + directID + "', `Отдел` = '" + otd + "', `Описание` = '" + desc + "' WHERE ID = " + id + ";";
             }
 
-            drawTree(); // Перерисовываем дерево
+            //drawTree(); // Перерисовываем дерево
             break;
         }
         case 1:     // Преподаватель
@@ -645,12 +643,12 @@ void MainWindow::on_saveButton_clicked()
 
             if (id.isEmpty())
             {
-                strQuery = "INSERT INTO Преподаватели (Имя, Фамилия, Отчество, Паспорт, Отдел) VALUES ('" + name + "', '" + surname + "', '" + patrname + "', '" + numpass + "', '" + otd + "');";
+                strQuery = "INSERT INTO Преподаватели (`Имя`, `Фамилия`, `Отчество`, `Паспорт`, `Отдел`) VALUES ('" + name + "', '" + surname + "', '" + patrname + "', '" + numpass + "', '" + otd + "');";
                 clearMoreInfoForm();
             }
             else
             {
-                strQuery = "UPDATE Преподаватели SET Имя = '" + name + "', Фамилия = '" + surname + "', Отчество = '" + patrname + "', Паспорт = '" + numpass + "', Отдел = '" + otd + "' WHERE ID = " + id + ";";
+                strQuery = "UPDATE Преподаватели SET `Имя` = '" + name + "', `Фамилия` = '" + surname + "', `Отчество` = '" + patrname + "', `Паспорт` = '" + numpass + "', `Отдел` = '" + otd + "' WHERE ID = " + id + ";";
             }
 
             break;
@@ -713,7 +711,7 @@ void MainWindow::on_saveButton_clicked()
             }
 
 
-            QString birthday = ui->studBirthday->text();    // Год рождения
+            //QString birthday = ui->studBirthday->text();    // Год рождения
             QString admiss = ui->admissDate->text();        // Дата подачи заявления
             QString out = ui->outDate->text();              // Когда выбыл
 
@@ -767,7 +765,7 @@ void MainWindow::on_saveButton_clicked()
                 strQuery.append("'Район школы', 'Школа', 'Класс', 'Родители', 'Домашний адрес', 'Телефон', 'e-mail', 'Дата заявления', 'Форма обучения', ");
                 strQuery.append("'Когда выбыл', 'С ослабленным здоровьем', 'Сирота', 'Инвалид', 'На учёте в полиции', 'Многодетная семья', ");
                 strQuery.append("'Неполная семья', 'Малообеспеченная семья', 'Мигранты', 'Примечания') VALUES ('");
-                strQuery.append(surname + "', '" + name  + "', '" + patr  + "', '" + docType  + "', '" + docNum  + "', '" + gender  + "', '" + birthday  + "', '");
+                //strQuery.append(surname + "', '" + name  + "', '" + patr  + "', '" + docType  + "', '" + docNum  + "', '" + gender  + "', '" + birthday  + "', '");
                 strQuery.append(arSchool  + "', '" + school  + "', '" + grad  + "', '" + parents  + "', '" + address  + "', '" + phone  + "', '" + email  + "', '" + admiss  + "', '" + eduForm  + "', '");
                 strQuery.append(out  + "', '" + weackHealth  + "', '" + orphan  + "', '" + invalid  + "', '" + accountInPolice + "', '" + large  + "', '");
                 strQuery.append(incompleteFamily  + "', '" + lowIncome  + "', '" + migrants  + "', '" + comments  + "');");
@@ -777,7 +775,7 @@ void MainWindow::on_saveButton_clicked()
             else
             {
                 // UPDATE
-                strQuery.append("UPDATE Учащиеся SET 'Фамилия' = '" + surname + "', 'Имя' = '" + name  + "', 'Отчество' = '" + patr  + "', 'Тип документа' = '" + docType  + "', 'Номер документа' = '" + docNum  + "', 'Пол' = '" + gender  + "', 'Год рождения' = '" + birthday  + "', ");
+               // strQuery.append("UPDATE Учащиеся SET 'Фамилия' = '" + surname + "', 'Имя' = '" + name  + "', 'Отчество' = '" + patr  + "', 'Тип документа' = '" + docType  + "', 'Номер документа' = '" + docNum  + "', 'Пол' = '" + gender  + "', 'Год рождения' = '" + birthday  + "', ");
                 strQuery.append("'Район школы' = '" + arSchool  + "', 'Школа' = '" + school  + "', 'Класс' = '" + grad  + "', 'Родители' = '" + parents  + "', 'Домашний адрес' = '" + address  + "', 'Телефон' = '" + phone  + "', 'e-mail' = '" + email  + "', 'Дата заявления' = '" + admiss  + "', 'Форма обучения' = '" + eduForm  + "', ");
                 strQuery.append("'Когда выбыл' = '" + out  + "', 'С ослабленным здоровьем' = '" + weackHealth  + "', 'Сирота' = '" + orphan  + "', 'Инвалид' = '" + invalid  + "', 'На учёте в полиции' = '" + accountInPolice + "', 'Многодетная семья' = '" + large  + "', ");
                 strQuery.append("'Неполная семья' = '" + incompleteFamily  + "', 'Малообеспеченная семья' = '" + lowIncome  + "', 'Мигранты' = '" + migrants  + "', 'Примечания' = '" + comments  + "' ");
@@ -786,7 +784,81 @@ void MainWindow::on_saveButton_clicked()
 
             break;
         }
+
+    case 3: // Направленность
+    {
+        QString id = ui->directID->text();
+        QString name = ui->directName->text().simplified().replace(QRegularExpression("-{2,}"), "-");
+
+        if (name.isEmpty())
+        {
+            // Сообщаем пользователю, что обязательные поля не заполнены
+            QMessageBox messageBox(QMessageBox::Information,
+                                   tr("Добавление записи"),
+                                   tr("Отсутсвуют данные для сохранения!"),
+                                   QMessageBox::Yes,
+                                   this);
+            messageBox.setButtonText(QMessageBox::Yes, tr("ОК"));
+            messageBox.exec();
+            return;
+        }
+
+
+        if (id.isEmpty())
+        {
+            strQuery = "INSERT INTO Направленности (`Название`) VALUES ('" + name + "');";
+            clearMoreInfoForm();
+        }
+        else
+        {
+            strQuery = "UPDATE Направленности SET `Название` = '" + name + "' WHERE ID = " + id + ";";
+        }
+
+        //drawTree(); // Перерисовываем дерево
+        break;
+
     }
+    case 4: // Группа
+    {
+        QString id = ui->groupID->text();
+        QString teachID = ui->groupTeachID->text();
+        QString assID = ui->groupAssID->text();
+        QString num = ui->groupNum->text();
+        QString year = QString::number(ui->groupYear->value());
+
+        // ЗДЕСЬ: Продумать, какие поля должны быть обязательными
+
+        if (num.isEmpty())
+        {
+            // Сообщаем пользователю, что обязательные поля не заполнены
+            QMessageBox messageBox(QMessageBox::Information,
+                                   tr("Добавление записи"),
+                                   tr("Одно или несколько обязательных полей не заполнены!"),
+                                   QMessageBox::Yes,
+                                   this);
+            messageBox.setButtonText(QMessageBox::Yes, tr("ОК"));
+            messageBox.exec();
+            return;
+        }
+
+
+        if (id.isEmpty())
+        {
+            strQuery = "INSERT INTO Группа (`Номер`, `Год обучения`, `ID объединения`, `ID преподавателя`) VALUES ('" + num + "', " + year + ", " + assID + ", " + teachID + ");";
+            clearMoreInfoForm();
+        }
+        else
+        {
+            strQuery = "UPDATE Группа SET `ID объединения` = " + assID + ", `ID преподавателя` = " + teachID + ", `Номер` = '" + num + "', `Год обучения` = " + year + " WHERE ID = " + id + ";";
+        }
+
+        //drawTree(); // Перерисовываем дерево
+        break;
+
+    }
+    }
+
+    qDebug() << strQuery;
 
     QSqlQuery query;
     query.exec(strQuery);
@@ -888,7 +960,6 @@ void MainWindow::drawTree()
    }
 
    ui->alDirect->clear();
-   ui->alDirect->addItems(*directions);
 
    for (QString & dir: *directions)
    {
@@ -968,7 +1039,7 @@ void MainWindow::showMoreInfo(int row)
         else
             ui->studGender->setCurrentIndex(1);                 // Муж
 
-        ui->studBirthday->setText(ui->tableWidget->item(row, 7)->text());   // Год рождения
+        //ui->studBirthday->setText(ui->tableWidget->item(row, 7)->text());   // Год рождения
 
         ui->areaSchools->setText(ui->tableWidget->item(row, 8)->text());    // Район школы
         ui->school->setText(ui->tableWidget->item(row, 9)->text());         // Школа
@@ -1045,12 +1116,13 @@ void MainWindow::showMoreInfo(int row)
 
     if (*currentTable == "Объединения")
     {
-        // SELECT `ID`, `Название`, `Направленность`, `Отдел`, `Описание` FROM Объединения;
+        // "SELECT `ID`, `ID Направленности`, `Название`, `Направленность`, `Отдел`, `Описание` FROM Объединения;"
         ui->alID->setText(ui->tableWidget->item(row, 0)->text());           // ID
-        ui->alName->setText(ui->tableWidget->item(row, 1)->text());         // Описание
-        ui->alDirect->setCurrentText(ui->tableWidget->item(row, 2)->text());       // Напавленность
-        ui->alOtd->setText(ui->tableWidget->item(row, 3)->text());          // Отдел
-        ui->alDescript->setText(ui->tableWidget->item(row, 4)->text());     // Описание
+        ui->alDirectID->setText(ui->tableWidget->item(row, 1)->text());
+        ui->alName->setText(ui->tableWidget->item(row, 2)->text());         // Описание
+        ui->alDirect->setText(ui->tableWidget->item(row, 3)->text());       // Напавленность
+        ui->alOtd->setText(ui->tableWidget->item(row, 4)->text());          // Отдел
+        ui->alDescript->setText(ui->tableWidget->item(row, 5)->text());     // Описание
     }
 
     if (*currentTable == "Группы")
@@ -1096,7 +1168,7 @@ void MainWindow::clearMoreInfoForm()
         ui->phone->clear();         // Телефон
         ui->email->clear();         // email
 
-        ui->studBirthday->clear();  // Год рождения
+        //ui->studBirthday->clear();  // Год рождения
         ui->admissDate->clear();    // Дата подачи заявления
         ui->outDate->clear();       // Когда выбыл
 
@@ -1136,7 +1208,8 @@ void MainWindow::clearMoreInfoForm()
     {
         ui->alID->clear();           // ID
         ui->alName->clear();         // Название
-        ui->alDirect->setCurrentIndex(0);       // Напавленность
+        ui->alDirect->clear();      // Напавленность
+        ui->alDirectID->clear();
         ui->alOtd->clear();          // Отдел
         ui->alDescript->clear();     // Описание
     }
@@ -1149,6 +1222,7 @@ void MainWindow::clearMoreInfoForm()
         ui->groupNum->clear();
         ui->groupTeachID->clear();
         ui->groupAssID->clear();
+        ui->groupYear->setValue(0);
 
         int rowCount = ui->studsInGroupe->rowCount();
         for(int i = 0; i < rowCount; i++)
@@ -1315,28 +1389,9 @@ void MainWindow::exportInExel()
 // ----------------------------------------------------------------------------------------------------
 // ----------------------------------------------------------------------------------------------------
 
-void MainWindow::on_addAssInDirect_clicked()
-{
-    TableOpt* to = new TableOpt();
-    to->setType("Ass");
-
-    QTableWidget *wgt = to->letTable();
-    QSqlQuery query;
-    query.exec("SELECT `ID`, `Название`, `Отдел`, `Описание` FROM Объединения;");
-    drawHeaders(query, wgt, false);
-    drawRows(query, wgt);
-    wgt->setColumnHidden(0, true);
-
-    if (to->exec() == QDialog::Accepted)
-    {
-        // Здесь - может быть выделено несколько строк!
-        int row = wgt->currentRow();
-        qDebug() << QString::number(row);
-
-    }
-}
-
-
+// ============================================================
+// =============== Добавление учащихся в группы ===============
+// ============================================================
 void MainWindow::on_addStudInGroup_clicked()
 {
     TableOpt* to = new TableOpt();
@@ -1353,26 +1408,23 @@ void MainWindow::on_addStudInGroup_clicked()
     {
         // Здесь - может быть выделено несколько строк!
         int row = wgt->currentRow();
-        qDebug() << QString::number(row);
-
+        QString strQuery;
         if (row > -1) // Если есть выделенные строки
         {
-            // Вот эта хрень не работает
-            // Потому что получаем все выделенные ячейки, среди которых нет скрытых
-            // А вытаскивать из них номера строк конечно можно
-            // Но это костыльно и геморно =/
-            QList<QTableWidgetItem *> selectedList = wgt->selectedItems();
-            for(QTableWidgetItem *item : selectedList)
-            {
-               if(item->column() == 0)
-                   qDebug()<<item->text();
-            }
-
+            for (QTableWidgetSelectionRange selectionRange : wgt->selectedRanges())
+                if (selectionRange.rowCount() > 0)
+                    for (int row = selectionRange.topRow(); row <= selectionRange.bottomRow(); row++)
+                    {
+                        strQuery.append("INSERT INTO Нагрузка(`ID учащегося`, `ID группы`) VALUES(" + wgt->item(row, 0)->text() + ", " + ui->groupID->text() + "); ");
+                        qDebug() << wgt->item(row, 0)->text();
+                    }
         }
     }
 }
 
-
+// ============================================================
+// ============ Связь между группой и объединением ============
+// ============================================================
 
 void MainWindow::on_addAssForGroup_clicked()
 {
@@ -1389,7 +1441,6 @@ void MainWindow::on_addAssForGroup_clicked()
     if (to->exec() == QDialog::Accepted)
     {
         int row = wgt->currentRow();
-        qDebug() << QString::number(row);
         if (row > -1)
         {
             ui->groupAssID->setText(wgt->item(row, 0)->text());
@@ -1398,6 +1449,10 @@ void MainWindow::on_addAssForGroup_clicked()
     }
 }
 
+
+// ============================================================
+// ========== Связь между группой и преподавателем ============
+// ============================================================
 void MainWindow::on_addTeachForGroup_clicked()
 {
     TableOpt* to = new TableOpt();
@@ -1413,11 +1468,33 @@ void MainWindow::on_addTeachForGroup_clicked()
     if (to->exec() == QDialog::Accepted)
     {
         int row = wgt->currentRow();
-        qDebug() << QString::number(row);
         if (row > -1)
         {
             ui->groupTeachID->setText(wgt->item(row, 0)->text());
             ui->groupTeach->setText(wgt->item(row, 1)->text() + " " + wgt->item(row, 2)->text()[0] + "." + wgt->item(row, 3)->text()[0] + ".");
+        }
+    }
+}
+
+void MainWindow::on_addDirectInAl_clicked()
+{
+    TableOpt* to = new TableOpt();
+    to->setType("Direct");
+
+    QTableWidget *wgt = to->letTable();
+    QSqlQuery query;
+    query.exec("SELECT `ID`, `Название` FROM Направленности;");
+    drawHeaders(query, wgt, false);
+    drawRows(query, wgt);
+    wgt->setColumnHidden(0, true);
+
+    if (to->exec() == QDialog::Accepted)
+    {
+        int row = wgt->currentRow();
+        if (row > -1)
+        {
+            ui->alDirectID->setText(wgt->item(row, 0)->text());
+            ui->alDirect->setText(wgt->item(row, 1)->text());
         }
     }
 }

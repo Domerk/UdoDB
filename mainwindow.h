@@ -102,14 +102,11 @@ private slots:
     void on_tableWidget_cellClicked(int row, int column);
     void on_saveButton_clicked();
 
-    void on_addAssInDirect_clicked();
-
     void on_addStudInGroup_clicked();
-
-
     void on_addAssForGroup_clicked();
-
     void on_addTeachForGroup_clicked();
+
+    void on_addDirectInAl_clicked();
 
 public slots:
     void connectReconfigSlot();
