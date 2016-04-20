@@ -99,7 +99,7 @@ MainWindow::MainWindow(QWidget *parent) :
 
     queryDirection.append("SELECT `ID`, `Название` FROM Направленности;");
 
-    queryGroup.append("SELECT `ID`, `ID объединения`, `ID преподавателя`, `Номер`, `Год обучения`, `Фамилия преподавателя`, `Имя преподавателя`, `Отчество преподавателя` FROM Группы;");
+    queryGroup.append("SELECT `ID`, `ID объединения`, `ID преподавателя`, `Номер`, `Год обучения`, `Объединение`, `Фамилия преподавателя`, `Имя преподавателя`, `Отчество преподавателя` FROM Группы;");
 
     // -------------------- Маски для скрытия колонок в таблицах ---------------
 
@@ -1127,14 +1127,24 @@ void MainWindow::showMoreInfo(int row)
 
     if (*currentTable == "Группы")
     {
-        // SELECT `ID`, `ID объединения`, `ID преподавателя`, `Номер`, `Год обучения`,
+        // SELECT `ID`, `ID объединения`, `ID преподавателя`, `Номер`, `Год обучения`, `Объединение`,
         // `Фамилия преподавателя`, `Имя преподавателя`, `Отчество преподавателя` FROM Группы;
         ui->groupID->setText(ui->tableWidget->item(row, 0)->text());    // ID
+        ui->groupAssID->setText(ui->tableWidget->item(row, 1)->text());
+        ui->groupTeachID->setText(ui->tableWidget->item(row, 2)->text());
         ui->groupNum->setText(ui->tableWidget->item(row, 3)->text());
         ui->groupYear->setValue(ui->tableWidget->item(row, 4)->text().toInt());
-        ui->groupTeach->setText(ui->tableWidget->item(row, 5)->text() + " " + ui->tableWidget->item(row, 6)->text()[0] + "." + ui->tableWidget->item(row, 7)->text()[0] + ".");
+        ui->groupAss->setText(ui->tableWidget->item(row, 5)->text());
+        ui->groupTeach->setText(ui->tableWidget->item(row, 6)->text() + " " + ui->tableWidget->item(row, 7)->text()[0] + "." + ui->tableWidget->item(row, 8)->text()[0] + ".");
+
 
         // Отрисовка таблички!!!
+        QString str = "SELECT `ID Учащегося`, `Фамилия`, `Имя`, `Отчество`, `Телефон`, `e-mail` FROM Состав_групп WHERE `ID Группы` = " + ui->groupID->text() + ";";
+
+        QSqlQuery query;
+        query.exec(str);
+        drawRows(query, ui->studsInGroupe);
+
 
     }
 
@@ -1408,16 +1418,27 @@ void MainWindow::on_addStudInGroup_clicked()
     {
         // Здесь - может быть выделено несколько строк!
         int row = wgt->currentRow();
-        QString strQuery;
         if (row > -1) // Если есть выделенные строки
         {
+            QString strQuery;
+            QSqlQuery query;
             for (QTableWidgetSelectionRange selectionRange : wgt->selectedRanges())
+            {
                 if (selectionRange.rowCount() > 0)
                     for (int row = selectionRange.topRow(); row <= selectionRange.bottomRow(); row++)
                     {
                         strQuery.append("INSERT INTO Нагрузка(`ID учащегося`, `ID группы`) VALUES(" + wgt->item(row, 0)->text() + ", " + ui->groupID->text() + "); ");
                         qDebug() << wgt->item(row, 0)->text();
                     }
+            }
+            query.exec(strQuery);
+            qDebug() << strQuery;
+            strQuery.clear();
+            strQuery.append("SELECT `ID Учащегося`, `Фамилия`, `Имя`, `Отчество`, `Телефон`, `e-mail` FROM Состав_групп WHERE `ID Группы` = " + ui->groupID->text() + ";");
+            qDebug() << strQuery;
+            query.exec(strQuery);
+            drawRows(query, ui->studsInGroupe);
+
         }
     }
 }
