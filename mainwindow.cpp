@@ -1496,11 +1496,11 @@ void MainWindow::on_addStudInGroup_clicked()
                     {
                         strQuery.append("INSERT INTO Нагрузка(`ID учащегося`, `ID группы`) VALUES(" + wgt->item(row, 0)->text() + ", " + ui->groupID->text() + "); ");
                         qDebug() << wgt->item(row, 0)->text();
+                        query.exec(strQuery);
+                        qDebug() << strQuery;
+                        strQuery.clear();
                     }
             }
-            query.exec(strQuery);
-            qDebug() << strQuery;
-            strQuery.clear();
             strQuery.append("SELECT `ID Учащегося`, `Фамилия`, `Имя`, `Отчество`, `Телефон`, `e-mail` FROM Состав_групп WHERE `ID Группы` = " + ui->groupID->text() + ";");
             qDebug() << strQuery;
             query.exec(strQuery);
