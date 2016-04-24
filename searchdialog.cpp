@@ -80,8 +80,7 @@ void SearchDialog::on_buttonBox_accepted()
         QString str = ui->teachName->text().simplified().replace(QRegularExpression("-{2,}"), "-");           // Берём из него инфу, отрезав вс лишнее
         if (!str.isEmpty())         // Если после отрезания от инфы что-нибудь осталось
         {
-            whereTeach->append("Имя");      // То заносим в стринглист имя поля и его значение
-            whereTeach->append(str);
+            whereTeach->append("`Имя` LIKE '%" + str + "%'");      // То заносим в стринглист имя поля и его значение
             useTeach = true;
         }
     }
@@ -91,8 +90,7 @@ void SearchDialog::on_buttonBox_accepted()
         QString str = ui->teachSurname->text().simplified().replace(QRegularExpression("-{2,}"), "-");
         if (!str.isEmpty())
         {
-        whereTeach->append("Фамилия");
-        whereTeach->append(str);
+        whereTeach->append("`Фамилия` LIKE '%" + str + "%'");
         useTeach = true;
         }
     }
@@ -102,8 +100,7 @@ void SearchDialog::on_buttonBox_accepted()
         QString str = ui->teachPatrname->text().simplified().replace(QRegularExpression("-{2,}"), "-");
         if (!str.isEmpty())
         {
-        whereTeach->append("Отчество");
-        whereTeach->append(str);
+        whereTeach->append("`Отчество` LIKE '%" + str + "%'");
         useTeach = true;
         }
     }
@@ -113,8 +110,7 @@ void SearchDialog::on_buttonBox_accepted()
         QString str = ui->teachPass->text().simplified().replace(QRegularExpression("-{2,}"), "-");
         if (!str.isEmpty())
         {
-        whereTeach->append("Паспорт");
-        whereTeach->append(str);
+        whereTeach->append("`Паспорт` LIKE '%" + str + "%'");
         useTeach = true;
         }
     }
@@ -124,8 +120,7 @@ void SearchDialog::on_buttonBox_accepted()
         QString str = ui->teachOtd->text().simplified().replace(QRegularExpression("-{2,}"), "-");
         if (!str.isEmpty())
         {
-        whereTeach->append("Отдел");
-        whereTeach->append(str);
+        whereTeach->append("`Отдел` LIKE '%" + str + "%'");
         useTeach = true;
         }
     }
@@ -153,7 +148,7 @@ void SearchDialog::on_buttonBox_accepted()
         QString str = ui->grNum->text().simplified().replace(QRegularExpression("-{2,}"), "-");
         if (!str.isEmpty())
         {
-            whereGroup->append("Номер");
+            whereGroup->append("`Номер` LIKE '%" + str + "%'");
             whereGroup->append(str);
             useTeach = true;
         }
@@ -161,8 +156,7 @@ void SearchDialog::on_buttonBox_accepted()
 
     if (ui->grYear->value() != 0)
     {
-        whereGroup->append("Год обучения");
-        whereGroup->append(ui->grYear->text());
+        whereGroup->append("`Год обучения` = " + ui->grYear->text());
         useTeach = true;
     }
 
@@ -195,8 +189,7 @@ void SearchDialog::on_buttonBox_accepted()
         QString str = ui->assName->text().simplified().replace(QRegularExpression("-{2,}"), "-");
         if (!str.isEmpty())
         {
-            whereAss->append("Название");
-            whereAss->append(str);
+            whereAss->append("`Название` LIKE '%" + str + "%'");
             useTeach = true;
         }
     }
@@ -206,8 +199,7 @@ void SearchDialog::on_buttonBox_accepted()
         QString str = ui->assOtd->text().simplified().replace(QRegularExpression("-{2,}"), "-");
         if (!str.isEmpty())
         {
-            whereAss->append("Отдел");
-            whereAss->append(str);
+            whereAss->append("`Отдел` LIKE '%" + str + "%'");
             useTeach = true;
         }
     }
@@ -217,8 +209,7 @@ void SearchDialog::on_buttonBox_accepted()
         QString str = ui->assDirect->text().simplified().replace(QRegularExpression("-{2,}"), "-");
         if (!str.isEmpty())
         {
-            whereAss->append("Направленность");
-            whereAss->append(str);
+            whereAss->append("`Направленность` LIKE '%" + str + "%'");
             useTeach = true;
         }
     }
@@ -238,8 +229,7 @@ void SearchDialog::on_buttonBox_accepted()
         QString str = ui->studName->text().simplified().replace(QRegularExpression("-{2,}"), "-");
         if (!str.isEmpty())
         {
-            whereStud->append("Имя");
-            whereStud->append(str);
+            whereStud->append("`Имя` LIKE '%" + str + "%'");
             useTeach = true;
         }
     }
@@ -255,8 +245,7 @@ void SearchDialog::on_buttonBox_accepted()
         QString str = ui->studSurname->text().simplified().replace(QRegularExpression("-{2,}"), "-");
         if (!str.isEmpty())
         {
-            whereStud->append("Фамилия");
-            whereStud->append(str);
+            whereStud->append("`Фамилия` LIKE '%" + str + "%'");
             useTeach = true;
         }
     }
@@ -272,8 +261,7 @@ void SearchDialog::on_buttonBox_accepted()
         QString str = ui->studPatr->text().simplified().replace(QRegularExpression("-{2,}"), "-");
         if (!str.isEmpty())
         {
-            whereStud->append("Отчество");
-            whereStud->append(str);
+            whereStud->append("`Отчество` LIKE '%" + str + "%'");
             useTeach = true;
         }
     }
@@ -289,8 +277,7 @@ void SearchDialog::on_buttonBox_accepted()
         QString str = ui->studAdr->text().simplified().replace(QRegularExpression("-{2,}"), "-");
         if (!str.isEmpty())
         {
-            whereStud->append("Адрес");
-            whereStud->append(str);
+            whereStud->append("`Адрес` LIKE '%" + str + "%'");
             useTeach = true;
         }
     }
@@ -301,16 +288,17 @@ void SearchDialog::on_buttonBox_accepted()
         useStud = true;
     }
 
-   /* if (ui->studBYear->isModified())
+    if (ui->studBYear_min->value() != ui->studBYear_min->minimum())
     {
-        QString str = ui->studBYear->text().simplified().replace(QRegularExpression("-{2,}"), "-");
-        if (!str.isEmpty())
-        {
-            whereStud->append("Год рождения");
-            whereStud->append(str);
-            useTeach = true;
-        }
-    } */
+        whereStud->append("`Год рождения` >= 01.01." + QString::number(ui->studBYear_min->value()));
+        useTeach = true;
+    }
+
+    if (ui->studBYear_max->value() != ui->studBYear_max->minimum())
+    {
+        whereStud->append("`Год рождения` <= 31.12." + QString::number(ui->studBYear_max->value()));
+        useTeach = true;
+    }
 
     if (ui->studClass_ch->isChecked())
     {
@@ -323,8 +311,7 @@ void SearchDialog::on_buttonBox_accepted()
         QString str = ui->studClass->text().simplified().replace(QRegularExpression("-{2,}"), "-");
         if (!str.isEmpty())
         {
-            whereStud->append("Класс");
-            whereStud->append(str);
+            whereStud->append("`Класс` LIKE '%" + str + "%'");
             useTeach = true;
         }
     }
@@ -374,8 +361,7 @@ void SearchDialog::on_buttonBox_accepted()
         QString str = ui->studDocNum->text().simplified().replace(QRegularExpression("-{2,}"), "-");
         if (!str.isEmpty())
         {
-            whereStud->append("Номер документа");
-            whereStud->append(str);
+            whereStud->append("`Номер документа` LIKE '%" + str + "%'");
             useTeach = true;
         }
     }
@@ -391,8 +377,7 @@ void SearchDialog::on_buttonBox_accepted()
         QString str = ui->studDocType->currentText();
         if (!str.isEmpty())
         {
-            whereStud->append("Тип документа");
-            whereStud->append(str);
+            whereStud->append("`Тип документа` LIKE '%" + str + "%'");
             useTeach = true;
         }
     }
@@ -407,8 +392,7 @@ void SearchDialog::on_buttonBox_accepted()
     if (ui->studEduForm->currentIndex() != 0)
     {
         QString str = ui->studEduForm->currentText();
-        whereStud->append("Форма обучения");
-        whereStud->append(str);
+        whereStud->append("`Форма обучения` LIKE '%" + str + "%'");
         useTeach = true;
     }
 
@@ -422,8 +406,7 @@ void SearchDialog::on_buttonBox_accepted()
     if (ui->studGender->currentIndex() != 0)
     {
         QString str = ui->studGender->currentText();
-        whereStud->append("Пол");
-        whereStud->append(str);
+        whereStud->append("`Пол` LIKE '%" + str + "%'");
         useTeach = true;
     }
 
@@ -436,9 +419,14 @@ void SearchDialog::on_buttonBox_accepted()
 
     if (ui->studIncom->currentIndex() != 0)
     {
-        QString str = ui->studIncom->currentText();
-        whereStud->append("Неполная семья");
-        whereStud->append(str);
+        if (ui->studIncom->currentText() == "Да")
+        {
+            whereStud->append("`Неполная семья` = 'true'");
+        }
+        else
+        {
+            whereStud->append("`Неполная семья` = 'false'");
+        }
         useTeach = true;
     }
 
@@ -450,23 +438,33 @@ void SearchDialog::on_buttonBox_accepted()
 
     if (ui->studInv->currentIndex() != 0)
     {
-        QString str = ui->studInv->currentText();
-        whereStud->append("Инвалид");
-        whereStud->append(str);
+        if (ui->studInv->currentText() == "Да")
+        {
+            whereStud->append("`Инвалид` = 'true'");
+        }
+        else
+        {
+            whereStud->append("`Инвалид` = 'false'");
+        }
         useTeach = true;
     }
 
     if (ui->studLarge_ch->isChecked())
     {
-        fromStud->append("Многодетная семья");
+        fromStud->append("Многодетная семья"); 
         useStud = true;
     }
 
     if (ui->studLarge->currentIndex() != 0)
     {
-        QString str = ui->studLarge->currentText();
-        whereStud->append("Многодетная семья");
-        whereStud->append(str);
+        if (ui->studLarge->currentText() == "Да")
+        {
+            whereStud->append("`Многодетная семья` = 'true'");
+        }
+        else
+        {
+            whereStud->append("`Многодетная семья` = 'false'");
+        }
         useTeach = true;
     }
 
@@ -481,8 +479,7 @@ void SearchDialog::on_buttonBox_accepted()
         QString str = ui->studMail->text().simplified().replace(QRegularExpression("-{2,}"), "-");
         if (!str.isEmpty())
         {
-            whereStud->append("e-mail");
-            whereStud->append(str);
+            whereStud->append("`e-mail` LIKE '%" + str + "%'");
             useTeach = true;
         }
     }
@@ -495,23 +492,33 @@ void SearchDialog::on_buttonBox_accepted()
 
     if (ui->studMigrants->currentIndex() != 0)
     {
-        QString str = ui->studMigrants->currentText();
-        whereStud->append("Мигранты");
-        whereStud->append(str);
+        if (ui->studMigrants->currentText() == "Да")
+        {
+            whereStud->append("`Мигранты` = 'true'");
+        }
+        else
+        {
+            whereStud->append("`Мигранты` = 'false'");
+        }
         useTeach = true;
     }
 
     if (ui->studNeedy_ch->isChecked())
     {
-        fromStud->append("Малообеспеченная семья");
+        fromStud->append("Малообеспеченная семь");
         useStud = true;
     }
 
     if (ui->studNeedy->currentIndex() != 0)
     {
-        QString str = ui->studNeedy->currentText();
-        whereStud->append("Малообеспеченная семья");
-        whereStud->append(str);
+        if (ui->studNeedy->currentText() == "Да")
+        {
+            whereStud->append("`Малообеспеченная семья` = 'true'");
+        }
+        else
+        {
+            whereStud->append("`Малообеспеченная семья` = 'false'");
+        }
         useTeach = true;
     }
 
@@ -523,9 +530,14 @@ void SearchDialog::on_buttonBox_accepted()
 
     if (ui->studOrph->currentIndex() != 0)
     {
-        QString str = ui->studOrph->currentText();
-        whereStud->append("Сирота");
-        whereStud->append(str);
+        if (ui->studOrph->currentText() == "Да")
+        {
+            whereStud->append("`Сирота` = 'true'");
+        }
+        else
+        {
+            whereStud->append("`Сирота` = 'false'");
+        }
         useTeach = true;
     }
 
@@ -540,8 +552,7 @@ void SearchDialog::on_buttonBox_accepted()
         QString str = ui->studParents->text().simplified().replace(QRegularExpression("-{2,}"), "-");
         if (!str.isEmpty())
         {
-            whereStud->append("Родители");
-            whereStud->append(str);
+            whereStud->append("`Родители`LIKE '%" + str + "%'");
             useTeach = true;
         }
     }
@@ -557,8 +568,7 @@ void SearchDialog::on_buttonBox_accepted()
         QString str = ui->studPhone->text().simplified().replace(QRegularExpression("-{2,}"), "-");
         if (!str.isEmpty())
         {
-            whereStud->append("Телефон");
-            whereStud->append(str);
+            whereStud->append("`Телефон` LIKE '%" + str + "%'");
             useTeach = true;
         }
     }
@@ -571,10 +581,14 @@ void SearchDialog::on_buttonBox_accepted()
 
     if (ui->studPolice->currentIndex() != 0)
     {
-        QString str = ui->studPolice->currentText();
-
-        whereStud->append("На учёте в полиции");
-        whereStud->append(str);
+        if (ui->studPolice->currentText() == "Да")
+        {
+            whereStud->append("`На учёте в полиции` = 'true'");
+        }
+        else
+        {
+            whereStud->append("`На учёте в полиции` = 'false'");
+        }
         useTeach = true;
 
     }
@@ -590,8 +604,7 @@ void SearchDialog::on_buttonBox_accepted()
         QString str = ui->studSchoolReg->text().simplified().replace(QRegularExpression("-{2,}"), "-");
         if (!str.isEmpty())
         {
-            whereStud->append("Район школы");
-            whereStud->append(str);
+            whereStud->append("`Район школы` LIKE '%" + str + "%'");
             useTeach = true;
         }
     }
@@ -607,8 +620,7 @@ void SearchDialog::on_buttonBox_accepted()
         QString str = ui->studSchool->text().simplified().replace(QRegularExpression("-{2,}"), "-");
         if (!str.isEmpty())
         {
-            whereStud->append("Школа");
-            whereStud->append(str);
+            whereStud->append("`Школа` LIKE '%" + str + "%'");
             useTeach = true;
         }
     }
@@ -621,13 +633,19 @@ void SearchDialog::on_buttonBox_accepted()
 
     if (ui->studWhealth->currentIndex() != 0)
     {
-        QString str = ui->studWhealth->currentText();
-
-        whereStud->append("С ослабленным здоровьем");
-        whereStud->append(str);
+        if (ui->studWhealth->currentText() == "Да")
+        {
+            whereStud->append("`С ослабленным здоровьем` = 'true'");
+        }
+        else
+        {
+            whereStud->append("`С ослабленным здоровьем` = 'false'");
+        }
         useTeach = true;
     }
 
+    // ---------------------------------------------------------------
+    // ---------------------------------------------------------------
     // ---------------------------------------------------------------
 
     if (useStud)
@@ -640,25 +658,40 @@ void SearchDialog::on_buttonBox_accepted()
         }
     }
 
+    // ---------------------------------------------------------------
 
     if (useAss)
     {
-        from->append(" Объединения, Направленности,");
+        from->append(" Объединения, ");
 
         if (!where->isEmpty())
             where->append(" AND");
 
-        where->append(" Направленности.`ID` = Объединения.`ID Направленности`");
+
+        for (QString & str : *fromAss)
+        {
+            columns->append(" Объединения.`" + str + "` `Объединениe: " + str + "`,");
+        }
+
+        if (useStud)
+        {
+            from->append(" Группа, Нагрузка,");
+            if (!where->isEmpty())
+                where->append(" AND");
+            where->append(" Объединения.`ID` = Группа.`ID объединения` AND Учащиеся.`ID` = Нагрузка.`ID учащегося` AND Группа.`ID` = Нагрузка.`ID группы`");
+        }
     }
+
+    // ---------------------------------------------------------------
 
     if (useGroup)
     {
-        from->append(" Группы,");
+        from->append(" Группа,");
         if (useTeach)
         {
             if (!where->isEmpty())
                 where->append(" AND");
-            where->append(" Преподаватели.`ID` = Группы.`ID преподавателя`");
+            where->append(" Преподаватели.`ID` = Группа.`ID преподавателя`");
         }
 
         if (useStud)
@@ -666,10 +699,24 @@ void SearchDialog::on_buttonBox_accepted()
             from->append(" Нагрузка,");
             if (!where->isEmpty())
                 where->append(" AND");
-            where->append(" Учащиеся.`ID` = Нагрузка.`ID учащегося` AND Группы.`ID` = Нагрузка.`ID группы`");
+            where->append(" Учащиеся.`ID` = Нагрузка.`ID учащегося` AND Группа.`ID` = Нагрузка.`ID группы`");
+        }
+
+        if (useAss)
+        {
+            if (!where->isEmpty())
+                where->append(" AND");
+            where->append(" Объединения.`ID` = Группа.`ID объединения`");
+        }
+
+        for (QString & str : *fromGroup)
+        {
+            columns->append(" Группа.`" + str + "` `Группа: " + str + "`,");
         }
 
     }
+
+    // ---------------------------------------------------------------
 
     if (useTeach)
     {
@@ -679,17 +726,30 @@ void SearchDialog::on_buttonBox_accepted()
         {
             columns->append(" Преподаватели.`" + str + "` `Преподаватель: " + str + "`,");
         }
+
+        if (useStud)
+        {
+            from->append(" Группа, Нагрузка,");
+            if (!where->isEmpty())
+                where->append(" AND");
+            where->append(" Преподаватели.`ID` = Группа.`ID преподавателя` AND Учащиеся.`ID` = Нагрузка.`ID учащегося` AND Группа.`ID` = Нагрузка.`ID группы`");
+        }
     }
 
+    // ---------------------------------------------------------------
 
     // Убираем запятую в конце
     columns->resize(columns->size()-1);
     // Убираем запятую в конце FROM
     from->resize(from->size()-1);
 
+    query->append("SELECT" + *columns + " FROM" + *from);
 
-    query->append("SELECT" + *columns + " FROM" + *from + " WHERE" + *where + ";");
+    if (!where->isEmpty())
+        query->append(" WHERE" + *where);
+
+    query->append(";");
+
     signalQuery(*query);
-
 }
 
