@@ -174,32 +174,7 @@ bool MainWindow::connectDB(QString nameDB)
     {
         ui->lblStatus->setText(tr("Ошибка соединения: соединение не установлено"));
     }
-
     return false;
-
-    /*
-    myDB = QSqlDatabase::addDatabase("QSQLITE");    // Указываем СУБД
-    myDB.setDatabaseName(pathToDB);                 // Задаём полное имя базы
-
-    QFileInfo checkFile(pathToDB);                  // Информация о файле базы
-
-    if (checkFile.isFile())                         // Если такой файл существует
-    {
-        if (myDB.open())                            // Открываем соединение
-        {
-            ui->lblStatus->setText(tr("Соединение установлено")); // Выводим сообщение
-            return true;                 // Возвращаем true
-        }
-        else
-        {
-            ui->lblStatus->setText(tr("Ошибка соединения: соединение не установлено"));
-        }
-    }
-    else
-    {
-        ui->lblStatus->setText(tr("Ошибка соединения: отсутсвует файл базы данных"));
-    }
-    return false; */
 }
 
 void MainWindow::connectReconfigSlot()
@@ -207,7 +182,6 @@ void MainWindow::connectReconfigSlot()
     connectDB("MainDB");
     if (!currentTable->isEmpty())
         refreshTable();
-
 }
 
 // ----------------------------------------------------------------------------------------------------
@@ -281,7 +255,7 @@ void MainWindow::showTable(QString table)
 
     // Отображаем заголовки и строки таблицы
     drawHeaders(query, ui->tableWidget, true);
-    drawRows(query, ui->tableWidget);
+    drawRows(query, ui->tableWidget, true);
     hideColumnsFromMask(currentMask);
 
     return;
@@ -327,7 +301,7 @@ void MainWindow::drawHeaders(QSqlQuery query, QTableWidget *table, bool isMainTa
 // ================ Отрисовка строк таблицы ===================
 // ============================================================
 
-void MainWindow::drawRows(QSqlQuery query, QTableWidget *table)
+void MainWindow::drawRows(QSqlQuery query, QTableWidget *table, bool available)
 {
     QSqlRecord rec;             // Объект данного типа содержит информацию о Select'е
     rec = query.record();       // Получаем нужную инфу от запроса
@@ -366,7 +340,9 @@ void MainWindow::drawRows(QSqlQuery query, QTableWidget *table)
             rowCount ++;    // Увеличиваем количество строк
         }
 
-    table->insertRow(rowCount); // В конце добавляем пустую строку
+    if (available)
+        table->insertRow(rowCount); // В конце добавляем пустую строку
+
     table->setSortingEnabled(true); // Разрешаем сортировку
 }
 
@@ -530,7 +506,7 @@ void MainWindow::refreshTable()
         lastSelect->append(queryAllians);
     }
 
-    drawRows(query, ui->tableWidget);
+    drawRows(query, ui->tableWidget, true);
 }
 
 // ============================================================
@@ -541,7 +517,7 @@ void MainWindow::repeatLastSelect()
 {
     QSqlQuery query;
     query.exec(*lastSelect);
-    drawRows(query, ui->tableWidget);
+    drawRows(query, ui->tableWidget, true);
 }
 
 // ============================================================
@@ -936,7 +912,7 @@ void MainWindow::simpleSearch()
 
         qDebug() << query.lastError();
 
-        drawRows(query, ui->tableWidget);
+        drawRows(query, ui->tableWidget, true);
         lastSelect = newSelect;
     }
 
@@ -1048,8 +1024,7 @@ void MainWindow::showMoreInfo(int row)
         else
             ui->studGender->setCurrentIndex(1);                 // Муж
 
-        //ui->studBirthday->setText(ui->tableWidget->item(row, 7)->text());   // Год рождения
-        QStringList qsl = ui->tableWidget->item(row, 7)->text().split(".");
+        QStringList qsl = ui->tableWidget->item(row, 7)->text().split("."); // Год рождения
         if (qsl.length() == 3)
         {
             ui->studBDay->setCurrentText(qsl[0]);
@@ -1087,13 +1062,9 @@ void MainWindow::showMoreInfo(int row)
             ui->studInYear->setValue(2000);
         }
 
-
-
         ui->eduForm->setCurrentText(ui->tableWidget->item(row, 16)->text()); // Форма обучения
 
-
         // Когда выбыл
-
         qsl.clear();
         qsl = ui->tableWidget->item(row, 17)->text().split(".");
         if (qsl.length() == 3)
@@ -1110,7 +1081,7 @@ void MainWindow::showMoreInfo(int row)
         }
 
 
-        // Чекбоксы - вероятно, имеет смысл предварительно засунуть их в вектор!!!
+        // Чекбоксы
 
         if (ui->tableWidget->item(row, 18)->text() == "Да")       // С ослабленным здоровьем
             ui->weackHealth->setChecked(true);
@@ -1165,6 +1136,15 @@ void MainWindow::showMoreInfo(int row)
         ui->teachPatr->setText(ui->tableWidget->item(row, 3)->text());      // Отчество
         ui->teachNumPass->setText(ui->tableWidget->item(row, 4)->text());   // Номер паспорта
         ui->teachOtd->setText(ui->tableWidget->item(row, 5)->text());       // Отдел
+
+        // Отрисовка таблички!!!
+        // Объединение + Номер + Год обучения
+
+        QString str = "SELECT `ID`, `Объединение`, `Номер`, `Год обучения` FROM Группы WHERE `ID преподавателя` = " + ui->teachID->text() + ";";
+
+        QSqlQuery query;
+        query.exec(str);
+        drawRows(query, ui->groupInTeach, false);
     }
 
     if (*currentTable == "Объединения")
@@ -1176,6 +1156,15 @@ void MainWindow::showMoreInfo(int row)
         ui->alDirect->setText(ui->tableWidget->item(row, 3)->text());       // Напавленность
         ui->alOtd->setText(ui->tableWidget->item(row, 4)->text());          // Отдел
         ui->alDescript->setText(ui->tableWidget->item(row, 5)->text());     // Описание
+
+        // Отрисовка таблички!!!
+        // Номер + Год обучения
+
+        QString str = "SELECT `ID`, `Номер`, `Год обучения` FROM Группы WHERE `ID объединения` = " + ui->alID->text() + ";";
+
+        QSqlQuery query;
+        query.exec(str);
+        drawRows(query, ui->groupInAl, false);
     }
 
     if (*currentTable == "Группы")
@@ -1198,9 +1187,7 @@ void MainWindow::showMoreInfo(int row)
 
         QSqlQuery query;
         query.exec(str);
-        drawRows(query, ui->studsInGroupe);
-
-
+        drawRows(query, ui->studsInGroupe, false);
     }
 
     if (*currentTable == "Направленности")
@@ -1208,7 +1195,13 @@ void MainWindow::showMoreInfo(int row)
         ui->directID->setText(ui->tableWidget->item(row, 0)->text());    // ID
         ui->directName->setText(ui->tableWidget->item(row, 1)->text());    // Название
 
-        // Отрисовка таблички!!!
+        // Отрисовка таблички!!! - Названия объединений
+
+        QString str = "SELECT `ID`, `Название` FROM Объединение WHERE `ID Направленности` = " + ui->directID->text() + ";";
+
+        QSqlQuery query;
+        query.exec(str);
+        drawRows(query, ui->alInDirect, false);
     }
 
 }
@@ -1348,7 +1341,7 @@ void MainWindow::querySlot(QString textQuery)
     QSqlQuery query;
     query.exec(textQuery);
     drawHeaders(query, ui->tableWidget, true);
-    drawRows(query, ui->tableWidget);
+    drawRows(query, ui->tableWidget, true);
 
     qDebug()<<textQuery;
 }
@@ -1478,7 +1471,7 @@ void MainWindow::on_addStudInGroup_clicked()
     QSqlQuery query;
     query.exec("SELECT `ID`, `Фамилия`, `Имя`, `Отчество`, `Тип документа`, `Номер документа`, `Пол`, `Год рождения` FROM Учащиеся");
     drawHeaders(query, wgt, false);
-    drawRows(query, wgt);
+    drawRows(query, wgt, false);
     wgt->setColumnHidden(0, true);
 
     if (to->exec() == QDialog::Accepted)
@@ -1504,7 +1497,7 @@ void MainWindow::on_addStudInGroup_clicked()
             strQuery.append("SELECT `ID Учащегося`, `Фамилия`, `Имя`, `Отчество`, `Телефон`, `e-mail` FROM Состав_групп WHERE `ID Группы` = " + ui->groupID->text() + ";");
             qDebug() << strQuery;
             query.exec(strQuery);
-            drawRows(query, ui->studsInGroupe);
+            drawRows(query, ui->studsInGroupe, false);
 
         }
     }
@@ -1523,7 +1516,7 @@ void MainWindow::on_addAssForGroup_clicked()
     QSqlQuery query;
     query.exec("SELECT `ID`, `Название`, `Отдел`, `Описание` FROM Объединения;");
     drawHeaders(query, wgt, false);
-    drawRows(query, wgt);
+    drawRows(query, wgt, false);
     wgt->setColumnHidden(0, true);
 
     if (to->exec() == QDialog::Accepted)
@@ -1550,7 +1543,7 @@ void MainWindow::on_addTeachForGroup_clicked()
     QSqlQuery query;
     query.exec("SELECT `ID`, `Фамилия`, `Имя`, `Отчество`, `Отдел` FROM Преподаватели");
     drawHeaders(query, wgt, false);
-    drawRows(query, wgt);
+    drawRows(query, wgt, false);
     wgt->setColumnHidden(0, true);
 
     if (to->exec() == QDialog::Accepted)
@@ -1573,7 +1566,7 @@ void MainWindow::on_addDirectInAl_clicked()
     QSqlQuery query;
     query.exec("SELECT `ID`, `Название` FROM Направленности;");
     drawHeaders(query, wgt, false);
-    drawRows(query, wgt);
+    drawRows(query, wgt, false);
     wgt->setColumnHidden(0, true);
 
     if (to->exec() == QDialog::Accepted)

@@ -97,7 +97,7 @@
            </sizepolicy>
           </property>
           <property name="currentIndex">
-           <number>2</number>
+           <number>3</number>
           </property>
           <widget class="QWidget" name="alliance">
            <layout class="QVBoxLayout" name="verticalLayout_7">
@@ -136,7 +136,7 @@
                 <rect>
                  <x>0</x>
                  <y>0</y>
-                 <width>297</width>
+                 <width>218</width>
                  <height>317</height>
                 </rect>
                </property>
@@ -314,8 +314,8 @@
                 <rect>
                  <x>0</x>
                  <y>0</y>
-                 <width>314</width>
-                 <height>316</height>
+                 <width>166</width>
+                 <height>268</height>
                 </rect>
                </property>
                <layout class="QVBoxLayout" name="verticalLayout_6">
@@ -481,7 +481,7 @@
                <property name="geometry">
                 <rect>
                  <x>0</x>
-                 <y>-102</y>
+                 <y>0</y>
                  <width>297</width>
                  <height>962</height>
                 </rect>
@@ -1797,8 +1797,8 @@
                 <rect>
                  <x>0</x>
                  <y>0</y>
-                 <width>314</width>
-                 <height>316</height>
+                 <width>194</width>
+                 <height>302</height>
                 </rect>
                </property>
                <layout class="QVBoxLayout" name="verticalLayout_12">

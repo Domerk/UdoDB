@@ -79,7 +79,7 @@ private:
     bool connectDB(QString nameDB);
     void showTable(QString table);
     void drawHeaders(QSqlQuery query, QTableWidget *table, bool isMainTable);
-    void drawRows(QSqlQuery query, QTableWidget *table);
+    void drawRows(QSqlQuery query, QTableWidget *table, bool available);
     void showMoreInfo(int row);
     void hideColumnsFromMask(QVector<bool> mask);
     void drawTree();
