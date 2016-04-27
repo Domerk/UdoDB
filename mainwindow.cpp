@@ -7,7 +7,7 @@ MainWindow::MainWindow(QWidget *parent) :
 {
     ui->setupUi(this);
     this->setWindowState(Qt::WindowMaximized); // Главное окно разворачивается на весь экран
-    ui->splitter->setSizes(QList <int> () << 100 << 750 << 200);
+    ui->splitter->setSizes(QList <int> () << 120 << 750 << 200);
 
     lastSelect = new QString();
     currentTable = new QString();
@@ -457,12 +457,22 @@ void MainWindow::deleteThis()
             if (messageBox.exec() == QMessageBox::Yes)
             {
                     QSqlQuery query;        // Создаём и формируем запрос
-                    QString str = "DELETE FROM " + *currentTable + " WHERE ID = " + ui->tableWidget->item(ui->tableWidget->verticalHeader()->currentIndex().row(), 0)->text() + " ;";
-                    query.exec(str);        // Выполняем запрос
-                    repeatLastSelect();     // Повторяеи последний Select
-                    clearMoreInfoForm();    // Чистим поле с подробностями
+                    QString strQuery;
 
-                    ui->lblStatus->setText(str);
+                    for (QTableWidgetSelectionRange selectionRange : ui->tableWidget->selectedRanges())
+                    {
+                        if (selectionRange.rowCount() > 0)
+                            for (int row = selectionRange.topRow(); row <= selectionRange.bottomRow(); row++)
+                            {
+                                strQuery.append("DELETE FROM " + *currentTable + " WHERE ID = " + ui->tableWidget->item(row, 0)->text() + " ;");
+                                query.exec(strQuery);
+                                qDebug() << strQuery;
+                                strQuery.clear();
+                            }
+                    }
+
+                    repeatLastSelect();     // Повторяем последний Select
+                    clearMoreInfoForm();    // Чистим поле с подробностями
             }
 
         }
