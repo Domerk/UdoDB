@@ -3,6 +3,7 @@
 
 #include <QDialog>
 #include <QPushButton>
+#include <QLineEdit>
 
 namespace Ui {
 class SearchDialog;
@@ -21,6 +22,23 @@ private slots:
 
 private:
     Ui::SearchDialog *ui;
+
+    QString *columns;
+    QString *from;
+    QString *where;
+    QString *query;
+
+    QStringList *fromStud;
+    QStringList *fromTeach;
+    QStringList *fromAss;
+    QStringList *fromGroup;
+
+    QStringList *whereStud;
+    QStringList *whereTeach;
+    QStringList *whereAss;
+    QStringList *whereGroup;
+
+    void getDataFromLineEdit(QStringList *slist, QLineEdit *ledit, QString text);
 
 
 signals:
