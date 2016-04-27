@@ -16,6 +16,9 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(connectDialog, SIGNAL(connectReconfig()), this, SLOT(connectReconfigSlot()));
     connect(ui->tableWidget->verticalHeader(), SIGNAL(sectionClicked(int)), this, SLOT(rowClicked(int)));
 
+    tempDbDialog = new TableOpt();
+    tempDbDialog->setType("tempDB");
+
     // Регулярное выражение для проверки имён, фамилий и отчеств.
     names = new QRegularExpression("^[А-ЯЁ]{1}[а-яё]*(-[А-ЯЁ]{1}[а-яё]*)?$");
 
@@ -64,6 +67,7 @@ MainWindow::MainWindow(QWidget *parent) :
 
     ui->mainToolBar->addAction(QIcon(":/icons/Icons/new.png"),tr("Новая запись"), this, SLOT(clearMoreInfoForm()));
     ui->mainToolBar->addAction(QIcon(":/icons/Icons/delete.png"),tr("Удалить запись"), this, SLOT(deleteThis()));
+    ui->mainToolBar->addAction(QIcon(":/icons/Icons/import.png"),tr("Импорт из временной базы"), this, SLOT(showTempTable()));
 
     ui->mainToolBar->addAction(QIcon(":/icons/Icons/options.png"),tr("Скрыть/Показать поля"), this, SLOT(changeTableMask()));
     ui->mainToolBar->addAction(QIcon(":/icons/Icons/optool.png"),tr("Расширенный поиск"), this, SLOT(globalSearch()));
@@ -135,9 +139,13 @@ MainWindow::~MainWindow()
     if (myDB.isOpen())
         myDB.close();
 
+    if (tempDB.isOpen())
+        tempDB.close();
+
     delete connectDialog;
     delete lastSelect;
     delete currentTable;
+    delete tempDbDialog;
     delete ui;
 }
 
@@ -147,25 +155,45 @@ MainWindow::~MainWindow()
 
 bool MainWindow::connectDB(QString nameDB)
 {
+    // Подключение к основной базе
+
     if (myDB.isOpen())
     {
         myDB.close();
     }
     else
     {
-        myDB = QSqlDatabase::addDatabase("QSQLITE");    // Указываем СУБД
+        myDB = QSqlDatabase::addDatabase("QSQLITE");    // Указываем СУБД, имени соединения нет - соединение по умолчанию
     }
 
     QSettings settings ("Kctt", "KcttDB");
-    settings.beginGroup(nameDB);
+    settings.beginGroup("mainDB");
     myDB.setHostName(settings.value("hostname", "localhost").toString());
     myDB.setDatabaseName(settings.value("dbname", "kcttDB").toString());
     myDB.setUserName(settings.value("username").toString());
     myDB.setPassword(settings.value("password").toString());
     settings.endGroup();
 
+    // Подключение к временной базе базе
+    if (tempDB.isOpen())
+    {
+        tempDB.close();
+    }
+    else
+    {
+        tempDB = QSqlDatabase::addDatabase("QSQLITE", "tempDB");    // Указываем СУБД
+    }
 
-    if (myDB.open())                            // Открываем соединение
+    settings.beginGroup("TempDB");
+    tempDB.setHostName(settings.value("hostname", "localhost").toString());
+    tempDB.setDatabaseName(settings.value("dbname", "kcttTempDB").toString());
+    tempDB.setUserName(settings.value("username").toString());
+    tempDB.setPassword(settings.value("password").toString());
+    settings.endGroup();
+
+    // Вот это место переписать, тк соединене с основной базой критично, а со временной - нет
+
+    if (myDB.open() && tempDB.open())                            // Открываем соединение
     {
         ui->lblStatus->setText(tr("Соединение установлено")); // Выводим сообщение
         return true;                 // Возвращаем true
@@ -1588,4 +1616,17 @@ void MainWindow::on_addDirectInAl_clicked()
             ui->alDirect->setText(wgt->item(row, 1)->text());
         }
     }
+}
+
+
+
+void MainWindow::showTempTable()
+{
+    QTableWidget *wgt = tempDbDialog->letTable();
+    QSqlQuery query(tempDB);
+    query.exec("SELECT * FROM Учащийся;");
+    qDebug()<<query.lastError().text();
+    drawHeaders(query, wgt, false);
+    drawRows(query, wgt, false);
+    tempDbDialog->show();
 }

@@ -36,10 +36,11 @@ public:
 
 private:
     enum MainToolButton : int {
-               Home = 0,
-               Repeat,
-               New,
-               Delete
+               New = 0,
+               Delete,
+               ImportFromTempDB,
+               Show,
+               Search
            };
 
     enum SearchToolButton : int {
@@ -50,7 +51,9 @@ private:
 
     Ui::MainWindow *ui;
     QSqlDatabase myDB;
+    QSqlDatabase tempDB;
 
+    TableOpt *tempDbDialog;
     ConnectionDialog *connectDialog;
 
     QString *lastSelect;
@@ -107,6 +110,8 @@ private slots:
     void on_addTeachForGroup_clicked();
 
     void on_addDirectInAl_clicked();
+
+    void showTempTable();
 
 public slots:
     void connectReconfigSlot();

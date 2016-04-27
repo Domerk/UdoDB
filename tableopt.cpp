@@ -74,4 +74,11 @@ void TableOpt::setType(QString type)
         ui->lineSearch->hide();
         ui->comments->setText(tr("Выберите направленность:"));
     }
+
+    if (myType == "tempDB")
+    {
+        this->setWindowTitle(tr("Учащиеся - самозапись"));
+        ui->searchParam->setText(tr("Фамилия:"));
+        ui->comments->setText(tr("Выберите одного или нескольких учащихся:"));
+    }
 }

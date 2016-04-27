@@ -9,5 +9,6 @@
         <file>Icons/search.png</file>
         <file>Icons/add.png</file>
         <file>Icons/remove.png</file>
+        <file>Icons/import.png</file>
     </qresource>
 </RCC>
