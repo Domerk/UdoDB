@@ -5,6 +5,7 @@
 #include <QTableWidget>
 #include <QRegularExpression>
 #include <QVector>
+#include <QComboBox>
 
 namespace Ui {
 class TableOpt;
@@ -19,6 +20,7 @@ public:
     ~TableOpt();
 
     QTableWidget* letTable();
+    QComboBox* letSearchBox();
     void setType(QString);
 
 private slots:

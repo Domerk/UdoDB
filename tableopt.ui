@@ -23,11 +23,7 @@
       <number>0</number>
      </property>
      <item>
-      <widget class="QLabel" name="searchParam">
-       <property name="text">
-        <string/>
-       </property>
-      </widget>
+      <widget class="QComboBox" name="searchParam"/>
      </item>
      <item>
       <widget class="QLineEdit" name="lineSearch"/>

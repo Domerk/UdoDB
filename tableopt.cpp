@@ -40,6 +40,11 @@ QTableWidget* TableOpt::letTable()
     return ui->tableWidget;
 }
 
+QComboBox* TableOpt::letSearchBox()
+{
+    return ui->searchParam;
+}
+
 void TableOpt::setType(QString type)
 {
     myType.clear();
@@ -48,21 +53,18 @@ void TableOpt::setType(QString type)
     if (myType == "Ass")
     {
         this->setWindowTitle(tr("Объединения"));
-        ui->searchParam->setText(tr("Название:"));
         ui->comments->setText(tr("Выберите объединение:"));
     }
 
     if (myType == "Stud")
     {
         this->setWindowTitle(tr("Учащиеся"));
-        ui->searchParam->setText(tr("Фамилия:"));
         ui->comments->setText(tr("Выберите одного или нескольких учащихся:"));
     }
 
     if (myType == "Teach")
     {
         this->setWindowTitle(tr("Преподаватель"));
-        ui->searchParam->setText(tr("Фамилия:"));
         ui->comments->setText(tr("Выберите преподавателя:"));
     }
 
@@ -78,7 +80,7 @@ void TableOpt::setType(QString type)
     if (myType == "tempDB")
     {
         this->setWindowTitle(tr("Учащиеся - самозапись"));
-        ui->searchParam->setText(tr("Фамилия:"));
         ui->comments->setText(tr("Выберите одного или нескольких учащихся:"));
+        ui->buttonBox->button(QDialogButtonBox::Ok)->setText(tr("Ок"));
     }
 }

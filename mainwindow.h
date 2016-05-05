@@ -17,6 +17,7 @@
 #include <QPushButton>
 #include <QDialogButtonBox>
 #include <QRegularExpression>
+#include <QMap>
 
 #include "searchdialog.h"
 #include "connectiondialog.h"
@@ -49,6 +50,13 @@ private:
                Columns
            };
 
+    struct Info
+    {
+        QString query;
+        int index;
+        QVector<bool> mask;
+    };
+
     Ui::MainWindow *ui;
     QSqlDatabase myDB;
     QSqlDatabase tempDB;
@@ -56,22 +64,10 @@ private:
     TableOpt *tempDbDialog;
     ConnectionDialog *connectDialog;
 
+    QMap<QString, Info> infoMap;
+
     QString *lastSelect;
-    QString *currentTable;
-
-    // Шаблонные запросы на вывод таблиц
-    // Вероятно, стоит вынести отсюда в отдельный файл
-
-    QString queryStud;
-    QString queryTeach;
-    QString queryAllians;
-    QString queryDirection;
-    QString queryGroup;
-
-    QVector<bool> studTableMask;
-    QVector<bool> teachTableMask;
-    QVector<bool> alliansTableMask;
-
+    QString *currentTable;   
     QVector<bool> currentMask;
 
     QRegularExpression *names;
@@ -81,7 +77,7 @@ private:
 
     bool connectDB(QString nameDB);
     void showTable(QString table);
-    void drawHeaders(QSqlQuery query, QTableWidget *table, bool isMainTable);
+    void drawHeaders(QSqlQuery query, QTableWidget *table, bool forSearch, QComboBox *serchCBox);
     void drawRows(QSqlQuery query, QTableWidget *table, bool available);
     void showMoreInfo(int row);
     void hideColumnsFromMask(QVector<bool> mask);

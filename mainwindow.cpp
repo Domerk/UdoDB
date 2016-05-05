@@ -92,34 +92,47 @@ MainWindow::MainWindow(QWidget *parent) :
 
     // ------------------ Запросы на вывод основных таблиц -----------------
 
-    queryStud.append("SELECT `ID`, `Фамилия`, `Имя`, `Отчество`, `Тип документа`, `Номер документа`, `Пол`, `Год рождения`, ");
-    queryStud.append("`Район школы`, `Школа`, `Класс`, `Родители`, `Домашний адрес`, `Телефон`, `e-mail`, `Дата заявления`, `Форма обучения`, ");
-    queryStud.append("`Когда выбыл`, `С ослабленным здоровьем`, `Сирота`, `Инвалид`, `На учёте в полиции`, `Многодетная семья`, ");
-    queryStud.append("`Неполная семья`, `Малообеспеченная семья`, `Мигранты`, `Примечания` FROM Учащиеся;");
+    Info inf;
 
-    queryTeach.append("SELECT `ID`, `Фамилия`, `Имя`, `Отчество`, `Паспорт`, `Отдел` FROM Преподаватели;");
-
-    queryAllians.append("SELECT `ID`, `ID Направленности`, `Название`, `Направленность`, `Отдел`, `Описание` FROM Объединения;");
-
-    queryDirection.append("SELECT `ID`, `Название` FROM Направленности;");
-
-    queryGroup.append("SELECT `ID`, `ID объединения`, `ID преподавателя`, `Номер`, `Год обучения`, `Объединение`, `Фамилия преподавателя`, `Имя преподавателя`, `Отчество преподавателя` FROM Группы;");
-
-    // -------------------- Маски для скрытия колонок в таблицах ---------------
-
-    studTableMask.append(true);
+    inf.query.append("SELECT `ID`, `Фамилия`, `Имя`, `Отчество`, `Тип документа`, `Номер документа`, `Пол`, `Год рождения`, `Район школы`, `Школа`, `Класс`, `Родители`, `Домашний адрес`, `Телефон`, `e-mail`, `Дата заявления`, `Форма обучения`,`Когда выбыл`, `С ослабленным здоровьем`, `Сирота`, `Инвалид`, `На учёте в полиции`, `Многодетная семья`, `Неполная семья`, `Малообеспеченная семья`, `Мигранты`, `Примечания` FROM Учащиеся;");
+    inf.index = 2;
+    inf.mask.append(true);
     for (int i = 1; i<11; i++)
-        studTableMask.append(false);
+        inf.mask.append(false);
     for (int i = 11; i<27; i++)
-        studTableMask.append(true);
+        inf.mask.append(true);
+    infoMap.insert("Учащиеся", inf);
 
-    teachTableMask.append(true);
+    inf.mask.clear();
+
+    inf.query = "SELECT `ID`, `Фамилия`, `Имя`, `Отчество`, `Паспорт`, `Отдел` FROM Преподаватели;";
+    inf.index = 1;
+    inf.mask.append(true);
     for (int i = 1; i<6; i++)
-        teachTableMask.append(false);
+        inf.mask.append(false);
+    infoMap.insert("Преподаватели", inf);
 
-    alliansTableMask.append(true);
+    inf.mask.clear();
+
+    inf.query = "SELECT `ID`, `ID Направленности`, `Название`, `Направленность`, `Отдел`, `Описание` FROM Объединения;";
+    inf.index = 0;
+    inf.mask.append(true);
     for (int i = 1; i<5; i++)
-        alliansTableMask.append(false);
+        inf.mask.append(false);
+    infoMap.insert("Объединения", inf);
+
+    inf.mask.clear();
+
+    inf.query = "SELECT `ID`, `Название` FROM Направленности;";
+    inf.index = 3;
+    infoMap.insert("Направленности", inf);
+
+    inf.mask.clear();
+
+    inf.query = "SELECT `ID`, `ID объединения`, `ID преподавателя`, `Номер`, `Год обучения`, `Объединение`, `Фамилия преподавателя`, `Имя преподавателя`, `Отчество преподавателя` FROM Группы;";
+    inf.index = 4;
+    infoMap.insert("Группы", inf);
+
 
     // ----------------------------- DataBase ------------------------------
 
@@ -237,52 +250,16 @@ void MainWindow::showTable(QString table)
     // Выполняем соотвествующий запрос, сохраняем информацию о нём
     // И показываем соотвесттвующую страницу StackedWidget (форму)
 
-    if (table == "Объединения")
-    {
-        query.exec(queryAllians);
-        lastSelect->append(queryAllians);
-        ui->stackedWidget->setCurrentIndex(0);
-        currentMask = alliansTableMask;
-    }
-
-
-    if (table == "Преподаватели")
-    {
-        query.exec(queryTeach);
-        lastSelect->append(queryTeach);
-        ui->stackedWidget->setCurrentIndex(1);
-        currentMask = teachTableMask;
-    }
-
-    if (table == "Учащиеся")
-    {
-        query.exec(queryStud);
-        lastSelect->append(queryStud);
-        ui->stackedWidget->setCurrentIndex(2);
-        currentMask = studTableMask;
-    }
-
-    if (table == "Направленности")
-    {
-        query.exec(queryDirection);
-        lastSelect->append(queryDirection);
-        ui->stackedWidget->setCurrentIndex(3);
-
-    }
-
-    if (table == "Группы")
-    {
-        query.exec(queryGroup);
-        lastSelect->append(queryGroup);
-        ui->stackedWidget->setCurrentIndex(4);
-
-    }
+    query.exec(infoMap.value(table).query);
+    lastSelect->append(infoMap.value(table).query);
+    ui->stackedWidget->setCurrentIndex(infoMap.value(table).index);
+    currentMask = infoMap.value(table).mask;
 
     // Сохраняем инфу о текущей таблице
     currentTable->append(table);
 
     // Отображаем заголовки и строки таблицы
-    drawHeaders(query, ui->tableWidget, true);
+    drawHeaders(query, ui->tableWidget, true, searchBox);
     drawRows(query, ui->tableWidget, true);
     hideColumnsFromMask(currentMask);
 
@@ -293,7 +270,7 @@ void MainWindow::showTable(QString table)
 // ============= Отрисовка заголовков таблицы =================
 // ============================================================
 
-void MainWindow::drawHeaders(QSqlQuery query, QTableWidget *table, bool isMainTable)
+void MainWindow::drawHeaders(QSqlQuery query, QTableWidget *table, bool forSearch, QComboBox *serchCBox)
 {
     // Удаляем столбцы, которые уже были нарисованы
 
@@ -315,14 +292,22 @@ void MainWindow::drawHeaders(QSqlQuery query, QTableWidget *table, bool isMainTa
 
     table->setHorizontalHeaderLabels(qsl);    // Устанавливаем названия столбцов в таблице
 
-    if (isMainTable)
+    if (forSearch)
+    {
+        serchCBox->clear();
+        if (qsl.size() > 1 && qsl.at(0) == "ID")
+            qsl.removeFirst();          // Удаляем 0й элемент (ID)
+        serchCBox->addItems(qsl);       // Задаём комбобоксу поиска
+    }
+
+    /*if (isMainTable)
     {
         searchBox->clear();
 
         if (qsl.size() > 1)
             qsl.removeFirst();          // Удаляем 0й элемент (ID)
         searchBox->addItems(qsl);   // Задаём комбобоксу поиска
-    }
+    } */
 }
 
 // ============================================================
@@ -440,6 +425,11 @@ void MainWindow::changeTableMask()
 
         hideColumnsFromMask(currentMask);
 
+        // Сохраняем инфу об изменениях
+
+       infoMap[*currentTable].mask = currentMask;
+
+        /*
         if (*currentTable == "Учащиеся")
         {
             studTableMask = currentMask;
@@ -453,7 +443,7 @@ void MainWindow::changeTableMask()
         if (*currentTable == "Объединения")
         {
             alliansTableMask = studTableMask;
-        }
+        } */
 
 
     }
@@ -525,25 +515,8 @@ void MainWindow::refreshTable()
 {
     QSqlQuery query;
     lastSelect->clear();
-
-    if (*currentTable == "Учащиеся")
-    {
-        query.exec(queryStud);
-        lastSelect->append(queryStud);
-    }
-
-    if (*currentTable == "Преподаватели")
-    {
-        query.exec(queryTeach);
-        lastSelect->append(queryTeach);
-    }
-
-    if (*currentTable == "Объединения")
-    {
-        query.exec(queryAllians);
-        lastSelect->append(queryAllians);
-    }
-
+    lastSelect->append(infoMap.value(*currentTable).query);
+    query.exec(*lastSelect);
     drawRows(query, ui->tableWidget, true);
 }
 
@@ -916,6 +889,8 @@ void MainWindow::simpleSearch()
 
         // Убрать регистрозависимость
 
+        // И вообще этот кусок кода не торт, поэтому перепиши его
+
         QString *newSelect = new QString();
 
         if (*currentTable == "Учащиеся")
@@ -925,7 +900,8 @@ void MainWindow::simpleSearch()
                     || searchBox->currentText() == "Многодетная семья" || searchBox->currentText() == "Неполная семья"
                     || searchBox->currentText() == "Малообеспеченная семья" || searchBox->currentText() == "Мигранты")
             {
-                newSelect->append(queryStud.replace(";", " ") + " WHERE `" + searchBox->currentText());
+                QString str = infoMap.value(*currentTable).query;
+                newSelect->append(str.replace(";", " ") + " WHERE `" + searchBox->currentText());
                 if (searchText->toLower() == "да")
                     newSelect->append("` = 'true';");
                 else
@@ -933,15 +909,22 @@ void MainWindow::simpleSearch()
             }
             else
             {
-                newSelect->append(queryStud.replace(";", " ") + " WHERE `" + searchBox->currentText() + "` LIKE '%" + *searchText + "%';");
+                QString str = infoMap.value(*currentTable).query;
+                newSelect->append(str.replace(";", " ") + " WHERE `" + searchBox->currentText() + "` LIKE '%" + *searchText + "%';");
             }
         }
 
         if (*currentTable == "Преподаватели")
-            newSelect->append(queryTeach.replace(";", " ") + " WHERE `" + searchBox->currentText() + "` LIKE '%" + *searchText + "%';");
+        {
+            QString str = infoMap.value(*currentTable).query;
+            newSelect->append(str.replace(";", " ") + " WHERE `" + searchBox->currentText() + "` LIKE '%" + *searchText + "%';");
+        }
 
         if (*currentTable == "Объединения")
-            newSelect->append(queryAllians.replace(";", " ") + " WHERE `" + searchBox->currentText() + "` LIKE '%" + *searchText + "%';");
+        {
+            QString str = infoMap.value(*currentTable).query;
+            newSelect->append(str.replace(";", " ") + " WHERE `" + searchBox->currentText() + "` LIKE '%" + *searchText + "%';");
+        }
 
         qDebug() << *newSelect;
 
@@ -1378,7 +1361,7 @@ void MainWindow::querySlot(QString textQuery)
 
     QSqlQuery query;
     query.exec(textQuery);
-    drawHeaders(query, ui->tableWidget, true);
+    drawHeaders(query, ui->tableWidget, true, searchBox);
     drawRows(query, ui->tableWidget, true);
 
     qDebug()<<textQuery;
@@ -1507,8 +1490,8 @@ void MainWindow::on_addStudInGroup_clicked()
 
     QTableWidget *wgt = to->letTable();
     QSqlQuery query;
-    query.exec("SELECT `ID`, `Фамилия`, `Имя`, `Отчество`, `Тип документа`, `Номер документа`, `Пол`, `Год рождения` FROM Учащиеся");
-    drawHeaders(query, wgt, false);
+    query.exec("SELECT `ID`, `Фамилия`, `Имя`, `Отчество`, `Тип документа`, `Номер документа`, `Пол`, `Год рождения` FROM Учащиеся;");
+    drawHeaders(query, wgt, true, to->letSearchBox());
     drawRows(query, wgt, false);
     wgt->setColumnHidden(0, true);
 
@@ -1553,7 +1536,7 @@ void MainWindow::on_addAssForGroup_clicked()
     QTableWidget *wgt = to->letTable();
     QSqlQuery query;
     query.exec("SELECT `ID`, `Название`, `Отдел`, `Описание` FROM Объединения;");
-    drawHeaders(query, wgt, false);
+    drawHeaders(query, wgt, true, to->letSearchBox());
     drawRows(query, wgt, false);
     wgt->setColumnHidden(0, true);
 
@@ -1579,8 +1562,8 @@ void MainWindow::on_addTeachForGroup_clicked()
 
     QTableWidget *wgt = to->letTable();
     QSqlQuery query;
-    query.exec("SELECT `ID`, `Фамилия`, `Имя`, `Отчество`, `Отдел` FROM Преподаватели");
-    drawHeaders(query, wgt, false);
+    query.exec("SELECT `ID`, `Фамилия`, `Имя`, `Отчество`, `Отдел` FROM Преподаватели;");
+    drawHeaders(query, wgt, true, to->letSearchBox());
     drawRows(query, wgt, false);
     wgt->setColumnHidden(0, true);
 
@@ -1603,7 +1586,7 @@ void MainWindow::on_addDirectInAl_clicked()
     QTableWidget *wgt = to->letTable();
     QSqlQuery query;
     query.exec("SELECT `ID`, `Название` FROM Направленности;");
-    drawHeaders(query, wgt, false);
+    drawHeaders(query, wgt, true, to->letSearchBox());
     drawRows(query, wgt, false);
     wgt->setColumnHidden(0, true);
 
@@ -1626,7 +1609,7 @@ void MainWindow::showTempTable()
     QSqlQuery query(tempDB);
     query.exec("SELECT * FROM Учащийся;");
     qDebug()<<query.lastError().text();
-    drawHeaders(query, wgt, false);
+    drawHeaders(query, wgt, true, tempDbDialog->letSearchBox());
     drawRows(query, wgt, false);
     tempDbDialog->show();
 }
