@@ -30,7 +30,13 @@ private slots:
 private:
     Ui::TableOpt *ui;
     QString myType;
+    QString baseQuery;
+    QString forSearch;
     QVector <int> id;
+    bool mainDB;
+
+signals:
+    void signalQuery(QTableWidget* tableWidget, QString strQuery, bool mainDB);
 };
 
 #endif // TABLEOPT_H

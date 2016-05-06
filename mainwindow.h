@@ -61,7 +61,7 @@ private:
     QSqlDatabase myDB;
     QSqlDatabase tempDB;
 
-    TableOpt *tempDbDialog;
+    TableOpt *dbDialog;
     ConnectionDialog *connectDialog;
 
     QMap<QString, Info> infoMap;
@@ -112,6 +112,7 @@ private slots:
 public slots:
     void connectReconfigSlot();
     void querySlot(QString);
+    void querySlot(QTableWidget* tableWidget, QString strQuery, bool mainDB);
 };
 
 #endif // MAINWINDOW_H

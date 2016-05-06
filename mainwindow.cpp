@@ -16,8 +16,9 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(connectDialog, SIGNAL(connectReconfig()), this, SLOT(connectReconfigSlot()));
     connect(ui->tableWidget->verticalHeader(), SIGNAL(sectionClicked(int)), this, SLOT(rowClicked(int)));
 
-    tempDbDialog = new TableOpt();
-    tempDbDialog->setType("tempDB");
+    dbDialog = new TableOpt();
+    dbDialog->setType("tempDB");
+    connect(dbDialog, SIGNAL(signalQuery(QTableWidget*,QString,bool)), this, SLOT(querySlot(QTableWidget*,QString,bool)));
 
     // Регулярное выражение для проверки имён, фамилий и отчеств.
     names = new QRegularExpression("^[А-ЯЁ]{1}[а-яё]*(-[А-ЯЁ]{1}[а-яё]*)?$");
@@ -158,7 +159,7 @@ MainWindow::~MainWindow()
     delete connectDialog;
     delete lastSelect;
     delete currentTable;
-    delete tempDbDialog;
+    delete dbDialog;
     delete ui;
 }
 
@@ -1485,17 +1486,16 @@ void MainWindow::exportInExel()
 // ============================================================
 void MainWindow::on_addStudInGroup_clicked()
 {
-    TableOpt* to = new TableOpt();
-    to->setType("Stud");
+    dbDialog->setType("Stud");
 
-    QTableWidget *wgt = to->letTable();
+    QTableWidget *wgt = dbDialog->letTable();
     QSqlQuery query;
     query.exec("SELECT `ID`, `Фамилия`, `Имя`, `Отчество`, `Тип документа`, `Номер документа`, `Пол`, `Год рождения` FROM Учащиеся;");
-    drawHeaders(query, wgt, true, to->letSearchBox());
+    drawHeaders(query, wgt, true, dbDialog->letSearchBox());
     drawRows(query, wgt, false);
     wgt->setColumnHidden(0, true);
 
-    if (to->exec() == QDialog::Accepted)
+    if (dbDialog->exec() == QDialog::Accepted)
     {
         // Здесь - может быть выделено несколько строк!
         int row = wgt->currentRow();
@@ -1530,17 +1530,16 @@ void MainWindow::on_addStudInGroup_clicked()
 
 void MainWindow::on_addAssForGroup_clicked()
 {
-    TableOpt* to = new TableOpt();
-    to->setType("Ass");
+    dbDialog->setType("Ass");
 
-    QTableWidget *wgt = to->letTable();
+    QTableWidget *wgt = dbDialog->letTable();
     QSqlQuery query;
     query.exec("SELECT `ID`, `Название`, `Отдел`, `Описание` FROM Объединения;");
-    drawHeaders(query, wgt, true, to->letSearchBox());
+    drawHeaders(query, wgt, true, dbDialog->letSearchBox());
     drawRows(query, wgt, false);
     wgt->setColumnHidden(0, true);
 
-    if (to->exec() == QDialog::Accepted)
+    if (dbDialog->exec() == QDialog::Accepted)
     {
         int row = wgt->currentRow();
         if (row > -1)
@@ -1557,17 +1556,16 @@ void MainWindow::on_addAssForGroup_clicked()
 // ============================================================
 void MainWindow::on_addTeachForGroup_clicked()
 {
-    TableOpt* to = new TableOpt();
-    to->setType("Teach");
+    dbDialog->setType("Teach");
 
-    QTableWidget *wgt = to->letTable();
+    QTableWidget *wgt = dbDialog->letTable();
     QSqlQuery query;
     query.exec("SELECT `ID`, `Фамилия`, `Имя`, `Отчество`, `Отдел` FROM Преподаватели;");
-    drawHeaders(query, wgt, true, to->letSearchBox());
+    drawHeaders(query, wgt, true, dbDialog->letSearchBox());
     drawRows(query, wgt, false);
     wgt->setColumnHidden(0, true);
 
-    if (to->exec() == QDialog::Accepted)
+    if (dbDialog->exec() == QDialog::Accepted)
     {
         int row = wgt->currentRow();
         if (row > -1)
@@ -1580,17 +1578,16 @@ void MainWindow::on_addTeachForGroup_clicked()
 
 void MainWindow::on_addDirectInAl_clicked()
 {
-    TableOpt* to = new TableOpt();
-    to->setType("Direct");
+    dbDialog->setType("Direct");
 
-    QTableWidget *wgt = to->letTable();
+    QTableWidget *wgt = dbDialog->letTable();
     QSqlQuery query;
     query.exec("SELECT `ID`, `Название` FROM Направленности;");
-    drawHeaders(query, wgt, true, to->letSearchBox());
+    drawHeaders(query, wgt, true, dbDialog->letSearchBox());
     drawRows(query, wgt, false);
     wgt->setColumnHidden(0, true);
 
-    if (to->exec() == QDialog::Accepted)
+    if (dbDialog->exec() == QDialog::Accepted)
     {
         int row = wgt->currentRow();
         if (row > -1)
@@ -1605,11 +1602,24 @@ void MainWindow::on_addDirectInAl_clicked()
 
 void MainWindow::showTempTable()
 {
-    QTableWidget *wgt = tempDbDialog->letTable();
+    QTableWidget *wgt = dbDialog->letTable();
     QSqlQuery query(tempDB);
-    query.exec("SELECT * FROM Учащийся;");
+    query.exec("SELECT Запись.`Объединение` `Объединение`, Учащийся.`Фамилия` `Фамилия`, Учащийся.`Имя` `Имя`, Учащийся.`Отчество` `Отчество`, Учащийся.`Тип документа` `Тип документа`, Учащийся.`Номер документа` `Номер документа`, Учащийся.`Пол` `Пол`, Учащийся.`Год рождения` `Год рождения`, Учащийся.`Район школы` `Район школы`, Учащийся.`Школа` `Школа`, `Класс` `Класс`, Учащийся.`Родители` `Родители`, Учащийся.`Домашний адрес` `Домашний адрес`, Учащийся.`Телефон` `Телефон`, Учащийся.`e-mail` `e-mail` FROM Учащийся, Запись WHERE Учащийся.`Тип документа` = Запись.`Тип документа` AND Учащийся.`Номер документа` = Запись.`Номер документа`;");
     qDebug()<<query.lastError().text();
-    drawHeaders(query, wgt, true, tempDbDialog->letSearchBox());
+    drawHeaders(query, wgt, true, dbDialog->letSearchBox());
     drawRows(query, wgt, false);
-    tempDbDialog->show();
+    dbDialog->show();
+}
+
+
+void MainWindow::querySlot(QTableWidget* tableWidget, QString strQuery, bool mainDB)
+{
+    QSqlQuery query;
+    if (!mainDB)
+    {
+        query = QSqlQuery(tempDB);
+    }
+
+    query.exec(strQuery);
+    drawRows(query, tableWidget, false);
 }
