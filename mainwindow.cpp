@@ -397,7 +397,6 @@ void MainWindow::changeTableMask()
     int colCount = ui->tableWidget->columnCount();
     int row = 0;
     int col = 0;
-    //vct.append(true);
 
     for (int i = 0; i < colCount-1; i++)        // Запись заголовков
     {
@@ -427,26 +426,7 @@ void MainWindow::changeTableMask()
         hideColumnsFromMask(currentMask);
 
         // Сохраняем инфу об изменениях
-
        infoMap[*currentTable].mask = currentMask;
-
-        /*
-        if (*currentTable == "Учащиеся")
-        {
-            studTableMask = currentMask;
-        }
-
-        if (*currentTable == "Преподаватели")
-        {
-            teachTableMask = studTableMask;
-        }
-
-        if (*currentTable == "Объединения")
-        {
-            alliansTableMask = studTableMask;
-        } */
-
-
     }
 }
 
@@ -937,7 +917,6 @@ void MainWindow::simpleSearch()
         drawRows(query, ui->tableWidget, true);
         lastSelect = newSelect;
     }
-
 }
 
 // ----------------------------------------------------------------------------------------------------
@@ -1387,7 +1366,6 @@ void MainWindow::on_treeWidget_itemClicked(QTreeWidgetItem *item, int column)
 void MainWindow::on_tableWidget_cellClicked(int row, int column)
 {
     ui->tableWidget->setSortingEnabled(false); // Временно запрещаем сортировку
-    //if (!ui->tableWidget->item(row, column)->data(Qt::DisplayRole).toString().isEmpty())
     if (row < ui->tableWidget->rowCount()-1)
     {
         showMoreInfo(row);
@@ -1519,6 +1497,7 @@ void MainWindow::on_addStudInGroup_clicked()
                         qDebug() << wgt->item(row, 0)->text();
                         query.exec(strQuery);
                         qDebug() << strQuery;
+                        qDebug() << query.lastError().text();
                         strQuery.clear();
                     }
             }
@@ -1609,6 +1588,7 @@ void MainWindow::on_addDirectInAl_clicked()
 
 void MainWindow::showTempTable()
 {
+    dbDialog->setType("tempDB");
     QTableWidget *wgt = dbDialog->letTable();
     QSqlQuery query(tempDB);
     query.exec("SELECT Запись.`Объединение` `Объединение`, Учащийся.`Фамилия` `Фамилия`, Учащийся.`Имя` `Имя`, Учащийся.`Отчество` `Отчество`, Учащийся.`Тип документа` `Тип документа`, Учащийся.`Номер документа` `Номер документа`, Учащийся.`Пол` `Пол`, Учащийся.`Год рождения` `Год рождения`, Учащийся.`Район школы` `Район школы`, Учащийся.`Школа` `Школа`, `Класс` `Класс`, Учащийся.`Родители` `Родители`, Учащийся.`Домашний адрес` `Домашний адрес`, Учащийся.`Телефон` `Телефон`, Учащийся.`e-mail` `e-mail` FROM Учащийся, Запись WHERE Учащийся.`Тип документа` = Запись.`Тип документа` AND Учащийся.`Номер документа` = Запись.`Номер документа`;");
@@ -1629,4 +1609,31 @@ void MainWindow::querySlot(QTableWidget* tableWidget, QString strQuery, bool mai
 
     query.exec(strQuery);
     drawRows(query, tableWidget, false);
+}
+
+void MainWindow::on_removeStudToGroup_clicked()
+{
+    int row = ui->studsInGroupe->currentRow();
+    if (row > -1) // Если есть выделенные строки
+    {
+        QString strQuery;
+        QSqlQuery query;
+        for (QTableWidgetSelectionRange selectionRange : ui->studsInGroupe->selectedRanges())
+        {
+            if (selectionRange.rowCount() > 0)
+                for (int row = selectionRange.topRow(); row <= selectionRange.bottomRow(); row++)
+                {
+                    strQuery.append("DELETE FROM Нагрузка WHERE `ID учащегося` = " + ui->studsInGroupe->item(row, 0)->text() + " AND `ID группы` = "  + ui->groupID->text() + ";");
+                    qDebug() << ui->studsInGroupe->item(row, 0)->text();
+                    query.exec(strQuery);
+                    qDebug() << strQuery;
+                    qDebug() << query.lastError().text();
+                    strQuery.clear();
+                }
+        }
+        strQuery.append("SELECT `ID Учащегося`, `Фамилия`, `Имя`, `Отчество`, `Телефон`, `e-mail` FROM Состав_групп WHERE `ID Группы` = " + ui->groupID->text() + ";");
+        qDebug() << strQuery;
+        query.exec(strQuery);
+        drawRows(query, ui->studsInGroupe, false);
+    }
 }

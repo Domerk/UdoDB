@@ -109,6 +109,8 @@ private slots:
 
     void showTempTable();
 
+    void on_removeStudToGroup_clicked();
+
 public slots:
     void connectReconfigSlot();
     void querySlot(QString);
