@@ -1027,6 +1027,8 @@ void MainWindow::setSearchActive()
 
 void MainWindow::showMoreInfo(int row)
 {
+    clearMoreInfoForm(); // Чистим форму
+
     if (*currentTable == "Учащиеся")
     {
         ui->studID->setText(ui->tableWidget->item(row, 0)->text());         // ID
@@ -1384,7 +1386,9 @@ void MainWindow::on_treeWidget_itemClicked(QTreeWidgetItem *item, int column)
 
 void MainWindow::on_tableWidget_cellClicked(int row, int column)
 {
-    if (row < ui->tableWidget->rowCount())
+    ui->tableWidget->setSortingEnabled(false); // Временно запрещаем сортировку
+    //if (!ui->tableWidget->item(row, column)->data(Qt::DisplayRole).toString().isEmpty())
+    if (row < ui->tableWidget->rowCount()-1)
     {
         showMoreInfo(row);
     }
@@ -1392,6 +1396,7 @@ void MainWindow::on_tableWidget_cellClicked(int row, int column)
     {
         clearMoreInfoForm();
     }
+    ui->tableWidget->setSortingEnabled(true);
 }
 
 // ============================================================
@@ -1400,7 +1405,8 @@ void MainWindow::on_tableWidget_cellClicked(int row, int column)
 
 void MainWindow::rowClicked(int row)
 {
-    if (row < ui->tableWidget->rowCount())
+    ui->tableWidget->setSortingEnabled(false); // Временно запрещаем сортировку
+    if (row < ui->tableWidget->rowCount()-1)
     {
         showMoreInfo(row);
     }
@@ -1408,6 +1414,7 @@ void MainWindow::rowClicked(int row)
     {
         clearMoreInfoForm();
     }
+    ui->tableWidget->setSortingEnabled(true);
 }
 
 // ----------------------------------------------------------------------------------------------------
