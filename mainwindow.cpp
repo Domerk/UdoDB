@@ -238,9 +238,7 @@ void MainWindow::showTable(QString table)
 {
 
     if (table == "Общее" || table == *currentTable)
-    {
         return;
-    }
 
     QSqlQuery query;        // Создаём запрос
     lastSelect->clear();    // Удаляем данные о последнем запросе
@@ -300,15 +298,6 @@ void MainWindow::drawHeaders(QSqlQuery query, QTableWidget *table, bool forSearc
             qsl.removeFirst();          // Удаляем 0й элемент (ID)
         serchCBox->addItems(qsl);       // Задаём комбобоксу поиска
     }
-
-    /*if (isMainTable)
-    {
-        searchBox->clear();
-
-        if (qsl.size() > 1)
-            qsl.removeFirst();          // Удаляем 0й элемент (ID)
-        searchBox->addItems(qsl);   // Задаём комбобоксу поиска
-    } */
 }
 
 // ============================================================
@@ -465,7 +454,6 @@ void MainWindow::deleteThis()
                             {
                                 strQuery.append("DELETE FROM " + *currentTable + " WHERE ID = " + ui->tableWidget->item(row, 0)->text() + " ;");
                                 query.exec(strQuery);
-                                qDebug() << strQuery;
                                 strQuery.clear();
                             }
                     }
@@ -835,8 +823,6 @@ void MainWindow::on_saveButton_clicked()
     }
     }
 
-    qDebug() << strQuery;
-
     QSqlQuery query;
     query.exec(strQuery);
 
@@ -907,12 +893,8 @@ void MainWindow::simpleSearch()
             newSelect->append(str.replace(";", " ") + " WHERE `" + searchBox->currentText() + "` LIKE '%" + *searchText + "%';");
         }
 
-        qDebug() << *newSelect;
-
         QSqlQuery query;
         query.exec(*newSelect);
-
-        qDebug() << query.lastError();
 
         drawRows(query, ui->tableWidget, true);
         lastSelect = newSelect;
@@ -1345,8 +1327,6 @@ void MainWindow::querySlot(QString textQuery)
     query.exec(textQuery);
     drawHeaders(query, ui->tableWidget, true, searchBox);
     drawRows(query, ui->tableWidget, true);
-
-    qDebug()<<textQuery;
 }
 
 // ============================================================
@@ -1367,13 +1347,9 @@ void MainWindow::on_tableWidget_cellClicked(int row, int column)
 {
     ui->tableWidget->setSortingEnabled(false); // Временно запрещаем сортировку
     if (row < ui->tableWidget->rowCount()-1)
-    {
         showMoreInfo(row);
-    }
     else
-    {
         clearMoreInfoForm();
-    }
     ui->tableWidget->setSortingEnabled(true);
 }
 
@@ -1385,13 +1361,9 @@ void MainWindow::rowClicked(int row)
 {
     ui->tableWidget->setSortingEnabled(false); // Временно запрещаем сортировку
     if (row < ui->tableWidget->rowCount()-1)
-    {
         showMoreInfo(row);
-    }
     else
-    {
         clearMoreInfoForm();
-    }
     ui->tableWidget->setSortingEnabled(true);
 }
 

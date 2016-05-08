@@ -4,6 +4,7 @@
 #include <QDialog>
 #include <QPushButton>
 #include <QLineEdit>
+#include <QComboBox>
 
 namespace Ui {
 class SearchDialog;
@@ -39,6 +40,7 @@ private:
     QStringList *whereGroup;
 
     void getDataFromLineEdit(QStringList *slist, QLineEdit *ledit, QString text);
+    void getDataFromBoolComboBox(QStringList *slist, QComboBox *box, QString text);
 
 
 signals:

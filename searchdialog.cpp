@@ -288,123 +288,49 @@ void SearchDialog::on_buttonBox_accepted()
         fromStud->append("Неполная семья");
 
     if (ui->studIncom->currentIndex() != 0)
-    {
-        if (ui->studIncom->currentText() == "Да")
-        {
-            whereStud->append("`Неполная семья` = 'true'");
-        }
-        else
-        {
-            whereStud->append("`Неполная семья` = 'false'");
-        }
-    }
+        getDataFromBoolComboBox(whereStud, ui->studIncom, "`Неполная семья`");
 
     if (ui->studInv_ch->isChecked())
         fromStud->append("Инвалид");
 
     if (ui->studInv->currentIndex() != 0)
-    {
-        if (ui->studInv->currentText() == "Да")
-        {
-            whereStud->append("`Инвалид` = 'true'");
-        }
-        else
-        {
-            whereStud->append("`Инвалид` = 'false'");
-        }
-    }
+        getDataFromBoolComboBox(whereStud, ui->studInv, "`Инвалид`");
 
     if (ui->studLarge_ch->isChecked())
         fromStud->append("Многодетная семья");
 
     if (ui->studLarge->currentIndex() != 0)
-    {
-        if (ui->studLarge->currentText() == "Да")
-        {
-            whereStud->append("`Многодетная семья` = 'true'");
-        }
-        else
-        {
-            whereStud->append("`Многодетная семья` = 'false'");
-        }
-    }
-
+        getDataFromBoolComboBox(whereStud, ui->studLarge, "`Многодетная семья`");
 
     if (ui->studMigrants_ch->isChecked())
         fromStud->append("Мигранты");
 
     if (ui->studMigrants->currentIndex() != 0)
-    {
-        if (ui->studMigrants->currentText() == "Да")
-        {
-            whereStud->append("`Мигранты` = 'true'");
-        }
-        else
-        {
-            whereStud->append("`Мигранты` = 'false'");
-        }
-    }
+        getDataFromBoolComboBox(whereStud, ui->studMigrants, "`Мигранты`");
 
     if (ui->studNeedy_ch->isChecked())
         fromStud->append("Малообеспеченная семь");
 
     if (ui->studNeedy->currentIndex() != 0)
-    {
-        if (ui->studNeedy->currentText() == "Да")
-        {
-            whereStud->append("`Малообеспеченная семья` = 'true'");
-        }
-        else
-        {
-            whereStud->append("`Малообеспеченная семья` = 'false'");
-        }
-    }
+        getDataFromBoolComboBox(whereStud, ui->studNeedy, "`Малообеспеченная семья`");
 
     if (ui->studOrph_ch->isChecked())
         fromStud->append("Сирота");
 
     if (ui->studOrph->currentIndex() != 0)
-    {
-        if (ui->studOrph->currentText() == "Да")
-        {
-            whereStud->append("`Сирота` = 'true'");
-        }
-        else
-        {
-            whereStud->append("`Сирота` = 'false'");
-        }
-    }
+        getDataFromBoolComboBox(whereStud, ui->studOrph, "`Сирота`");
 
     if (ui->studWhealth_ch->isChecked())
         fromStud->append("С ослабленным здоровьем");
 
     if (ui->studWhealth->currentIndex() != 0)
-    {
-        if (ui->studWhealth->currentText() == "Да")
-        {
-            whereStud->append("`С ослабленным здоровьем` = 'true'");
-        }
-        else
-        {
-            whereStud->append("`С ослабленным здоровьем` = 'false'");
-        }
-    }
+        getDataFromBoolComboBox(whereStud, ui->studWhealth, "`С ослабленным здоровьем`");
 
     if (ui->studPolice_ch->isChecked())
         fromStud->append("На учёте в полиции");
 
     if (ui->studPolice->currentIndex() != 0)
-    {
-        if (ui->studPolice->currentText() == "Да")
-        {
-            whereStud->append("`На учёте в полиции` = 'true'");
-        }
-        else
-        {
-            whereStud->append("`На учёте в полиции` = 'false'");
-        }
-
-    }
+        getDataFromBoolComboBox(whereStud, ui->studPolice, "`На учёте в полиции`");
 
     // ---------------------------------------------------------------
     // ---------------------------------------------------------------
@@ -572,4 +498,12 @@ void SearchDialog::getDataFromLineEdit(QStringList *slist, QLineEdit *ledit, QSt
     {
         slist->append(text.arg(str));
     }
+}
+
+void SearchDialog::getDataFromBoolComboBox(QStringList *slist, QComboBox *box, QString text)
+{
+    if (box->currentText() == "Да")
+        slist->append(text + " = 'true'");
+    else
+        slist->append(text + " = 'false'");
 }
