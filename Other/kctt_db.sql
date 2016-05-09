@@ -130,6 +130,15 @@ CREATE VIEW Преподаватели_групп AS
 	GROUP BY (Преподаватели.`ID`)
 ;
 
+-- Триггеры
+
+DROP TRIGGER IF EXISTS AllInsertTrigger;
+CREATE TRIGGER AllInsertTrigger
+ AFTER INSERT ON Объединение
+ BEGIN 
+ INSERT INTO Группа (`Номер`,`ID объединения`) VALUES ("Без группы", (SELECT `ID` FROM Объединение WHERE `Название` = NEW.`Название`));
+ END;
+ 
 -- Примеры данных
 
 INSERT INTO Учащиеся(`ID`, `Тип документа`, `Номер документа`, `Фамилия`, `Имя`, `Пол`) VALUES ("0", "Паспорт", "123", "Иванов", "Иван", "Муж");

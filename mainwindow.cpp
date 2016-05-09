@@ -118,7 +118,8 @@ MainWindow::MainWindow(QWidget *parent) :
     inf.query = "SELECT `ID`, `ID Направленности`, `Название`, `Направленность`, `Отдел`, `Описание` FROM Объединения;";
     inf.index = 0;
     inf.mask.append(true);
-    for (int i = 1; i<5; i++)
+    inf.mask.append(true);
+    for (int i = 2; i<6; i++)
         inf.mask.append(false);
     infoMap.insert("Объединения", inf);
 
@@ -126,12 +127,18 @@ MainWindow::MainWindow(QWidget *parent) :
 
     inf.query = "SELECT `ID`, `Название` FROM Направленности;";
     inf.index = 3;
+    inf.mask.append(true);
+    inf.mask.append(false);
     infoMap.insert("Направленности", inf);
 
     inf.mask.clear();
 
     inf.query = "SELECT `ID`, `ID объединения`, `ID преподавателя`, `Номер`, `Год обучения`, `Объединение`, `Фамилия преподавателя`, `Имя преподавателя`, `Отчество преподавателя` FROM Группы;";
     inf.index = 4;
+    for (int i = 0; i<3; i++)
+        inf.mask.append(true);
+    for (int i = 3; i<9; i++)
+        inf.mask.append(false);
     infoMap.insert("Группы", inf);
 
 
