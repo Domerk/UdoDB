@@ -554,7 +554,7 @@ void MainWindow::on_saveButton_clicked()
             }
             else
             {
-                strQuery = "UPDATE Объединение SET `Название` = '" + name + "', `ID Направленности` = '" + directID + "', `Отдел` = '" + otd + "', `Описание` = '" + desc + "' WHERE ID = " + id + ";";
+                strQuery = "UPDATE Объединение SET `Название` = '" + name + "', `ID Направленности` = '" + directID + "', `Отдел` = '" + otd + "', `Описание` = '" + desc + "' WHERE `ID` = " + id + ";";
             }
 
             //drawTree(); // Перерисовываем дерево
@@ -614,7 +614,7 @@ void MainWindow::on_saveButton_clicked()
             }
             else
             {
-                strQuery = "UPDATE Преподаватели SET `Имя` = '" + name + "', `Фамилия` = '" + surname + "', `Отчество` = '" + patrname + "', `Паспорт` = '" + numpass + "', `Отдел` = '" + otd + "' WHERE ID = " + id + ";";
+                strQuery = "UPDATE Преподаватели SET `Имя` = '" + name + "', `Фамилия` = '" + surname + "', `Отчество` = '" + patrname + "', `Паспорт` = '" + numpass + "', `Отдел` = '" + otd + "' WHERE `ID` = " + id + ";";
             }
 
             break;
@@ -736,10 +736,10 @@ void MainWindow::on_saveButton_clicked()
             {
                 // INSERT
                 strQuery = "INSERT INTO Учащиеся (";
-                strQuery.append("'Фамилия', 'Имя', 'Отчество', 'Тип документа', 'Номер документа', 'Пол', 'Год рождения', ");
-                strQuery.append("'Район школы', 'Школа', 'Класс', 'Родители', 'Домашний адрес', 'Телефон', 'e-mail', 'Дата заявления', 'Форма обучения', ");
-                strQuery.append("'Когда выбыл', 'С ослабленным здоровьем', 'Сирота', 'Инвалид', 'На учёте в полиции', 'Многодетная семья', ");
-                strQuery.append("'Неполная семья', 'Малообеспеченная семья', 'Мигранты', 'Примечания') VALUES ('");
+                strQuery.append("`Фамилия`, `Имя`, `Отчество`, `Тип документа`, `Номер документа`, `Пол`, `Год рождения`, ");
+                strQuery.append("`Район школы`, `Школа`, `Класс`, `Родители`, `Домашний адрес`, `Телефон`, `e-mail`, `Дата заявления`, `Форма обучения`, ");
+                strQuery.append("`Когда выбыл`, `С ослабленным здоровьем`, `Сирота`, `Инвалид`, `На учёте в полиции`, `Многодетная семья`, ");
+                strQuery.append("`Неполная семья`, `Малообеспеченная семья`, `Мигранты`, `Примечания`) VALUES ('");
                 strQuery.append(surname + "', '" + name  + "', '" + patr  + "', '" + docType  + "', '" + docNum  + "', '" + gender  + "', '" + birthday  + "', '");
                 strQuery.append(arSchool  + "', '" + school  + "', '" + grad  + "', '" + parents  + "', '" + address  + "', '" + phone  + "', '" + email  + "', '" + admiss  + "', '" + eduForm  + "', '");
                 strQuery.append(out  + "', '" + weackHealth  + "', '" + orphan  + "', '" + invalid  + "', '" + accountInPolice + "', '" + large  + "', '");
@@ -750,11 +750,11 @@ void MainWindow::on_saveButton_clicked()
             else
             {
                 // UPDATE
-                strQuery.append("UPDATE Учащиеся SET 'Фамилия' = '" + surname + "', 'Имя' = '" + name  + "', 'Отчество' = '" + patr  + "', 'Тип документа' = '" + docType  + "', 'Номер документа' = '" + docNum  + "', 'Пол' = '" + gender  + "', 'Год рождения' = '" + birthday  + "', ");
-                strQuery.append("'Район школы' = '" + arSchool  + "', 'Школа' = '" + school  + "', 'Класс' = '" + grad  + "', 'Родители' = '" + parents  + "', 'Домашний адрес' = '" + address  + "', 'Телефон' = '" + phone  + "', 'e-mail' = '" + email  + "', 'Дата заявления' = '" + admiss  + "', 'Форма обучения' = '" + eduForm  + "', ");
-                strQuery.append("'Когда выбыл' = '" + out  + "', 'С ослабленным здоровьем' = '" + weackHealth  + "', 'Сирота' = '" + orphan  + "', 'Инвалид' = '" + invalid  + "', 'На учёте в полиции' = '" + accountInPolice + "', 'Многодетная семья' = '" + large  + "', ");
-                strQuery.append("'Неполная семья' = '" + incompleteFamily  + "', 'Малообеспеченная семья' = '" + lowIncome  + "', 'Мигранты' = '" + migrants  + "', 'Примечания' = '" + comments  + "' ");
-                strQuery.append("WHERE ID = " + id + ";");
+                strQuery.append("UPDATE Учащиеся SET `Фамилия` = '" + surname + "', `Имя` = '" + name  + "', `Отчество` = '" + patr  + "', `Тип документа` = '" + docType  + "', `Номер документа` = '" + docNum  + "', `Пол` = '" + gender  + "', `Год рождения` = '" + birthday  + "', ");
+                strQuery.append("`Район школы` = '" + arSchool  + "', `Школа` = '" + school  + "', `Класс` = '" + grad  + "', `Родители` = '" + parents  + "', `Домашний адрес` = '" + address  + "', `Телефон` = '" + phone  + "', `e-mail` = '" + email  + "', `Дата заявления` = '" + admiss  + "', `Форма обучения` = '" + eduForm  + "', ");
+                strQuery.append("`Когда выбыл` = '" + out  + "', `С ослабленным здоровьем` = '" + weackHealth  + "', `Сирота` = '" + orphan  + "', `Инвалид` = '" + invalid  + "', `На учёте в полиции` = '" + accountInPolice + "', `Многодетная семья` = '" + large  + "', ");
+                strQuery.append("`Неполная семья` = '" + incompleteFamily  + "', `Малообеспеченная семья` = '" + lowIncome  + "', `Мигранты` = '" + migrants  + "', `Примечания` = '" + comments  + "' ");
+                strQuery.append("WHERE `ID` = " + id + ";");
             }
 
             break;
@@ -786,7 +786,7 @@ void MainWindow::on_saveButton_clicked()
         }
         else
         {
-            strQuery = "UPDATE Направленности SET `Название` = '" + name + "' WHERE ID = " + id + ";";
+            strQuery = "UPDATE Направленности SET `Название` = '" + name + "' WHERE `ID` = " + id + ";";
         }
 
         //drawTree(); // Перерисовываем дерево
@@ -824,7 +824,7 @@ void MainWindow::on_saveButton_clicked()
         }
         else
         {
-            strQuery = "UPDATE Группа SET `ID объединения` = " + assID + ", `ID преподавателя` = " + teachID + ", `Номер` = '" + num + "', `Год обучения` = " + year + " WHERE ID = " + id + ";";
+            strQuery = "UPDATE Группа SET `ID объединения` = " + assID + ", `ID преподавателя` = " + teachID + ", `Номер` = '" + num + "', `Год обучения` = " + year + " WHERE `ID` = " + id + ";";
         }
 
         //drawTree(); // Перерисовываем дерево
@@ -949,7 +949,7 @@ void MainWindow::drawTree()
        treeDir->setText(0, dir);
 
        strQuery.clear();
-       strQuery.append("SELECT Объединения.Название FROM Объединения, Направленности  WHERE Направленности.ID = Объединения.`ID Направленности` AND Направленности.Название = `");
+       strQuery.append("SELECT Объединения.Название FROM Объединения, Направленности  WHERE Направленности.`ID` = Объединения.`ID Направленности` AND Направленности.`Название` = `");
        strQuery.append(dir + "`;");
        query.exec(strQuery);
        while (query.next())    // Пока есть результаты запроса
@@ -965,7 +965,7 @@ void MainWindow::drawTree()
            treeAss->setText(0, ass);
 
            strQuery.clear();
-           strQuery.append("SELECT Группы.Номер, Группы.ID FROM Объединения, Направленности, Группы  WHERE Направленности.ID = Объединения.`ID Направленности` AND Объединения.ID = Группы.`ID объединения` AND Направленности.Название = `");
+           strQuery.append("SELECT Группы.Номер, Группы.ID FROM Объединения, Направленности, Группы  WHERE Направленности.`ID` = Объединения.`ID Направленности` AND Объединения.`ID` = Группы.`ID объединения` AND Направленности.`Название` = `");
            strQuery.append(dir + "`, Объединения.Название = `" + ass + "`;");
            query.exec(strQuery);
            while (query.next())    // Пока есть результаты запроса
