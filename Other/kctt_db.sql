@@ -4,7 +4,7 @@ DROP TABLE IF EXISTS Учащиеся;
 DROP TABLE IF EXISTS Преподаватели;
 DROP TABLE IF EXISTS Направленности;
 DROP TABLE IF EXISTS Объединение;
-DROP TABLE IF EXISTS Группы;
+DROP TABLE IF EXISTS Группа;
 DROP TABLE IF EXISTS Нагрузка;
 
 CREATE TABLE Учащиеся (
@@ -45,7 +45,6 @@ CREATE TABLE Учащиеся (
 );
 
 CREATE TABLE Преподаватели (
--- Поля
 `ID` 				INTEGER			PRIMARY KEY			AUTOINCREMENT,
 `Фамилия`   		VARCHAR(60)		NOT NULL,
 `Имя`     			VARCHAR(60)		NOT NULL,
@@ -60,7 +59,6 @@ CREATE TABLE Направленности (
 );
 
 CREATE TABLE Объединение (
--- Поля
 `ID` 			INTEGER				PRIMARY KEY			AUTOINCREMENT,
 `Название`		VARCHAR(60)		NOT NULL,
 `Отдел`			  	VARCHAR(60)		NOT NULL,
@@ -70,29 +68,24 @@ CREATE TABLE Объединение (
 FOREIGN KEY (`ID Направленности`)	REFERENCES Направленности(`ID`)
 );
 
-
 CREATE TABLE Группа (
--- Поля
 `ID` 				INTEGER			PRIMARY KEY			AUTOINCREMENT,
 `ID объединения` 	INTEGER,
 `ID преподавателя` 	INTEGER,
 `Номер`			   	VARCHAR(30),
 `Год обучения`		INTEGER,
 
--- Параметры
-FOREIGN KEY (`ID объединения`) 		REFERENCES Объединение(`ID`)
-FOREIGN KEY (`ID преподавателя`)	REFERENCES Преподаватели(`ID`)
+FOREIGN KEY (`ID объединения`) 		REFERENCES Объединение(`ID`)		ON DELETE CASCADE,
+FOREIGN KEY (`ID преподавателя`)	REFERENCES Преподаватели(`ID`)		ON DELETE CASCADE
 );
 
 CREATE TABLE Нагрузка (
--- Поля
 `ID учащегося`	INTEGER,
 `ID группы` 	INTEGER,
 
--- Параметры
 PRIMARY KEY (`ID учащегося`, `ID группы`),
-FOREIGN KEY (`ID учащегося`) 	REFERENCES Учащиеся(`ID`)
-FOREIGN KEY (`ID группы`)		REFERENCES Группа(`ID`)
+FOREIGN KEY (`ID учащегося`) 	REFERENCES Учащиеся(`ID`) 	ON DELETE CASCADE,
+FOREIGN KEY (`ID группы`)		REFERENCES Группа(`ID`)		ON DELETE CASCADE
 );
 
 
@@ -136,7 +129,16 @@ DROP TRIGGER IF EXISTS AllInsertTrigger;
 CREATE TRIGGER AllInsertTrigger
  AFTER INSERT ON Объединение
  BEGIN 
- INSERT INTO Группа (`Номер`,`ID объединения`) VALUES ("Без группы", (SELECT `ID` FROM Объединение WHERE `Название` = NEW.`Название`));
+	INSERT INTO Группа (`Номер`,`ID объединения`) VALUES ("Без группы", (SELECT `ID` FROM Объединение WHERE `Название` = NEW.`Название`));
+ END;
+ 
+ -- Вот эта штука не работает (не создаётся!), нужно написать её как-то иначе
+ 
+ DROP TRIGGER IF EXISTS AllDeleteTrigger;
+ CREATE TRIGGER AllDeleteTrigger
+ BEFORE DELETE ON Объединения
+ BEGIN 
+	DELETE FROM Объединениe WHERE `ID` = OLD.`ID`;
  END;
  
 -- Примеры данных

@@ -115,6 +115,7 @@ public slots:
     void connectReconfigSlot();
     void querySlot(QString);
     void querySlot(QTableWidget* tableWidget, QString strQuery, bool mainDB);
+    void queriesSlot(QStringList qsl, bool mainDB);
 };
 
 #endif // MAINWINDOW_H

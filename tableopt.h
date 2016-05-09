@@ -26,6 +26,8 @@ public:
 private slots:
     void on_lineSearch_textChanged(const QString &arg1);
     void search();
+    void on_insertButton_clicked();
+    void on_deleteButton_clicked();
 
 private:
     Ui::TableOpt *ui;
@@ -37,6 +39,7 @@ private:
 
 signals:
     void signalQuery(QTableWidget* tableWidget, QString strQuery, bool mainDB);
+    void signalQueries(QStringList qsl, bool mainDB);
 };
 
 #endif // TABLEOPT_H

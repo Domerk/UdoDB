@@ -19,6 +19,8 @@ MainWindow::MainWindow(QWidget *parent) :
     dbDialog = new TableOpt();
     dbDialog->setType("tempDB");
     connect(dbDialog, SIGNAL(signalQuery(QTableWidget*,QString,bool)), this, SLOT(querySlot(QTableWidget*,QString,bool)));
+    connect(dbDialog, SIGNAL(signalQueries(QStringList,bool)), this, SLOT(queriesSlot(QStringList,bool)));
+
 
     // Регулярное выражение для проверки имён, фамилий и отчеств.
     names = new QRegularExpression("^[А-ЯЁ]{1}[а-яё]*(-[А-ЯЁ]{1}[а-яё]*)?$");
@@ -459,12 +461,13 @@ void MainWindow::deleteThis()
                         if (selectionRange.rowCount() > 0)
                             for (int row = selectionRange.topRow(); row <= selectionRange.bottomRow(); row++)
                             {
-                                strQuery.append("DELETE FROM " + *currentTable + " WHERE ID = " + ui->tableWidget->item(row, 0)->text() + " ;");
+                                strQuery.append("DELETE FROM " + *currentTable + " WHERE `ID` = " + ui->tableWidget->item(row, 0)->text() + " ;");
                                 query.exec(strQuery);
                                 strQuery.clear();
                             }
                     }
 
+                    qDebug() << query.lastError().text();
                     repeatLastSelect();     // Повторяем последний Select
                     clearMoreInfoForm();    // Чистим поле с подробностями
             }
@@ -832,12 +835,14 @@ void MainWindow::on_saveButton_clicked()
 
     QSqlQuery query;
     query.exec(strQuery);
+    qDebug() << strQuery;
 
     if (query.isValid())
         ui->lblStatus->setText("Ok");
     else
         ui->lblStatus->setText("Error");
 
+    qDebug() << query.lastError().text();
     repeatLastSelect();
 }
 
@@ -1570,7 +1575,7 @@ void MainWindow::showTempTable()
     dbDialog->setType("tempDB");
     QTableWidget *wgt = dbDialog->letTable();
     QSqlQuery query(tempDB);
-    query.exec("SELECT Запись.`Объединение` `Объединение`, Учащийся.`Фамилия` `Фамилия`, Учащийся.`Имя` `Имя`, Учащийся.`Отчество` `Отчество`, Учащийся.`Тип документа` `Тип документа`, Учащийся.`Номер документа` `Номер документа`, Учащийся.`Пол` `Пол`, Учащийся.`Год рождения` `Год рождения`, Учащийся.`Район школы` `Район школы`, Учащийся.`Школа` `Школа`, `Класс` `Класс`, Учащийся.`Родители` `Родители`, Учащийся.`Домашний адрес` `Домашний адрес`, Учащийся.`Телефон` `Телефон`, Учащийся.`e-mail` `e-mail` FROM Учащийся, Запись WHERE Учащийся.`Тип документа` = Запись.`Тип документа` AND Учащийся.`Номер документа` = Запись.`Номер документа`;");
+    query.exec("SELECT Запись.`Объединение` `Объединение`, Учащийся.`Фамилия` `Фамилия`, Учащийся.`Имя` `Имя`, Учащийся.`Отчество` `Отчество`, Учащийся.`Тип документа` `Тип документа`, Учащийся.`Номер документа` `Номер документа`, Учащийся.`Пол` `Пол`, Учащийся.`Год рождения` `Год рождения`, Учащийся.`Район школы` `Район школы`, Учащийся.`Школа` `Школа`, Учащийся.`Класс` `Класс`, Учащийся.`Родители` `Родители`, Учащийся.`Домашний адрес` `Домашний адрес`, Учащийся.`Телефон` `Телефон`, Учащийся.`e-mail` `e-mail` FROM Учащийся, Запись WHERE Учащийся.`Тип документа` = Запись.`Тип документа` AND Учащийся.`Номер документа` = Запись.`Номер документа`;");
     qDebug()<<query.lastError().text();
     drawHeaders(query, wgt, true, dbDialog->letSearchBox());
     drawRows(query, wgt, false);
@@ -1582,12 +1587,24 @@ void MainWindow::querySlot(QTableWidget* tableWidget, QString strQuery, bool mai
 {
     QSqlQuery query;
     if (!mainDB)
-    {
         query = QSqlQuery(tempDB);
-    }
 
     query.exec(strQuery);
     drawRows(query, tableWidget, false);
+}
+
+void MainWindow::queriesSlot(QStringList qsl, bool mainDB)
+{
+    QSqlQuery query;
+    if (!mainDB)
+        query = QSqlQuery(tempDB);
+
+    for (QString & strQuery : qsl)
+    {
+        query.exec(strQuery);
+        qDebug() << strQuery;
+        qDebug() << query.lastError().text();
+    }
 }
 
 void MainWindow::on_removeStudToGroup_clicked()
