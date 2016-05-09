@@ -131,14 +131,19 @@ CREATE TRIGGER AllInsertTrigger
  BEGIN 
 	INSERT INTO Группа (`Номер`,`ID объединения`) VALUES ("Без группы", (SELECT `ID` FROM Объединение WHERE `Название` = NEW.`Название`));
  END;
- 
- -- Вот эта штука не работает (не создаётся!), нужно написать её как-то иначе
- 
+  
  DROP TRIGGER IF EXISTS AllDeleteTrigger;
  CREATE TRIGGER AllDeleteTrigger
- BEFORE DELETE ON Объединения
+ INSTEAD OF DELETE ON Объединения
  BEGIN 
-	DELETE FROM Объединениe WHERE `ID` = OLD.`ID`;
+	DELETE FROM Объединение WHERE `ID` = OLD.`ID`;
+ END;
+ 
+ DROP TRIGGER IF EXISTS GroupDeleteTrigger;
+ CREATE TRIGGER GroupDeleteTrigger
+ INSTEAD OF DELETE ON Группы
+ BEGIN 
+	DELETE FROM Группа WHERE `ID` = OLD.`ID`;
  END;
  
 -- Примеры данных
