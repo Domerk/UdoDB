@@ -254,14 +254,17 @@ void MainWindow::showTable(QString table)
     currentTable->clear();  // О текущей таблице
     currentMask.clear();   // И о её маске
 
-    // Далее в зависимости от того, какую таблицу нцжно вывести
+    // Далее в зависимости от того, какую таблицу нужно вывести
     // Выполняем соотвествующий запрос, сохраняем информацию о нём
     // И показываем соотвесттвующую страницу StackedWidget (форму)
 
-    query.exec(infoMap.value(table).query);
-    lastSelect->append(infoMap.value(table).query);
-    ui->stackedWidget->setCurrentIndex(infoMap.value(table).index);
-    currentMask = infoMap.value(table).mask;
+    if (infoMap.contains(table))
+    {
+        query.exec(infoMap.value(table).query);
+        lastSelect->append(infoMap.value(table).query);
+        ui->stackedWidget->setCurrentIndex(infoMap.value(table).index);
+        currentMask = infoMap.value(table).mask;
+    }
 
     // Сохраняем инфу о текущей таблице
     currentTable->append(table);
@@ -470,6 +473,9 @@ void MainWindow::deleteThis()
                     qDebug() << query.lastError().text();
                     repeatLastSelect();     // Повторяем последний Select
                     clearMoreInfoForm();    // Чистим поле с подробностями
+
+                    if (*currentTable == "Объединения" || *currentTable == "Направленности" || *currentTable == "Группы")
+                        drawTree();
             }
 
         }
@@ -556,8 +562,6 @@ void MainWindow::on_saveButton_clicked()
             {
                 strQuery = "UPDATE Объединение SET `Название` = '" + name + "', `ID Направленности` = '" + directID + "', `Отдел` = '" + otd + "', `Описание` = '" + desc + "' WHERE `ID` = " + id + ";";
             }
-
-            //drawTree(); // Перерисовываем дерево
             break;
         }
         case 1:     // Преподаватель
@@ -788,8 +792,6 @@ void MainWindow::on_saveButton_clicked()
         {
             strQuery = "UPDATE Направленности SET `Название` = '" + name + "' WHERE `ID` = " + id + ";";
         }
-
-        //drawTree(); // Перерисовываем дерево
         break;
 
     }
@@ -826,8 +828,6 @@ void MainWindow::on_saveButton_clicked()
         {
             strQuery = "UPDATE Группа SET `ID объединения` = " + assID + ", `ID преподавателя` = " + teachID + ", `Номер` = '" + num + "', `Год обучения` = " + year + " WHERE `ID` = " + id + ";";
         }
-
-        //drawTree(); // Перерисовываем дерево
         break;
 
     }
@@ -844,6 +844,9 @@ void MainWindow::on_saveButton_clicked()
 
     qDebug() << query.lastError().text();
     repeatLastSelect();
+
+    if (*currentTable == "Объединения" || *currentTable == "Направленности" || *currentTable == "Группы")
+        drawTree();
 }
 
 // ============================================================
@@ -923,6 +926,25 @@ void MainWindow::simpleSearch()
 
 void MainWindow::drawTree()
 {
+    ui->treeWidget->clear();
+
+    QStringList* bases = new QStringList();
+    bases->append("Учащиеся");
+    bases->append("Преподаватели");
+    bases->append("Направленности");
+    bases->append("Объединения");
+    bases->append("Группы");
+    QTreeWidgetItem *base = new QTreeWidgetItem(ui->treeWidget);
+    base->setText(0, "Общее");
+    for (int i = 0; i<5; i++)
+    {
+        QTreeWidgetItem *newItem = new QTreeWidgetItem();
+        newItem->setText(0, bases->at(i));
+        base->addChild(newItem);
+    }
+
+    delete bases;
+
    QStringList *directions = new QStringList();
    QStringList *association = new QStringList();
 
@@ -931,7 +953,7 @@ void MainWindow::drawTree()
 
    // Получаем список направленностей
 
-   QString strQuery = "SELECT Название FROM Направленности ;";
+   QString strQuery = "SELECT `Название` FROM Направленности;";
    QSqlQuery query;
    query.exec(strQuery);
    while (query.next())    // Пока есть результаты запроса
@@ -949,8 +971,8 @@ void MainWindow::drawTree()
        treeDir->setText(0, dir);
 
        strQuery.clear();
-       strQuery.append("SELECT Объединения.Название FROM Объединения, Направленности  WHERE Направленности.`ID` = Объединения.`ID Направленности` AND Направленности.`Название` = `");
-       strQuery.append(dir + "`;");
+       strQuery.append("SELECT `Название` FROM Объединения WHERE `Направленность` = '");
+       strQuery.append(dir + "';");
        query.exec(strQuery);
        while (query.next())    // Пока есть результаты запроса
        {
@@ -965,9 +987,11 @@ void MainWindow::drawTree()
            treeAss->setText(0, ass);
 
            strQuery.clear();
-           strQuery.append("SELECT Группы.Номер, Группы.ID FROM Объединения, Направленности, Группы  WHERE Направленности.`ID` = Объединения.`ID Направленности` AND Объединения.`ID` = Группы.`ID объединения` AND Направленности.`Название` = `");
-           strQuery.append(dir + "`, Объединения.Название = `" + ass + "`;");
+           strQuery.append("SELECT  Группа.`Номер`, Группа.`ID` FROM Объединение, Направленности, Группа  WHERE Направленности.`ID` = Объединение.`ID Направленности` AND Объединение.`ID` = Группа.`ID объединения` AND Направленности.`Название` = '");
+           strQuery.append(dir + "' AND Объединение.Название = '" + ass + "';");
+           qDebug() << strQuery;
            query.exec(strQuery);
+           qDebug() << query.lastError().text();
            while (query.next())    // Пока есть результаты запроса
            {
                QTreeWidgetItem *treeGroup = new QTreeWidgetItem();
@@ -981,6 +1005,7 @@ void MainWindow::drawTree()
        }
 
        direct->addChild(treeDir);
+       association->clear();
    }
 
 }
