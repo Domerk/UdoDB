@@ -167,16 +167,16 @@ void SearchDialog::on_buttonBox_accepted()
 
 
     if (ui->studBYear_ch->isChecked())
-        fromStud->append("Год рождения");
+        fromStud->append("Дата рождения");
 
     if (ui->studBYear_min->value() != ui->studBYear_min->minimum())
     {
-        whereStud->append("`Год рождения` >= 01.01." + QString::number(ui->studBYear_min->value()));
+        whereStud->append("`Дата рождения` >= 01.01." + QString::number(ui->studBYear_min->value()));
     }
 
     if (ui->studBYear_max->value() != ui->studBYear_max->minimum())
     {
-        whereStud->append("`Год рождения` <= 31.12." + QString::number(ui->studBYear_max->value()));
+        whereStud->append("`Дата рождения` <= 31.12." + QString::number(ui->studBYear_max->value()));
     }
 
 

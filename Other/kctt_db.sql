@@ -16,7 +16,7 @@ CREATE TABLE Учащиеся (
 `Тип документа`	  	VARCHAR(60)		NOT NULL,
 `Номер документа`	VARCHAR(60)		NOT NULL,
 `Пол`			    VARCHAR(3)		NOT NULL,
-`Год рождения`	  	DATE,
+`Дата рождения`	  	DATE,
 
 `Район школы`		  VARCHAR(60),
 `Школа`			      VARCHAR(60),
@@ -105,7 +105,6 @@ CREATE VIEW Группы AS
 	WHERE Группа.`ID объединения` = Объединение.`ID`
 	AND Группа.`ID преподавателя` = Преподаватели.`ID`
 ;
-
 
 DROP VIEW IF EXISTS Состав_групп;
 CREATE VIEW Состав_групп AS
