@@ -371,7 +371,6 @@ void MainWindow::drawRows(QSqlQuery query, QTableWidget *table, bool available)
 // ================= Скрытие полей по маске ===================
 // ============================================================
 
-
 void MainWindow::hideColumnsFromMask(QVector<bool> mask)
 {
     if (mask.size() == ui->tableWidget->columnCount())
@@ -882,37 +881,35 @@ void MainWindow::simpleSearch()
 
         QString *newSelect = new QString();
 
-        if (*currentTable == "Учащиеся")
+        if (searchBox->currentText() == "С ослабленным здоровьем" || searchBox->currentText() ==  "Сирота"
+                || searchBox->currentText() == "Инвалид" || searchBox->currentText() == "На учёте в полиции"
+                || searchBox->currentText() == "Многодетная семья" || searchBox->currentText() == "Неполная семья"
+                || searchBox->currentText() == "Малообеспеченная семья" || searchBox->currentText() == "Мигранты")
         {
-            if (searchBox->currentText() == "С ослабленным здоровьем" || searchBox->currentText() ==  "Сирота"
-                    || searchBox->currentText() == "Инвалид" || searchBox->currentText() == "На учёте в полиции"
-                    || searchBox->currentText() == "Многодетная семья" || searchBox->currentText() == "Неполная семья"
-                    || searchBox->currentText() == "Малообеспеченная семья" || searchBox->currentText() == "Мигранты")
-            {
-                QString str = infoMap.value(*currentTable).query;
-                newSelect->append(str.replace(";", " ") + " WHERE `" + searchBox->currentText());
-                if (searchText->toLower() == "да")
-                    newSelect->append("` = 'true';");
-                else
-                    newSelect->append("` = 'false';");
-            }
+            QString str = infoMap.value(*currentTable).query;
+            newSelect->append(str.replace(";", " "));
+            if (newSelect->contains("WHERE", Qt::CaseSensitive))
+                newSelect->append("AND ");
             else
-            {
-                QString str = infoMap.value(*currentTable).query;
-                newSelect->append(str.replace(";", " ") + " WHERE `" + searchBox->currentText() + "` LIKE '%" + *searchText + "%';");
-            }
-        }
+                newSelect->append("WHERE ");
 
-        if (*currentTable == "Преподаватели")
+            newSelect->append("`" + searchBox->currentText());
+
+            if (searchText->toLower() == "да")
+                newSelect->append("` = 'true';");
+            else
+                newSelect->append("` = 'false';");
+        }
+        else
         {
             QString str = infoMap.value(*currentTable).query;
-            newSelect->append(str.replace(";", " ") + " WHERE `" + searchBox->currentText() + "` LIKE '%" + *searchText + "%';");
-        }
+            newSelect->append(str.replace(";", " "));
+            if (newSelect->contains("WHERE", Qt::CaseSensitive))
+                newSelect->append("AND ");
+            else
+                newSelect->append("WHERE ");
 
-        if (*currentTable == "Объединения")
-        {
-            QString str = infoMap.value(*currentTable).query;
-            newSelect->append(str.replace(";", " ") + " WHERE `" + searchBox->currentText() + "` LIKE '%" + *searchText + "%';");
+            newSelect->append("`" + searchBox->currentText() + "` LIKE '%" + *searchText + "%';");
         }
 
         QSqlQuery query;
