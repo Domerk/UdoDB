@@ -51,6 +51,9 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->studsInGroupe->setColumnHidden(0, true);
     ui->alInDirect->setColumnHidden(0, true);
 
+    ui->studGroupTable->setColumnHidden(0, true);
+    ui->studGroupTable->setColumnHidden(1, true);
+
     // -------------------------------- Меню --------------------------------
 
     connect (ui->actionConnect, SIGNAL(triggered()), connectDialog, SLOT(exec()));
@@ -264,6 +267,9 @@ void MainWindow::showTable(QString table)
         lastSelect->append(infoMap.value(table).query);
         ui->stackedWidget->setCurrentIndex(infoMap.value(table).index);
         currentMask = infoMap.value(table).mask;
+
+        qDebug()<<*lastSelect;
+        qDebug()<<query.lastError().text();
     }
 
     // Сохраняем инфу о текущей таблице
@@ -306,7 +312,7 @@ void MainWindow::drawHeaders(QSqlQuery query, QTableWidget *table, bool forSearc
     if (forSearch)
     {
         serchCBox->clear();
-        if (qsl.size() > 1 && qsl.at(0) == "ID")
+        while (qsl.size() > 1 && qsl.at(0).contains("ID", Qt::CaseInsensitive))
             qsl.removeFirst();          // Удаляем 0й элемент (ID)
         serchCBox->addItems(qsl);       // Задаём комбобоксу поиска
     }
@@ -1204,6 +1210,16 @@ void MainWindow::showMoreInfo(int row)
 
             // Дополнительные сведенья
             ui->studComments->setPlainText(ui->tableWidget->item(row, 26)->text());
+
+
+            QString strQuery = "SELECT `ID объединения`, `ID Группы`, `Объединение`, `Номер группы` FROM Нагрузка_Учащегося WHERE `ID Учащегося` = '";
+            strQuery.append(ui->studID->text() + "';");
+            QSqlQuery query;
+            query.exec(strQuery);
+            drawRows(query, ui->studGroupTable, false);
+
+            qDebug()<<query.lastError().text();
+
             break;
         }
 
@@ -1265,6 +1281,12 @@ void MainWindow::clearMoreInfoForm()
             ui->alDirectID->clear();
             ui->alOtd->clear();          // Отдел
             ui->alDescript->clear();     // Описание
+
+            // groupInAl
+            int rowCount = ui->groupInAl->rowCount();
+            for(int i = 0; i < rowCount; i++)
+                 ui->groupInAl->removeRow(0);
+
             break;
         }
         case 1:     // Преподаватель
@@ -1275,6 +1297,12 @@ void MainWindow::clearMoreInfoForm()
             ui->teachPatr->clear();      // Отчество
             ui->teachNumPass->clear();   // Номер паспорта
             ui->teachOtd->clear();       // Отдел
+
+            // groupInTeach
+            int rowCount = ui->groupInTeach->rowCount();
+            for(int i = 0; i < rowCount; i++)
+                 ui->groupInTeach->removeRow(0);
+
             break;
         }
         case 2:     // Учащийся
@@ -1323,6 +1351,11 @@ void MainWindow::clearMoreInfoForm()
             ui->migrants->setChecked(false);
             ui->orphan->setChecked(false);
             ui->weackHealth->setChecked(false);
+
+            int rowCount = ui->studGroupTable->rowCount();
+            for(int i = 0; i < rowCount; i++)
+                 ui->studGroupTable->removeRow(0);
+
             break;
         }
 
@@ -1505,6 +1538,7 @@ void MainWindow::exportInExel()
 // ============================================================
 // =============== Добавление учащихся в группы ===============
 // ============================================================
+
 void MainWindow::on_addStudInGroup_clicked()
 {
     dbDialog->setType("Stud");
