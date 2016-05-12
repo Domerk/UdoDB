@@ -133,8 +133,8 @@ void TableOpt::on_insertButton_clicked()
             }
         }
         emit signalQueries(qsl, true);
-        emit signalQuery(ui->tableWidget, baseQuery, mainDB);
-
+        on_deleteButton_clicked();
+        emit signalQuery(ui->tableWidget, baseQuery, mainDB);      
     }
 }
 
@@ -149,7 +149,7 @@ void TableOpt::on_deleteButton_clicked()
             if (selectionRange.rowCount() > 0)
                 for (int row = selectionRange.topRow(); row <= selectionRange.bottomRow(); row++)
                 {
-                    qsl.append("DELETE FROM Учащийся WHERE `ID` = " + ui->tableWidget->item(row, 0)->text() + ";");
+                    qsl.append("DELETE FROM Учащийся WHERE `Тип документа` = '" + ui->tableWidget->item(row, 4)->text() + "' AND `Номер документа` = '" + ui->tableWidget->item(row, 5)->text() + "'");
                 }
         }
         emit signalQueries(qsl, false);
