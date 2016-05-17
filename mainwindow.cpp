@@ -249,7 +249,7 @@ void MainWindow::connectReconfigSlot()
 void MainWindow::showTable(QString table)
 {
 
-    if (table == "Общее" || table == *currentTable)
+    if (table == "Общее" ||table == "Отчётность" || table == *currentTable)
         return;
 
     QSqlQuery query;        // Создаём запрос
@@ -265,7 +265,8 @@ void MainWindow::showTable(QString table)
     {
         query.exec(infoMap.value(table).query);
         lastSelect->append(infoMap.value(table).query);
-        ui->stackedWidget->setCurrentIndex(infoMap.value(table).index);
+        if (infoMap.value(table).index != -1)
+            ui->stackedWidget->setCurrentIndex(infoMap.value(table).index);
         currentMask = infoMap.value(table).mask;
 
         qDebug()<<*lastSelect;
@@ -404,17 +405,21 @@ void MainWindow::changeTableMask()
     int row = 0;
     int col = 0;
 
-    for (int i = 0; i < colCount-1; i++)        // Запись заголовков
+    for (int i = 0; i < colCount; i++)        // Запись заголовков
     {
-        vct.append(new QCheckBox(ui->tableWidget->horizontalHeaderItem(i+1)->text()));
-        vct[i]->setChecked(!currentMask[i+1]);
+        vct.append(new QCheckBox(ui->tableWidget->horizontalHeaderItem(i)->text()));
+        vct[i]->setChecked(!currentMask[i]);
         gl->addWidget(vct[i], row, col);
 
-        row++;
-        if (row>10)
+        if (ui->tableWidget->horizontalHeaderItem(i)->text().contains("ID", Qt::CaseInsensitive))
+            vct[i]->hide();     // Если название поля содержит ID, то оно скрыто
+        else
+            row++;  // Иначе увеличиваем количество строк
+
+        if (row>10) // Если количество строк больше 10
         {
-            row=0;
-            col++;
+            row=0;      // Сбрасываем счётчик строк
+            col++;      // Увеличиваем счётчик столбцов на 1
         }
     }
 
@@ -426,8 +431,8 @@ void MainWindow::changeTableMask()
     wgt->setWindowTitle(tr("Скрыть / Показать поля"));
     if (wgt->exec() == QDialog::Accepted)
     {
-        for(int i = 1; i < colCount; i++)
-            currentMask[i] = !vct[i-1]->isChecked();
+        for(int i = 0; i < colCount; i++)
+            currentMask[i] = !vct[i]->isChecked();
 
         hideColumnsFromMask(currentMask);
 
@@ -1026,6 +1031,34 @@ void MainWindow::drawTree()
        association->clear();
    }
 
+   // Получение запросов для секции Отчётность
+
+   /*
+   QTreeWidgetItem *reporting = new QTreeWidgetItem(ui->treeWidget);
+   reporting->setText(0, "Отчётность");
+
+   //создаём экземпляр QSettings, который работает с нужным файлом
+   QSettings reportings(":/settings/Other/reporting.ini", QSettings::IniFormat);
+   reportings.beginGroup("Queries");
+   reportings.setIniCodec(QTextCodec::codecForName("UTF-8"));
+
+   //для каждого ключа из тех, что находятся в секции "Queries"
+   for (const QString &key : reportings.childKeys())
+   {
+       QTreeWidgetItem *treeReport = new QTreeWidgetItem();
+       QString k = QString::fromUtf8(key.toLatin1());
+       k.replace("_", " ");
+       treeReport->setText(0, k);
+       reporting->addChild(treeReport);
+
+       Info info;
+       info.query = reportings.value(key).toString();
+       infoMap.insert(k, info);
+   }
+
+   reportings.endGroup();
+   */
+
 }
 
 // ============================================================
@@ -1045,9 +1078,9 @@ void MainWindow::showMoreInfo(int row)
 {
     clearMoreInfoForm(); // Чистим форму
     int currentIndex = ui->stackedWidget->currentIndex();
-
     switch (currentIndex)
     {
+        case -1: return;
         case 0:     // Объединение
         {
         // "SELECT `ID`, `ID Направленности`, `Название`, `Направленность`, `Отдел`, `Описание` FROM Объединения;"
@@ -1270,6 +1303,7 @@ void MainWindow::clearMoreInfoForm()
     int currentIndex = ui->stackedWidget->currentIndex();
     switch (currentIndex)
     {
+        case -1: return;
         case 0:     // Объединение
         {
             ui->alID->clear();           // ID
