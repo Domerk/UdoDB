@@ -58,6 +58,13 @@ void TableOpt::setType(QString type)
     ui->deleteButton->hide();
     ui->insertButton->hide();
 
+    if (ui->searchParam->isHidden())
+    {
+        ui->searchParam->show();
+        ui->buttonSearch->show();
+        ui->lineSearch->show();
+    }
+
     if (myType == "Ass")
     {
         this->setWindowTitle(tr("Объединения"));
