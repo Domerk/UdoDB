@@ -54,6 +54,11 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->studGroupTable->setColumnHidden(0, true);
     ui->studGroupTable->setColumnHidden(1, true);
 
+    QSettings settings ("Other/config.ini", QSettings::IniFormat);
+    settings.beginGroup("Settings");
+    this->setWindowTitle(settings.value("windowtile", "База данных учащихся УДО").toString());
+    settings.endGroup();
+
     // -------------------------------- Меню --------------------------------
 
     connect (ui->actionConnect, SIGNAL(triggered()), connectDialog, SLOT(exec()));
@@ -192,8 +197,8 @@ bool MainWindow::connectDB(QString nameDB)
         myDB = QSqlDatabase::addDatabase("QSQLITE");    // Указываем СУБД, имени соединения нет - соединение по умолчанию
     }
 
-    QSettings settings ("Kctt", "KcttDB");
-    settings.beginGroup("mainDB");
+    QSettings settings ("Other/config.ini", QSettings::IniFormat);
+    settings.beginGroup("MainDB");
     myDB.setHostName(settings.value("hostname", "localhost").toString());
     myDB.setDatabaseName(settings.value("dbname", "kcttDB").toString());
     myDB.setUserName(settings.value("username").toString());
@@ -249,7 +254,7 @@ void MainWindow::connectReconfigSlot()
 void MainWindow::showTable(QString table)
 {
 
-    if (table == "Общее" ||table == "Отчётность" || table == *currentTable)
+    if (table == "Общее" || table == *currentTable)
         return;
 
     QSqlQuery query;        // Создаём запрос
@@ -1030,35 +1035,6 @@ void MainWindow::drawTree()
        direct->addChild(treeDir);
        association->clear();
    }
-
-   // Получение запросов для секции Отчётность
-
-   /*
-   QTreeWidgetItem *reporting = new QTreeWidgetItem(ui->treeWidget);
-   reporting->setText(0, "Отчётность");
-
-   //создаём экземпляр QSettings, который работает с нужным файлом
-   QSettings reportings(":/settings/Other/reporting.ini", QSettings::IniFormat);
-   reportings.beginGroup("Queries");
-   reportings.setIniCodec(QTextCodec::codecForName("UTF-8"));
-
-   //для каждого ключа из тех, что находятся в секции "Queries"
-   for (const QString &key : reportings.childKeys())
-   {
-       QTreeWidgetItem *treeReport = new QTreeWidgetItem();
-       QString k = QString::fromUtf8(key.toLatin1());
-       k.replace("_", " ");
-       treeReport->setText(0, k);
-       reporting->addChild(treeReport);
-
-       Info info;
-       info.query = reportings.value(key).toString();
-       infoMap.insert(k, info);
-   }
-
-   reportings.endGroup();
-   */
-
 }
 
 // ============================================================

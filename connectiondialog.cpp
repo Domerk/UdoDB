@@ -12,7 +12,7 @@ ConnectionDialog::ConnectionDialog(QWidget *parent) :
 
     this->setWindowTitle(tr("Настройка соединения"));
 
-    QSettings settings ("Kctt", "KcttDB");
+    QSettings settings ("Other/config.ini", QSettings::IniFormat);
 
     settings.beginGroup("MainDB");
     ui->mainHost->setText(settings.value("hostname", "localhost").toString());
@@ -52,7 +52,7 @@ void ConnectionDialog::on_buttonBox_accepted()
     // Если действие подтверждено
     if (messageBox.exec() == QMessageBox::Yes)
     {
-        QSettings settings ("Kctt", "KcttDB");
+        QSettings settings ("Other/config.ini", QSettings::IniFormat);
 
         settings.beginGroup("MainDB");
         settings.setValue("hostname", ui->mainHost->text());
