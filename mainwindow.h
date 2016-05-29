@@ -53,7 +53,7 @@ private:
     struct Info
     {
         QString query;
-        int index;
+        int index = -1;
         QVector<bool> mask;
     };
 
@@ -75,7 +75,7 @@ private:
     QComboBox *searchBox;
     QLineEdit *searchEdit;
 
-    bool connectDB(QString nameDB);
+    bool connectDB();
     void showTable(QString table);
     void drawHeaders(QSqlQuery query, QTableWidget *table, bool forSearch, QComboBox *serchCBox);
     void drawRows(QSqlQuery query, QTableWidget *table, bool available);
@@ -110,6 +110,9 @@ private slots:
     void showTempTable();
 
     void on_removeStudToGroup_clicked();
+
+    void showQtInfo();
+    void showLicense();
 
 public slots:
     void connectReconfigSlot();

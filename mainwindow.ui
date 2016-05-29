@@ -136,7 +136,7 @@
                 <rect>
                  <x>0</x>
                  <y>0</y>
-                 <width>297</width>
+                 <width>218</width>
                  <height>317</height>
                 </rect>
                </property>
@@ -320,8 +320,8 @@
                 <rect>
                  <x>0</x>
                  <y>0</y>
-                 <width>314</width>
-                 <height>316</height>
+                 <width>166</width>
+                 <height>268</height>
                 </rect>
                </property>
                <layout class="QVBoxLayout" name="verticalLayout_6">
@@ -487,7 +487,7 @@
                <property name="geometry">
                 <rect>
                  <x>0</x>
-                 <y>-742</y>
+                 <y>0</y>
                  <width>297</width>
                  <height>1058</height>
                 </rect>
@@ -1741,8 +1741,8 @@
                 <rect>
                  <x>0</x>
                  <y>0</y>
-                 <width>314</width>
-                 <height>316</height>
+                 <width>139</width>
+                 <height>155</height>
                 </rect>
                </property>
                <layout class="QVBoxLayout" name="verticalLayout_11">
@@ -1843,8 +1843,8 @@
                 <rect>
                  <x>0</x>
                  <y>0</y>
-                 <width>314</width>
-                 <height>316</height>
+                 <width>194</width>
+                 <height>302</height>
                 </rect>
                </property>
                <layout class="QVBoxLayout" name="verticalLayout_12">
@@ -2085,7 +2085,7 @@
          </widget>
         </item>
         <item>
-         <widget class="QLabel" name="label_19">
+         <widget class="QLabel" name="infoFormComment">
           <property name="sizePolicy">
            <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
             <horstretch>0</horstretch>
@@ -2196,6 +2196,9 @@
     <property name="title">
      <string>Справка</string>
     </property>
+    <addaction name="actionProgram"/>
+    <addaction name="actionQt"/>
+    <addaction name="actionLicense"/>
    </widget>
    <addaction name="menuFile"/>
    <addaction name="menuTab"/>
@@ -2283,6 +2286,21 @@
   <action name="actionForMask">
    <property name="text">
     <string>Скрыть / Показать поля</string>
+   </property>
+  </action>
+  <action name="actionQt">
+   <property name="text">
+    <string>О библиотеке Qt</string>
+   </property>
+  </action>
+  <action name="actionLicense">
+   <property name="text">
+    <string>Показать лицензию</string>
+   </property>
+  </action>
+  <action name="actionProgram">
+   <property name="text">
+    <string>О программе</string>
    </property>
   </action>
  </widget>

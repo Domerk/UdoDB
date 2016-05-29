@@ -72,6 +72,9 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->actionNewStr, SIGNAL(triggered()), this, SLOT(clearMoreInfoForm()));
     connect(ui->actionDeleteStr, SIGNAL(triggered()), this, SLOT(deleteThis()));
 
+    connect(ui->actionQt, SIGNAL(triggered()), this, SLOT(showQtInfo()));
+    connect(ui->actionLicense, SIGNAL(triggered()), this, SLOT(showLicense()));
+
     // --------------------------- Main ToolBar ----------------------------
 
     // Иконки: http://www.flaticon.com/packs/web-application-ui/4
@@ -154,7 +157,7 @@ MainWindow::MainWindow(QWidget *parent) :
 
     // ----------------------------- DataBase ------------------------------
 
-    if (connectDB("MainDB"))
+    if (connectDB())
     {
         drawTree();
         showTable("Учащиеся");
@@ -184,7 +187,7 @@ MainWindow::~MainWindow()
 // ============== Установка соединения с базой ================
 // ============================================================
 
-bool MainWindow::connectDB(QString nameDB)
+bool MainWindow::connectDB()
 {
     // Подключение к основной базе
 
@@ -238,7 +241,7 @@ bool MainWindow::connectDB(QString nameDB)
 
 void MainWindow::connectReconfigSlot()
 {
-    connectDB("MainDB");
+    connectDB();
     if (!currentTable->isEmpty())
         refreshTable();
 }
@@ -256,6 +259,11 @@ void MainWindow::showTable(QString table)
 
     if (table == "Общее" || table == *currentTable)
         return;
+
+    if (table == "Учащиеся" || table == "Группы" || table == "Преподаватели" || table == "Объединения" || table == "Направленности")
+        ui->mainToolBar->actions()[MainToolButton::Delete]->setDisabled(false);
+    else
+        ui->mainToolBar->actions()[MainToolButton::Delete]->setDisabled(true);
 
     QSqlQuery query;        // Создаём запрос
     lastSelect->clear();    // Удаляем данные о последнем запросе
@@ -1742,4 +1750,40 @@ void MainWindow::on_removeStudToGroup_clicked()
         query.exec(strQuery);
         drawRows(query, ui->studsInGroupe, false);
     }
+}
+
+
+void MainWindow::showQtInfo()
+{
+    QMessageBox messageBox;
+    messageBox.aboutQt(this, tr("О библиотеке Qt"));
+}
+
+void MainWindow::showLicense()
+{
+    QDialog messageBox;
+    messageBox.setWindowTitle(tr("Лицензия"));
+    QTextEdit* textEdit = new QTextEdit;
+    textEdit->setReadOnly(true);
+    textEdit->setHtml(tr("The MIT License (MIT)"
+                         " <br /><br />Copyright © 2016 Domerk"
+                         "<br /><br />Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the &quot;Software&quot;), to deal in the Software without restriction, including without limitation the rights"
+                         "to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:"
+                         " <br /><br />The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software."
+                         "<br /><br />THE SOFTWARE IS PROVIDED &quot;AS IS&quot;, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS "
+                         "OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,"
+                         "OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE."
+                         "<br /><br />Translations into Russian:"
+                         "<br /><br />Copyright © 2016 Domerk"
+                         "<br /><br />Данная лицензия разрешает лицам, получившим копию данного программного обеспечения и сопутствующей документации (в дальнейшем именуемыми «Программное Обеспечение»), безвозмездно использовать Программное Обеспечение без ограничений, включая "
+                         "неограниченное право на использование, копирование, изменение, добавление, публикацию, распространение, сублицензирование и/или продажу копий Программного Обеспечения, а также лицам, которым предоставляется данное Программное Обеспечение, при соблюдении следующих условий:"
+                         "<br /><br />Указанное выше уведомление об авторском праве и данные условия должны быть включены во все копии или значимые части данного Программного Обеспечения."
+                         "<br /><br />ДАННОЕ ПРОГРАММНОЕ ОБЕСПЕЧЕНИЕ ПРЕДОСТАВЛЯЕТСЯ «КАК ЕСТЬ», БЕЗ КАКИХ-ЛИБО ГАРАНТИЙ, ЯВНО ВЫРАЖЕННЫХ ИЛИ ПОДРАЗУМЕВАЕМЫХ, ВКЛЮЧАЯ ГАРАНТИИ ТОВАРНОЙ ПРИГОДНОСТИ, СООТВЕТСТВИЯ ПО ЕГО КОНКРЕТНОМУ НАЗНАЧЕНИЮ И ОТСУТСТВИЯ НАРУШЕНИЙ, НО НЕ  ОГРАНИЧИВАЯСЬ ИМИ. "
+                         "НИ В КАКОМ СЛУЧАЕ АВТОРЫ ИЛИ ПРАВООБЛАДАТЕЛИ НЕ НЕСУТ  ОТВЕТСТВЕННОСТИ ПО КАКИМ-ЛИБО ИСКАМ, ЗА УЩЕРБ ИЛИ ПО ИНЫМ ТРЕБОВАНИЯМ, В ТОМ ЧИСЛЕ, ПРИ ДЕЙСТВИИ КОНТРАКТА, ДЕЛИКТЕ ИЛИ ИНОЙ СИТУАЦИИ, ВОЗНИКШИМ ИЗ-ЗА ИСПОЛЬЗОВАНИЯ ПРОГРАММНОГО ОБЕСПЕЧЕНИЯ ИЛИ ИНЫХ ДЕЙСТВИЙ С ПРОГРАММНЫМ ОБЕСПЕЧЕНИЕМ."));
+    QVBoxLayout* layout = new QVBoxLayout;
+    QDialogButtonBox* button = new QDialogButtonBox(QDialogButtonBox::Close);
+    layout->addWidget(textEdit);
+    layout->addWidget(button);
+    messageBox.setLayout(layout);
+    messageBox.exec();
 }
