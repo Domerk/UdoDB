@@ -5,6 +5,7 @@
 #include <QPushButton>
 #include <QLineEdit>
 #include <QComboBox>
+#include <QDate>
 
 namespace Ui {
 class SearchDialog;
@@ -41,6 +42,8 @@ private:
 
     void getDataFromLineEdit(QStringList *slist, QLineEdit *ledit, QString text);
     void getDataFromBoolComboBox(QStringList *slist, QComboBox *box, QString text);
+
+    QString getDateToForm(int d, int m, int y);
 
 
 signals:

@@ -171,12 +171,12 @@ void SearchDialog::on_buttonBox_accepted()
 
     if (ui->studBYear_min->value() != ui->studBYear_min->minimum())
     {
-        whereStud->append("`Дата рождения` >= 01.01." + QString::number(ui->studBYear_min->value()));
+        whereStud->append("`Дата рождения` >= " + getDateToForm(01, 01, ui->studBYear_min->value());
     }
 
     if (ui->studBYear_max->value() != ui->studBYear_max->minimum())
     {
-        whereStud->append("`Дата рождения` <= 31.12." + QString::number(ui->studBYear_max->value()));
+        whereStud->append("`Дата рождения` <= " + getDateToForm(31, 12, ui->studBYear_min->value()));
     }
 
 
@@ -506,4 +506,11 @@ void SearchDialog::getDataFromBoolComboBox(QStringList *slist, QComboBox *box, Q
         slist->append(text + " = 'true'");
     else
         slist->append(text + " = 'false'");
+}
+
+QString SearchDialog::getDateToForm(int d, int m, int y)
+{
+    QDate date;
+    date.setDate(y, m, d);
+    return date.toString(Qt::SystemLocaleShortDate);
 }

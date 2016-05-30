@@ -18,6 +18,7 @@
 #include <QDialogButtonBox>
 #include <QRegularExpression>
 #include <QMap>
+#include <QSpinBox>
 
 #include "searchdialog.h"
 #include "connectiondialog.h"
@@ -83,6 +84,9 @@ private:
     void hideColumnsFromMask(QVector<bool> mask);
     void drawTree();
 
+    void getDateToTable(QString str, QComboBox* d, QComboBox* m, QSpinBox* y);
+    void getDateToForm(QString* str, QComboBox* d, QComboBox* m, QSpinBox* y);
+
 private slots:
     void clearMoreInfoForm();
     void deleteThis();
@@ -113,6 +117,7 @@ private slots:
 
     void showQtInfo();
     void showLicense();
+    void showProgramInfo();
 
 public slots:
     void connectReconfigSlot();

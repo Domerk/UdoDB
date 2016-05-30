@@ -74,6 +74,7 @@ MainWindow::MainWindow(QWidget *parent) :
 
     connect(ui->actionQt, SIGNAL(triggered()), this, SLOT(showQtInfo()));
     connect(ui->actionLicense, SIGNAL(triggered()), this, SLOT(showLicense()));
+    connect(ui->actionProgram, SIGNAL(triggered()), this, SLOT(showProgramInfo()));
 
     // --------------------------- Main ToolBar ----------------------------
 
@@ -261,9 +262,15 @@ void MainWindow::showTable(QString table)
         return;
 
     if (table == "Учащиеся" || table == "Группы" || table == "Преподаватели" || table == "Объединения" || table == "Направленности")
+    {
         ui->mainToolBar->actions()[MainToolButton::Delete]->setDisabled(false);
+        ui->actionDeleteStr->setDisabled(false);
+    }
     else
+    {
         ui->mainToolBar->actions()[MainToolButton::Delete]->setDisabled(true);
+        ui->actionDeleteStr->setDisabled(true);
+    }
 
     QSqlQuery query;        // Создаём запрос
     lastSelect->clear();    // Удаляем данные о последнем запросе
@@ -708,15 +715,14 @@ void MainWindow::on_saveButton_clicked()
             QString admiss;
             QString out;
 
+            // Дата рождения
+            getDateToForm(&birthday, ui->studBDay, ui->studBMon, ui->studBYear);
 
-            if (ui->studBDay->currentIndex() != 0 && ui->studBMon->currentIndex() != 0)
-                birthday = ui->studBDay->currentText() + "." + ui->studBMon->currentText() + "." + QString::number(ui->studBYear->value());    // Дата рождения
+            // Дата подачи заявления
+            getDateToForm(&admiss, ui->studInDay, ui->studInMon, ui->studInYear);
 
-            if (ui->studInDay->currentIndex() != 0 && ui->studInMon->currentIndex() != 0)
-                admiss = ui->studInDay->currentText() + "." + ui->studInMon->currentText() + "." + QString::number(ui->studInYear->value());        // Дата подачи заявления
-
-            if (ui->studOutDay->currentIndex() != 0 && ui->studOutMon->currentIndex() != 0)
-            out = ui->studOutDay->currentText() + "." + ui->studOutMon->currentText() + "." + QString::number(ui->studOutYear->value());               // Когда выбыл
+            // Когда выбыл
+            getDateToForm(&out, ui->studOutDay, ui->studOutMon, ui->studOutYear);
 
             // Combo Box
             QString eduForm = ui->eduForm->currentText(); // Форма обучения
@@ -871,6 +877,16 @@ void MainWindow::on_saveButton_clicked()
 
     if (*currentTable == "Объединения" || *currentTable == "Направленности" || *currentTable == "Группы")
         drawTree();
+}
+
+void MainWindow::getDateToForm(QString* str, QComboBox* d, QComboBox* m, QSpinBox* y)
+{
+    if (d->currentIndex() != 0 && m->currentIndex() != 0)
+    {
+        QDate date;
+        date.setDate(y->value(), m->currentText().toInt(), d->currentText().toInt());
+        str->append(date.toString(Qt::SystemLocaleShortDate));
+    }
 }
 
 // ============================================================
@@ -1123,19 +1139,8 @@ void MainWindow::showMoreInfo(int row)
             else
                 ui->studGender->setCurrentIndex(1);                 // Муж
 
-            QStringList qsl = ui->tableWidget->item(row, 7)->text().split("."); // Дата рождения
-            if (qsl.length() == 3)
-            {
-                ui->studBDay->setCurrentText(qsl[0]);
-                ui->studBMon->setCurrentText(qsl[1]);
-                ui->studBYear->setValue(qsl[2].toInt());
-            }
-            else
-            {
-                ui->studBDay->setCurrentIndex(0);
-                ui->studBMon->setCurrentIndex(0);
-                ui->studBYear->setValue(2000);
-            }
+            // Дата рождения
+            getDateToTable(ui->tableWidget->item(row, 7)->text(), ui->studBDay, ui->studBMon, ui->studBYear);
 
             ui->areaSchools->setText(ui->tableWidget->item(row, 8)->text());    // Район школы
             ui->school->setText(ui->tableWidget->item(row, 9)->text());         // Школа
@@ -1146,39 +1151,12 @@ void MainWindow::showMoreInfo(int row)
             ui->email->setText(ui->tableWidget->item(row, 14)->text());         // email
 
             // Дата подачи заявления
-            qsl.clear();
-            qsl = ui->tableWidget->item(row, 15)->text().split(".");
-            if (qsl.length() == 3)
-            {
-                ui->studInDay->setCurrentText(qsl[0]);
-                ui->studInMon->setCurrentText(qsl[1]);
-                ui->studInYear->setValue(qsl[2].toInt());
-            }
-            else
-            {
-                ui->studInDay->setCurrentIndex(0);
-                ui->studInMon->setCurrentIndex(0);
-                ui->studInYear->setValue(2000);
-            }
+            getDateToTable(ui->tableWidget->item(row, 15)->text(), ui->studInDay, ui->studInMon, ui->studInYear);
 
             ui->eduForm->setCurrentText(ui->tableWidget->item(row, 16)->text()); // Форма обучения
 
             // Когда выбыл
-            qsl.clear();
-            qsl = ui->tableWidget->item(row, 17)->text().split(".");
-            if (qsl.length() == 3)
-            {
-                ui->studOutDay->setCurrentText(qsl[0]);
-                ui->studOutMon->setCurrentText(qsl[1]);
-                ui->studOutYear->setValue(qsl[2].toInt());
-            }
-            else
-            {
-                ui->studOutDay->setCurrentIndex(0);
-                ui->studOutMon->setCurrentIndex(0);
-                ui->studOutYear->setValue(2000);
-            }
-
+            getDateToTable(ui->tableWidget->item(row, 17)->text(), ui->studOutDay, ui->studOutMon, ui->studOutYear);
 
             // Чекбоксы
 
@@ -1275,6 +1253,31 @@ void MainWindow::showMoreInfo(int row)
             drawRows(query, ui->studsInGroupe, false);
             break;
         }
+    }
+}
+
+void MainWindow::getDateToTable(QString str, QComboBox* d, QComboBox* m, QSpinBox* y)
+{
+    QStringList qsl = str.split(QRegularExpression("\\D"));
+    if (qsl.length() == 3)
+    {
+        m->setCurrentText(qsl[1]);
+        if (qsl[0].length() == 2)
+        {
+            d->setCurrentText(qsl[0]);
+            y->setValue(qsl[2].toInt());
+        }
+        else
+        {
+            d->setCurrentText(qsl[2]);
+            y->setValue(qsl[0].toInt());
+        }
+    }
+    else
+    {
+        d->setCurrentIndex(0);
+        m->setCurrentIndex(0);
+        y->setValue(2000);
     }
 }
 
@@ -1752,6 +1755,9 @@ void MainWindow::on_removeStudToGroup_clicked()
     }
 }
 
+// ----------------------------------------------------------------------------------------------------
+// ----------------------------------------------------------------------------------------------------
+// ----------------------------------------------------------------------------------------------------
 
 void MainWindow::showQtInfo()
 {
@@ -1761,15 +1767,15 @@ void MainWindow::showQtInfo()
 
 void MainWindow::showLicense()
 {
-    QDialog messageBox;
-    messageBox.setWindowTitle(tr("Лицензия"));
+    QDialog license;
+    license.setWindowTitle(tr("Лицензия"));
     QTextEdit* textEdit = new QTextEdit;
     textEdit->setReadOnly(true);
     textEdit->setHtml(tr("The MIT License (MIT)"
-                         " <br /><br />Copyright © 2016 Domerk"
+                         "<br /><br />Copyright © 2016 Domerk"
                          "<br /><br />Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the &quot;Software&quot;), to deal in the Software without restriction, including without limitation the rights"
                          "to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:"
-                         " <br /><br />The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software."
+                         "<br /><br />The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software."
                          "<br /><br />THE SOFTWARE IS PROVIDED &quot;AS IS&quot;, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS "
                          "OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,"
                          "OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE."
@@ -1779,11 +1785,25 @@ void MainWindow::showLicense()
                          "неограниченное право на использование, копирование, изменение, добавление, публикацию, распространение, сублицензирование и/или продажу копий Программного Обеспечения, а также лицам, которым предоставляется данное Программное Обеспечение, при соблюдении следующих условий:"
                          "<br /><br />Указанное выше уведомление об авторском праве и данные условия должны быть включены во все копии или значимые части данного Программного Обеспечения."
                          "<br /><br />ДАННОЕ ПРОГРАММНОЕ ОБЕСПЕЧЕНИЕ ПРЕДОСТАВЛЯЕТСЯ «КАК ЕСТЬ», БЕЗ КАКИХ-ЛИБО ГАРАНТИЙ, ЯВНО ВЫРАЖЕННЫХ ИЛИ ПОДРАЗУМЕВАЕМЫХ, ВКЛЮЧАЯ ГАРАНТИИ ТОВАРНОЙ ПРИГОДНОСТИ, СООТВЕТСТВИЯ ПО ЕГО КОНКРЕТНОМУ НАЗНАЧЕНИЮ И ОТСУТСТВИЯ НАРУШЕНИЙ, НО НЕ  ОГРАНИЧИВАЯСЬ ИМИ. "
-                         "НИ В КАКОМ СЛУЧАЕ АВТОРЫ ИЛИ ПРАВООБЛАДАТЕЛИ НЕ НЕСУТ  ОТВЕТСТВЕННОСТИ ПО КАКИМ-ЛИБО ИСКАМ, ЗА УЩЕРБ ИЛИ ПО ИНЫМ ТРЕБОВАНИЯМ, В ТОМ ЧИСЛЕ, ПРИ ДЕЙСТВИИ КОНТРАКТА, ДЕЛИКТЕ ИЛИ ИНОЙ СИТУАЦИИ, ВОЗНИКШИМ ИЗ-ЗА ИСПОЛЬЗОВАНИЯ ПРОГРАММНОГО ОБЕСПЕЧЕНИЯ ИЛИ ИНЫХ ДЕЙСТВИЙ С ПРОГРАММНЫМ ОБЕСПЕЧЕНИЕМ."));
+                         "НИ В КАКОМ СЛУЧАЕ АВТОРЫ ИЛИ ПРАВООБЛАДАТЕЛИ НЕ НЕСУТ  ОТВЕТСТВЕННОСТИ ПО КАКИМ-ЛИБО ИСКАМ, ЗА УЩЕРБ ИЛИ ПО ИНЫМ ТРЕБОВАНИЯМ, В ТОМ ЧИСЛЕ, ПРИ ДЕЙСТВИИ КОНТРАКТА, ДЕЛИКТЕ ИЛИ ИНОЙ СИТУАЦИИ, ВОЗНИКШИМ ИЗ-ЗА ИСПОЛЬЗОВАНИЯ ПРОГРАММНОГО ОБЕСПЕЧЕНИЯ ИЛИ ИНЫХ ДЕЙСТВИЙ С ПРОГРАММНЫМ ОБЕСПЕЧЕНИЕМ."
+                         "<br /><br /><hr /><br />Иконки панели инструментов предоставлены <a href=http://www.flaticon.com title=Flaticon>www.flaticon.com</a> "
+                         "по лицензии <a href=http://creativecommons.org/licenses/by/3.0/ title=Creative Commons BY 3.0>CC BY 3.0</a>.<br /><br />"));
     QVBoxLayout* layout = new QVBoxLayout;
-    QDialogButtonBox* button = new QDialogButtonBox(QDialogButtonBox::Close);
+    QDialogButtonBox* button = new QDialogButtonBox(QDialogButtonBox::Ok);
     layout->addWidget(textEdit);
     layout->addWidget(button);
-    messageBox.setLayout(layout);
-    messageBox.exec();
+    license.setLayout(layout);
+    license.exec();
+}
+
+void MainWindow::showProgramInfo()
+{
+    QMessageBox aboutBox;
+    aboutBox.setWindowTitle(tr("О программе"));
+    aboutBox.setInformativeText(tr("<strong>Разработчик:</strong><br />"
+                                   "<a href=https://github.com/Domerk>Domerk</a><br /><br />"
+                                   "<strong>Благодарности:</strong><br />"
+                                   "<a href=https://github.com/aksenoff>Alex Aksenoff</a>, <a href=https://github.com/aizenbit>Alex Aizenbit</a>"
+                                   ));
+    aboutBox.exec();
 }
