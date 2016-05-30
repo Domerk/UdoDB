@@ -171,7 +171,7 @@ void SearchDialog::on_buttonBox_accepted()
 
     if (ui->studBYear_min->value() != ui->studBYear_min->minimum())
     {
-        whereStud->append("`Дата рождения` >= " + getDateToForm(01, 01, ui->studBYear_min->value());
+        whereStud->append("`Дата рождения` >= " + getDateToForm(01, 01, ui->studBYear_min->value()));
     }
 
     if (ui->studBYear_max->value() != ui->studBYear_max->minimum())
