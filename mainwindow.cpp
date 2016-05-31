@@ -1768,6 +1768,7 @@ void MainWindow::showQtInfo()
 void MainWindow::showLicense()
 {
     QDialog license;
+    //license.setWindowFlags(Qt::Window | Qt::WindowSystemMenuHint);
     license.setWindowTitle(tr("Лицензия"));
     QTextEdit* textEdit = new QTextEdit;
     textEdit->setReadOnly(true);
@@ -1800,7 +1801,13 @@ void MainWindow::showProgramInfo()
 {
     QMessageBox aboutBox;
     aboutBox.setWindowTitle(tr("О программе"));
-    aboutBox.setInformativeText(tr("<strong>Разработчик:</strong><br />"
+    aboutBox.setInformativeText(tr("Программа представляет собой клиент для работы с базой данных учреждения дополнительного образования. "
+                                   "Она позволяет просматривать, добавлять, удалять и изменять данные об учащихся, преподавателях, объединениях, учебных группах и направленностях.<br /><br />"
+                                   "Если у Вас остались вопросы или Вы хотите помочь в развитии данного проекта, "
+                                   "посетите его <a href=https://github.com/Domerk/KcttDB/wiki>домашнюю страницу</a> или обратитесь к администрации образовательного учреждения.<br /><br />"
+                                   "Разработано по заказу Центра детского (юношеского) технического творчества Московского района Санкт-Петербурга.<br /><br />"
+                                   "Программа основана на Qt 5.4.1 (MSVC 2010, 32 бита).<br /><br />"
+                                   "<strong>Разработчик:</strong><br />"
                                    "<a href=https://github.com/Domerk>Domerk</a><br /><br />"
                                    "<strong>Благодарности:</strong><br />"
                                    "<a href=https://github.com/aksenoff>Alex Aksenoff</a>, <a href=https://github.com/aizenbit>Alex Aizenbit</a>"
