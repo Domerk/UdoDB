@@ -61,17 +61,30 @@ MainWindow::MainWindow(QWidget *parent) :
 
     // -------------------------------- Меню --------------------------------
 
+    // Файл
     connect (ui->actionConnect, SIGNAL(triggered()), connectDialog, SLOT(exec()));
     connect(ui->exit, SIGNAL(triggered()), this, SLOT(close()));
     connect(ui->actionExel, SIGNAL(triggered()), this, SLOT(exportInExel()));
 
+    // Таблица
     connect(ui->actionRefreshTab, SIGNAL(triggered()), this, SLOT(refreshTable()));
     connect(ui->actionRepeatLastSelect, SIGNAL(triggered()), this, SLOT(repeatLastSelect()));
-    connect (ui->actionForMask, SIGNAL(triggered()), this, SLOT(changeTableMask()));
+    connect(ui->actionForMask, SIGNAL(triggered()), this, SLOT(changeTableMask()));
+    connect(ui->actionSearch, SIGNAL(triggered()), this, SLOT(globalSearch()));
 
+    ui->actionForMask->setIcon(QIcon(":/icons/Icons/options.png"));
+    ui->actionSearch->setIcon(QIcon(":/icons/Icons/optool.png"));
+
+    // Запись
     connect(ui->actionNewStr, SIGNAL(triggered()), this, SLOT(clearMoreInfoForm()));
+    connect(ui->actionImport, SIGNAL(triggered()), this, SLOT(showTempTable()));
     connect(ui->actionDeleteStr, SIGNAL(triggered()), this, SLOT(deleteThis()));
 
+    ui->actionNewStr->setIcon(QIcon(":/icons/Icons/new.png"));
+    ui->actionImport->setIcon(QIcon(":/icons/Icons/import.png"));
+    ui->actionDeleteStr->setIcon(QIcon(":/icons/Icons/delete.png"));
+
+    // Справка
     connect(ui->actionQt, SIGNAL(triggered()), this, SLOT(showQtInfo()));
     connect(ui->actionLicense, SIGNAL(triggered()), this, SLOT(showLicense()));
     connect(ui->actionProgram, SIGNAL(triggered()), this, SLOT(showProgramInfo()));
@@ -81,14 +94,11 @@ MainWindow::MainWindow(QWidget *parent) :
     // Иконки: http://www.flaticon.com/packs/web-application-ui/4
 
     ui->mainToolBar->addAction(QIcon(":/icons/Icons/new.png"),tr("Новая запись"), this, SLOT(clearMoreInfoForm()));
-    ui->mainToolBar->addAction(QIcon(":/icons/Icons/delete.png"),tr("Удалить запись"), this, SLOT(deleteThis()));
     ui->mainToolBar->addAction(QIcon(":/icons/Icons/import.png"),tr("Импорт из временной базы"), this, SLOT(showTempTable()));
+    ui->mainToolBar->addAction(QIcon(":/icons/Icons/delete.png"),tr("Удалить запись"), this, SLOT(deleteThis()));
 
     ui->mainToolBar->addAction(QIcon(":/icons/Icons/options.png"),tr("Скрыть/Показать поля"), this, SLOT(changeTableMask()));
     ui->mainToolBar->addAction(QIcon(":/icons/Icons/optool.png"),tr("Расширенный поиск"), this, SLOT(globalSearch()));
-
-    //ui->mainToolBar->actions()[ToolButton::...]->setDisabled(true);
-
 
     // ------------------------- Search ToolBar ----------------------------
 
@@ -103,7 +113,6 @@ MainWindow::MainWindow(QWidget *parent) :
 
     connect(searchEdit, SIGNAL(textChanged(QString)), this, SLOT(setSearchActive()));
     connect(searchEdit, SIGNAL(returnPressed()), this, SLOT(simpleSearch()));
-
 
     // ------------------ Запросы на вывод основных таблиц -----------------
 
@@ -1768,7 +1777,6 @@ void MainWindow::showQtInfo()
 void MainWindow::showLicense()
 {
     QDialog license;
-    //license.setWindowFlags(Qt::Window | Qt::WindowSystemMenuHint);
     license.setWindowTitle(tr("Лицензия"));
     QTextEdit* textEdit = new QTextEdit;
     textEdit->setReadOnly(true);

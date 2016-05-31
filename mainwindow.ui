@@ -35,39 +35,9 @@
        </property>
        <column>
         <property name="text">
-         <string>ЦДЮТТ</string>
+         <string>Навигация</string>
         </property>
        </column>
-       <item>
-        <property name="text">
-         <string>Общее</string>
-        </property>
-        <item>
-         <property name="text">
-          <string>Учащиеся</string>
-         </property>
-        </item>
-        <item>
-         <property name="text">
-          <string>Преподаватели</string>
-         </property>
-        </item>
-        <item>
-         <property name="text">
-          <string>Направленности</string>
-         </property>
-        </item>
-        <item>
-         <property name="text">
-          <string>Объединения</string>
-         </property>
-        </item>
-        <item>
-         <property name="text">
-          <string>Группы</string>
-         </property>
-        </item>
-       </item>
       </widget>
       <widget class="QTableWidget" name="tableWidget">
        <property name="editTriggers">
@@ -487,9 +457,9 @@
                <property name="geometry">
                 <rect>
                  <x>0</x>
-                 <y>0</y>
+                 <y>-771</y>
                  <width>297</width>
-                 <height>1058</height>
+                 <height>1107</height>
                 </rect>
                </property>
                <layout class="QVBoxLayout" name="verticalLayout_4">
@@ -630,14 +600,14 @@
                   <item>
                    <widget class="QComboBox" name="studBDay">
                     <property name="sizePolicy">
-                     <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+                     <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
                       <horstretch>0</horstretch>
                       <verstretch>0</verstretch>
                      </sizepolicy>
                     </property>
                     <property name="maximumSize">
                      <size>
-                      <width>50</width>
+                      <width>200</width>
                       <height>16777215</height>
                      </size>
                     </property>
@@ -812,9 +782,15 @@
                   </item>
                   <item>
                    <widget class="QComboBox" name="studBMon">
+                    <property name="sizePolicy">
+                     <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+                      <horstretch>0</horstretch>
+                      <verstretch>0</verstretch>
+                     </sizepolicy>
+                    </property>
                     <property name="maximumSize">
                      <size>
-                      <width>50</width>
+                      <width>200</width>
                       <height>16777215</height>
                      </size>
                     </property>
@@ -894,6 +870,12 @@
                   </item>
                   <item>
                    <widget class="QSpinBox" name="studBYear">
+                    <property name="sizePolicy">
+                     <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+                      <horstretch>0</horstretch>
+                      <verstretch>0</verstretch>
+                     </sizepolicy>
+                    </property>
                     <property name="minimum">
                      <number>1990</number>
                     </property>
@@ -955,7 +937,14 @@
                  </widget>
                 </item>
                 <item>
-                 <widget class="QTextEdit" name="parents"/>
+                 <widget class="QTextEdit" name="parents">
+                  <property name="sizePolicy">
+                   <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+                    <horstretch>0</horstretch>
+                    <verstretch>0</verstretch>
+                   </sizepolicy>
+                  </property>
+                 </widget>
                 </item>
                 <item>
                  <widget class="QLabel" name="label_12">
@@ -965,7 +954,14 @@
                  </widget>
                 </item>
                 <item>
-                 <widget class="QTextEdit" name="address"/>
+                 <widget class="QTextEdit" name="address">
+                  <property name="sizePolicy">
+                   <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+                    <horstretch>0</horstretch>
+                    <verstretch>0</verstretch>
+                   </sizepolicy>
+                  </property>
+                 </widget>
                 </item>
                 <item>
                  <widget class="QLabel" name="label_15">
@@ -991,6 +987,12 @@
                   </item>
                   <item>
                    <widget class="QComboBox" name="studInDay">
+                    <property name="sizePolicy">
+                     <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+                      <horstretch>0</horstretch>
+                      <verstretch>0</verstretch>
+                     </sizepolicy>
+                    </property>
                     <item>
                      <property name="text">
                       <string/>
@@ -1162,6 +1164,12 @@
                   </item>
                   <item>
                    <widget class="QComboBox" name="studInMon">
+                    <property name="sizePolicy">
+                     <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+                      <horstretch>0</horstretch>
+                      <verstretch>0</verstretch>
+                     </sizepolicy>
+                    </property>
                     <item>
                      <property name="text">
                       <string/>
@@ -1239,7 +1247,7 @@
                   <item>
                    <widget class="QSpinBox" name="studInYear">
                     <property name="sizePolicy">
-                     <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+                     <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
                       <horstretch>0</horstretch>
                       <verstretch>0</verstretch>
                      </sizepolicy>
@@ -1278,6 +1286,12 @@
                   </item>
                   <item>
                    <widget class="QComboBox" name="studOutDay">
+                    <property name="sizePolicy">
+                     <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+                      <horstretch>0</horstretch>
+                      <verstretch>0</verstretch>
+                     </sizepolicy>
+                    </property>
                     <item>
                      <property name="text">
                       <string/>
@@ -1449,6 +1463,12 @@
                   </item>
                   <item>
                    <widget class="QComboBox" name="studOutMon">
+                    <property name="sizePolicy">
+                     <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+                      <horstretch>0</horstretch>
+                      <verstretch>0</verstretch>
+                     </sizepolicy>
+                    </property>
                     <item>
                      <property name="text">
                       <string/>
@@ -1526,7 +1546,7 @@
                   <item>
                    <widget class="QSpinBox" name="studOutYear">
                     <property name="sizePolicy">
-                     <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+                     <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
                       <horstretch>0</horstretch>
                       <verstretch>0</verstretch>
                      </sizepolicy>
@@ -1656,7 +1676,14 @@
                  </widget>
                 </item>
                 <item>
-                 <widget class="QTextEdit" name="studComments"/>
+                 <widget class="QTextEdit" name="studComments">
+                  <property name="sizePolicy">
+                   <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+                    <horstretch>0</horstretch>
+                    <verstretch>0</verstretch>
+                   </sizepolicy>
+                  </property>
+                 </widget>
                 </item>
                 <item>
                  <widget class="QLabel" name="label_52">
@@ -1673,6 +1700,18 @@
                 </item>
                 <item>
                  <widget class="QTableWidget" name="studGroupTable">
+                  <property name="sizePolicy">
+                   <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+                    <horstretch>0</horstretch>
+                    <verstretch>0</verstretch>
+                   </sizepolicy>
+                  </property>
+                  <property name="minimumSize">
+                   <size>
+                    <width>0</width>
+                    <height>120</height>
+                   </size>
+                  </property>
                   <attribute name="horizontalHeaderStretchLastSection">
                    <bool>true</bool>
                   </attribute>
@@ -2183,6 +2222,7 @@
     </property>
     <addaction name="actionRefreshTab"/>
     <addaction name="actionRepeatLastSelect"/>
+    <addaction name="actionSearch"/>
     <addaction name="actionForMask"/>
    </widget>
    <widget class="QMenu" name="menuStr">
@@ -2190,6 +2230,8 @@
      <string>Строка</string>
     </property>
     <addaction name="actionNewStr"/>
+    <addaction name="actionImport"/>
+    <addaction name="separator"/>
     <addaction name="actionDeleteStr"/>
    </widget>
    <widget class="QMenu" name="menu">
@@ -2255,7 +2297,7 @@
   </action>
   <action name="actionNewStr">
    <property name="text">
-    <string>Новая строка</string>
+    <string>Новая запись</string>
    </property>
   </action>
   <action name="actionDeleteStr">
@@ -2301,6 +2343,16 @@
   <action name="actionProgram">
    <property name="text">
     <string>О программе</string>
+   </property>
+  </action>
+  <action name="actionImport">
+   <property name="text">
+    <string>Импортировать</string>
+   </property>
+  </action>
+  <action name="actionSearch">
+   <property name="text">
+    <string>Расширенный поиск</string>
    </property>
   </action>
  </widget>

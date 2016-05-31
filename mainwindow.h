@@ -39,8 +39,8 @@ public:
 private:
     enum MainToolButton : int {
                New = 0,
-               Delete,
                ImportFromTempDB,
+               Delete,
                Show,
                Search
            };
