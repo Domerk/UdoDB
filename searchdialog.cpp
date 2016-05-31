@@ -170,14 +170,10 @@ void SearchDialog::on_buttonBox_accepted()
         fromStud->append("Дата рождения");
 
     if (ui->studBYear_min->value() != ui->studBYear_min->minimum())
-    {
-        whereStud->append("`Дата рождения` >= " + getDateToForm(01, 01, ui->studBYear_min->value()));
-    }
+        whereStud->append("`Дата рождения` >= '" + getDateToForm(01, 01, ui->studBYear_min->value()) + "'");
 
     if (ui->studBYear_max->value() != ui->studBYear_max->minimum())
-    {
-        whereStud->append("`Дата рождения` <= " + getDateToForm(31, 12, ui->studBYear_min->value()));
-    }
+        whereStud->append("`Дата рождения` <= '" + getDateToForm(31, 12, ui->studBYear_min->value()) + "'");
 
 
     if (ui->studClass_ch->isChecked())
@@ -190,29 +186,21 @@ void SearchDialog::on_buttonBox_accepted()
     if (ui->studDataIn_ch->isChecked())
         fromStud->append("Дата заявления");
 
-   /* if (ui->studDataIn->isModified())
+    if (ui->studYIn->value() != ui->studDataOutMin->minimum())
     {
-        QString str = ui->studDataIn->text().simplified().replace(QRegularExpression("-{2,}"), "-");
-        if (!str.isEmpty())
-        {
-            whereStud->append("Дата заявления");
-            whereStud->append(str);
-        }
-    } */
+        whereStud->append("`Дата заявления` >= '" + getDateToForm(01, ui->studMIn->currentText().toInt(), ui->studYIn->value()) + "'");
+        whereStud->append("`Дата заявления` <= '" + getDateToForm(31, ui->studMIn->currentText().toInt(), ui->studYIn->value()) + "'");
+
+    }
 
     if (ui->studDataOut_ch->isChecked())
         fromStud->append("Когда выбыл");
 
-   /* if (ui->studDataOut->isModified())
-    {
-        QString str = ui->studDataOut->text().simplified().replace(QRegularExpression("-{2,}"), "-");
-        if (!str.isEmpty())
-        {
-            whereStud->append("Когда выбыл");
-            whereStud->append(str);
-        }
-    } */
+    if (ui->studDataOutMin->value() != ui->studDataOutMin->minimum())
+        whereStud->append("`Когда выбыл` >= '" + getDateToForm(01, 01, ui->studDataOutMin->value()) + "'");
 
+    if (ui->studDataOutMax->value() != ui->studDataOutMax->minimum())
+        whereStud->append("`Когда выбыл` <= '" + getDateToForm(31, 12, ui->studDataOutMax->value()) + "'");
 
     if (ui->studDocType_ch->isChecked())
         fromStud->append("Тип документа");
@@ -341,14 +329,14 @@ void SearchDialog::on_buttonBox_accepted()
     useAss = !fromAss->isEmpty() || !whereAss->isEmpty();
     useGroup = !fromGroup->isEmpty() || !whereGroup->isEmpty();
 
+    if ((useStud && useAss) || (useStud && useTeach))
+        useGroup = true;
+
     if (useStud)
     {
         from->append(" Учащиеся,");
-
         for (QString & str : *fromStud)
-        {
             columns->append(" Учащиеся.`" + str + "` `Учащийся: " + str + "`,");
-        }
 
         if (!whereStud->isEmpty())
         {
@@ -357,10 +345,7 @@ void SearchDialog::on_buttonBox_accepted()
             where->append(" Учащиеся." + whereStud->at(0));
 
             for (int i = 1; i<whereStud->size(); i++)
-            {
-                where->append(" AND ");
-                where->append(" Учащиеся." + whereStud->at(i));
-            }
+                where->append(" AND Учащиеся." + whereStud->at(i));
         }
 
     }
@@ -370,19 +355,8 @@ void SearchDialog::on_buttonBox_accepted()
     if (useAss)
     {
         from->append(" Объединения, ");
-
         for (QString & str : *fromAss)
-        {
-            columns->append(" Объединения.`" + str + "` `Объединениe: " + str + "`,");
-        }
-
-        if (useStud)
-        {
-            from->append(" Группа, Нагрузка,");
-            if (!where->isEmpty())
-                where->append(" AND");
-            where->append(" Объединения.`ID` = Группа.`ID объединения` AND Учащиеся.`ID` = Нагрузка.`ID учащегося` AND Группа.`ID` = Нагрузка.`ID группы`");
-        }
+            columns->append(" Объединения.`" + str + "` `Объединение: " + str + "`,");
 
         if (!whereAss->isEmpty())
         {
@@ -391,10 +365,7 @@ void SearchDialog::on_buttonBox_accepted()
             where->append(" Объединения." + whereAss->at(0));
 
             for (int i = 1; i<whereAss->size(); i++)
-            {
-                where->append(" AND ");
-                where->append(" Объединения." + whereAss->at(i));
-            }
+                where->append(" AND Объединения." + whereAss->at(i));
         }
     }
 
@@ -403,32 +374,8 @@ void SearchDialog::on_buttonBox_accepted()
     if (useGroup)
     {
         from->append(" Группа,");
-        if (useTeach)
-        {
-            if (!where->isEmpty())
-                where->append(" AND");
-            where->append(" Преподаватели.`ID` = Группа.`ID преподавателя`");
-        }
-
-        if (useStud)
-        {
-            from->append(" Нагрузка,");
-            if (!where->isEmpty())
-                where->append(" AND");
-            where->append(" Учащиеся.`ID` = Нагрузка.`ID учащегося` AND Группа.`ID` = Нагрузка.`ID группы`");
-        }
-
-        if (useAss)
-        {
-            if (!where->isEmpty())
-                where->append(" AND");
-            where->append(" Объединения.`ID` = Группа.`ID объединения`");
-        }
-
         for (QString & str : *fromGroup)
-        {
             columns->append(" Группа.`" + str + "` `Группа: " + str + "`,");
-        }
 
         if (!whereGroup->isEmpty())
         {
@@ -437,10 +384,7 @@ void SearchDialog::on_buttonBox_accepted()
             where->append(" Группа." + whereGroup->at(0));
 
             for (int i = 1; i<whereGroup->size(); i++)
-            {
-                where->append(" AND ");
-                where->append(" Группа." + whereGroup->at(i));
-            }
+                where->append(" AND Группа." + whereGroup->at(i));
         }
 
     }
@@ -452,17 +396,7 @@ void SearchDialog::on_buttonBox_accepted()
         from->append(" Преподаватели,");
 
         for (QString & str : *fromTeach)
-        {
             columns->append(" Преподаватели.`" + str + "` `Преподаватель: " + str + "`,");
-        }
-
-        if (useStud)
-        {
-            from->append(" Группа, Нагрузка,");
-            if (!where->isEmpty())
-                where->append(" AND");
-            where->append(" Преподаватели.`ID` = Группа.`ID преподавателя` AND Учащиеся.`ID` = Нагрузка.`ID учащегося` AND Группа.`ID` = Нагрузка.`ID группы`");
-        }
 
         if (!whereTeach->isEmpty())
         {
@@ -471,10 +405,37 @@ void SearchDialog::on_buttonBox_accepted()
             where->append(" Преподаватели." + whereTeach->at(0));
 
             for (int i = 1; i<whereTeach->size(); i++)
-            {
-                where->append(" AND ");
-                where->append(" Преподаватели." + whereTeach->at(i));
-            }
+                where->append(" AND Преподаватели." + whereTeach->at(i));
+        }
+    }
+
+    if (useStud && (useGroup || useAss || useTeach))
+    {
+        from->append(" Нагрузка,");
+        if (!where->isEmpty())
+            where->append(" AND");
+        where->append(" Учащиеся.`ID` = Нагрузка.`ID учащегося` AND Группа.`ID` = Нагрузка.`ID группы`");
+
+        if (useAss)
+            where->append(" AND Объединения.`ID` = Группа.`ID объединения`");
+
+        if (useTeach)
+            where->append(" AND Преподаватели.`ID` = Группа.`ID преподавателя`");
+    }
+    else
+    {
+        if (useGroup && useAss)
+        {
+            if (!where->isEmpty())
+                where->append(" AND");
+            where->append(" Объединения.`ID` = Группа.`ID объединения`");
+        }
+
+        if (useGroup && useTeach)
+        {
+            if (!where->isEmpty())
+                where->append(" AND");
+            where->append(" Преподаватели.`ID` = Группа.`ID преподавателя`");
         }
     }
 
@@ -488,6 +449,10 @@ void SearchDialog::on_buttonBox_accepted()
         query->append(" WHERE " + *where);
 
     query->append(";");
+
+    qDebug()<<"Расширенный поиск";
+    qDebug()<<*query;
+
     signalQuery(*query);
 }
 

@@ -35,9 +35,9 @@
      <widget class="QWidget" name="scrollAreaWidgetContents">
       <property name="geometry">
        <rect>
-        <x>-11</x>
-        <y>-66</y>
-        <width>605</width>
+        <x>0</x>
+        <y>0</y>
+        <width>584</width>
         <height>382</height>
        </rect>
       </property>
@@ -566,7 +566,7 @@
           </widget>
          </item>
          <item>
-          <widget class="QSpinBox" name="spinBox">
+          <widget class="QSpinBox" name="studDataOutMin">
            <property name="sizePolicy">
             <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
              <horstretch>0</horstretch>
@@ -596,7 +596,7 @@
           </widget>
          </item>
          <item>
-          <widget class="QSpinBox" name="spinBox_2">
+          <widget class="QSpinBox" name="studDataOutMax">
            <property name="sizePolicy">
             <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
              <horstretch>0</horstretch>
@@ -619,7 +619,7 @@
        <item row="2" column="4">
         <layout class="QHBoxLayout" name="horizontalLayout_5">
          <item>
-          <widget class="QComboBox" name="comboBox">
+          <widget class="QComboBox" name="studMIn">
            <property name="sizePolicy">
             <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
              <horstretch>0</horstretch>
@@ -689,7 +689,7 @@
           </widget>
          </item>
          <item>
-          <widget class="QSpinBox" name="spinBox_3">
+          <widget class="QSpinBox" name="studYIn">
            <property name="sizePolicy">
             <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
              <horstretch>0</horstretch>

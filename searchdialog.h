@@ -6,6 +6,7 @@
 #include <QLineEdit>
 #include <QComboBox>
 #include <QDate>
+#include <QDebug>
 
 namespace Ui {
 class SearchDialog;
