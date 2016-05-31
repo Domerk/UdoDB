@@ -21,6 +21,12 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(dbDialog, SIGNAL(signalQuery(QTableWidget*,QString,bool)), this, SLOT(querySlot(QTableWidget*,QString,bool)));
     connect(dbDialog, SIGNAL(signalQueries(QStringList,bool)), this, SLOT(queriesSlot(QStringList,bool)));
 
+    bases = new QStringList();
+    bases->append("Учащиеся");
+    bases->append("Преподаватели");
+    bases->append("Направленности");
+    bases->append("Объединения");
+    bases->append("Группы");
 
     // Регулярное выражение для проверки имён, фамилий и отчеств.
     names = new QRegularExpression("^[А-ЯЁ]{1}[а-яё]*(-[А-ЯЁ]{1}[а-яё]*)?$");
@@ -186,6 +192,7 @@ MainWindow::~MainWindow()
     if (tempDB.isOpen())
         tempDB.close();
 
+    delete bases;
     delete connectDialog;
     delete lastSelect;
     delete currentTable;
@@ -592,6 +599,18 @@ void MainWindow::on_saveButton_clicked()
                 return;
             }
 
+            if (bases->contains(name))
+            {
+                // Сообщаем пользователю, что он ввёл что-то не то
+                QMessageBox messageBox(QMessageBox::Information,
+                                       tr("Добавление записи"),
+                                       tr("Сохранение невозможно: введены некорректные данные."),
+                                       QMessageBox::Yes,
+                                       this);
+                messageBox.setButtonText(QMessageBox::Yes, tr("ОК"));
+                messageBox.exec();
+                return;
+            }
 
             if (id.isEmpty())
             {
@@ -821,6 +840,18 @@ void MainWindow::on_saveButton_clicked()
             return;
         }
 
+        if (bases->contains(name))
+        {
+            // Сообщаем пользователю, что он ввёл что-то не то
+            QMessageBox messageBox(QMessageBox::Information,
+                                   tr("Добавление записи"),
+                                   tr("Сохранение невозможно: введены некорректные данные."),
+                                   QMessageBox::Yes,
+                                   this);
+            messageBox.setButtonText(QMessageBox::Yes, tr("ОК"));
+            messageBox.exec();
+            return;
+        }
 
         if (id.isEmpty())
         {
@@ -857,6 +888,18 @@ void MainWindow::on_saveButton_clicked()
             return;
         }
 
+        if (bases->contains(num))
+        {
+            // Сообщаем пользователю, что он ввёл что-то не то
+            QMessageBox messageBox(QMessageBox::Information,
+                                   tr("Добавление записи"),
+                                   tr("Сохранение невозможно: введены некорректные данные."),
+                                   QMessageBox::Yes,
+                                   this);
+            messageBox.setButtonText(QMessageBox::Yes, tr("ОК"));
+            messageBox.exec();
+            return;
+        }
 
         if (id.isEmpty())
         {
@@ -974,13 +1017,6 @@ void MainWindow::simpleSearch()
 void MainWindow::drawTree()
 {
     ui->treeWidget->clear();
-
-    QStringList* bases = new QStringList();
-    bases->append("Учащиеся");
-    bases->append("Преподаватели");
-    bases->append("Направленности");
-    bases->append("Объединения");
-    bases->append("Группы");
     QTreeWidgetItem *base = new QTreeWidgetItem(ui->treeWidget);
     base->setText(0, "Общее");
     for (int i = 0; i<5; i++)
@@ -989,8 +1025,6 @@ void MainWindow::drawTree()
         newItem->setText(0, bases->at(i));
         base->addChild(newItem);
     }
-
-    delete bases;
 
    QStringList *directions = new QStringList();
    QStringList *association = new QStringList();

@@ -76,6 +76,8 @@ private:
     QComboBox *searchBox;
     QLineEdit *searchEdit;
 
+    QStringList* bases;
+
     bool connectDB();
     void showTable(QString table);
     void drawHeaders(QSqlQuery query, QTableWidget *table, bool forSearch, QComboBox *serchCBox);
