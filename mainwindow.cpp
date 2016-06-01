@@ -144,7 +144,7 @@ MainWindow::MainWindow(QWidget *parent) :
 
     inf.mask.clear();
 
-    inf.query = "SELECT `ID`, `ID Направленности`, `Название`, `Направленность`, `Отдел`, `Описание` FROM Объединения;";
+    inf.query = "SELECT `ID`, `ID направленности`, `Название`, `Направленность`, `Отдел`, `Описание` FROM Объединения;";
     inf.index = 0;
     inf.mask.append(true);
     inf.mask.append(true);
@@ -170,7 +170,6 @@ MainWindow::MainWindow(QWidget *parent) :
         inf.mask.append(false);
     infoMap.insert("Группы", inf);
 
-
     // ----------------------------- DataBase ------------------------------
 
     if (connectDB())
@@ -178,7 +177,6 @@ MainWindow::MainWindow(QWidget *parent) :
         drawTree();
         showTable("Учащиеся");
     }
-
 }
 
 // ============================================================
@@ -209,13 +207,9 @@ bool MainWindow::connectDB()
     // Подключение к основной базе
 
     if (myDB.isOpen())
-    {
         myDB.close();
-    }
     else
-    {
         myDB = QSqlDatabase::addDatabase("QSQLITE");    // Указываем СУБД, имени соединения нет - соединение по умолчанию
-    }
 
     QSettings settings ("Other/config.ini", QSettings::IniFormat);
     settings.beginGroup("MainDB");
@@ -227,13 +221,9 @@ bool MainWindow::connectDB()
 
     // Подключение к временной базе базе
     if (tempDB.isOpen())
-    {
         tempDB.close();
-    }
     else
-    {
         tempDB = QSqlDatabase::addDatabase("QSQLITE", "tempDB");    // Указываем СУБД
-    }
 
     settings.beginGroup("TempDB");
     tempDB.setHostName(settings.value("hostname", "localhost").toString());
@@ -304,9 +294,6 @@ void MainWindow::showTable(QString table)
         if (infoMap.value(table).index != -1)
             ui->stackedWidget->setCurrentIndex(infoMap.value(table).index);
         currentMask = infoMap.value(table).mask;
-
-        qDebug()<<*lastSelect;
-        qDebug()<<query.lastError().text();
     }
 
     // Сохраняем инфу о текущей таблице
@@ -340,9 +327,7 @@ void MainWindow::drawHeaders(QSqlQuery query, QTableWidget *table, bool forSearc
     table->setColumnCount(columnCount);   // Задаём количество столбцов у таблицы
 
     for (int i = 0; i<columnCount; i++)     // Пока прочитали не все столбцы
-    {
         qsl.append(rec.fieldName(i));       // Пишем их названия в стринглист
-    }
 
     table->setHorizontalHeaderLabels(qsl);    // Устанавливаем названия столбцов в таблице
 
@@ -614,12 +599,12 @@ void MainWindow::on_saveButton_clicked()
 
             if (id.isEmpty())
             {
-                strQuery = "INSERT INTO Объединение (`Название`, `ID Направленности`, `Отдел`, `Описание`) VALUES ('" + name + "', '" + directID + "', '" + otd  + "', '" + desc + "');";
+                strQuery = "INSERT INTO Объединение (`Название`, `ID направленности`, `Отдел`, `Описание`) VALUES ('" + name + "', '" + directID + "', '" + otd  + "', '" + desc + "');";
                 clearMoreInfoForm();
             }
             else
             {
-                strQuery = "UPDATE Объединение SET `Название` = '" + name + "', `ID Направленности` = '" + directID + "', `Отдел` = '" + otd + "', `Описание` = '" + desc + "' WHERE `ID` = " + id + ";";
+                strQuery = "UPDATE Объединение SET `Название` = '" + name + "', `ID направленности` = '" + directID + "', `Отдел` = '" + otd + "', `Описание` = '" + desc + "' WHERE `ID` = " + id + ";";
             }
             break;
         }
@@ -917,7 +902,6 @@ void MainWindow::on_saveButton_clicked()
 
     QSqlQuery query;
     query.exec(strQuery);
-    qDebug() << strQuery;
 
     if (query.isValid())
         ui->lblStatus->setText("Ok");
@@ -1072,11 +1056,11 @@ void MainWindow::drawTree()
 
            infoMap.insert(ass, infoMap.value("Группы"));
            infoMap[ass].query.clear();
-           infoMap[ass].query.append("SELECT Группа.`ID` `ID`, Группа.`ID преподавателя` `ID преподавателя`, Объединение.`ID` `ID объединения`, Группа.`Номер` `Номер`, Группа.`Год обучения` `Год обучения`, Объединение.`Название` `Объединение`, Преподаватели.`Фамилия` `Фамилия преподавателя`, Преподаватели.`Имя` `Имя преподавателя`, Преподаватели.`Отчество` `Отчество преподавателя` FROM Группа, Объединение, Преподаватели, Направленности WHERE Группа.`ID объединения` = Объединение.`ID` AND Группа.`ID преподавателя` = Преподаватели.`ID` AND Направленности.`ID` = Объединение.`ID Направленности` AND Направленности.`Название` = '");
+           infoMap[ass].query.append("SELECT Группа.`ID` `ID`, Группа.`ID преподавателя` `ID преподавателя`, Объединение.`ID` `ID объединения`, Группа.`Номер` `Номер`, Группа.`Год обучения` `Год обучения`, Объединение.`Название` `Объединение`, Преподаватели.`Фамилия` `Фамилия преподавателя`, Преподаватели.`Имя` `Имя преподавателя`, Преподаватели.`Отчество` `Отчество преподавателя` FROM Группа, Объединение, Преподаватели, Направленности WHERE Группа.`ID объединения` = Объединение.`ID` AND Группа.`ID преподавателя` = Преподаватели.`ID` AND Направленности.`ID` = Объединение.`ID направленности` AND Направленности.`Название` = '");
            infoMap[ass].query.append(dir + "' AND Объединение.Название = '" + ass + "';");
 
            strQuery.clear();
-           strQuery.append("SELECT  Группа.`Номер`, Группа.`ID` FROM Объединение, Направленности, Группа  WHERE Направленности.`ID` = Объединение.`ID Направленности` AND Объединение.`ID` = Группа.`ID объединения` AND Направленности.`Название` = '");
+           strQuery.append("SELECT  Группа.`Номер`, Группа.`ID` FROM Объединение, Направленности, Группа  WHERE Направленности.`ID` = Объединение.`ID направленности` AND Объединение.`ID` = Группа.`ID объединения` AND Направленности.`Название` = '");
            strQuery.append(dir + "' AND Объединение.Название = '" + ass + "';");
            qDebug() << strQuery;
            query.exec(strQuery);
@@ -1126,7 +1110,7 @@ void MainWindow::showMoreInfo(int row)
         case -1: return;
         case 0:     // Объединение
         {
-        // "SELECT `ID`, `ID Направленности`, `Название`, `Направленность`, `Отдел`, `Описание` FROM Объединения;"
+        // "SELECT `ID`, `ID направленности`, `Название`, `Направленность`, `Отдел`, `Описание` FROM Объединения;"
         ui->alID->setText(ui->tableWidget->item(row, 0)->text());           // ID
         ui->alDirectID->setText(ui->tableWidget->item(row, 1)->text());
         ui->alName->setText(ui->tableWidget->item(row, 2)->text());         // Описание
@@ -1265,7 +1249,7 @@ void MainWindow::showMoreInfo(int row)
 
             // Отрисовка таблички!!! - Названия объединений
 
-            QString str = "SELECT `ID`, `Название` FROM Объединение WHERE `ID Направленности` = " + ui->directID->text() + ";";
+            QString str = "SELECT `ID`, `Название` FROM Объединение WHERE `ID направленности` = " + ui->directID->text() + ";";
 
             QSqlQuery query;
             query.exec(str);
@@ -1289,7 +1273,7 @@ void MainWindow::showMoreInfo(int row)
             ui->removeStudToGroup->setEnabled(true);
 
             // Отрисовка таблички!!!
-            QString str = "SELECT `ID Учащегося`, `Фамилия`, `Имя`, `Отчество`, `Телефон`, `e-mail` FROM Состав_групп WHERE `ID Группы` = " + ui->groupID->text() + ";";
+            QString str = "SELECT `ID учащегося`, `Фамилия`, `Имя`, `Отчество`, `Телефон`, `e-mail` FROM Состав_групп WHERE `ID группы` = " + ui->groupID->text() + ";";
 
             QSqlQuery query;
             query.exec(str);
@@ -1632,7 +1616,7 @@ void MainWindow::on_addStudInGroup_clicked()
                         strQuery.clear();
                     }
             }
-            strQuery.append("SELECT `ID Учащегося`, `Фамилия`, `Имя`, `Отчество`, `Телефон`, `e-mail` FROM Состав_групп WHERE `ID Группы` = " + ui->groupID->text() + ";");
+            strQuery.append("SELECT `ID учащегося`, `Фамилия`, `Имя`, `Отчество`, `Телефон`, `e-mail` FROM Состав_групп WHERE `ID группы` = " + ui->groupID->text() + ";");
             qDebug() << strQuery;
             query.exec(strQuery);
             drawRows(query, ui->studsInGroupe, false);
@@ -1762,7 +1746,6 @@ void MainWindow::queriesSlot(QStringList qsl, bool mainDB)
     for (QString & strQuery : qsl)
     {
         query.exec(strQuery);
-        qDebug() << strQuery;
         qDebug() << query.lastError().text();
     }
 }
@@ -1786,13 +1769,11 @@ void MainWindow::on_removeStudToGroup_clicked()
                     strQuery.append("DELETE FROM Нагрузка WHERE `ID учащегося` = " + ui->studsInGroupe->item(row, 0)->text() + " AND `ID группы` = "  + ui->groupID->text() + ";");
                     qDebug() << ui->studsInGroupe->item(row, 0)->text();
                     query.exec(strQuery);
-                    qDebug() << strQuery;
                     qDebug() << query.lastError().text();
                     strQuery.clear();
                 }
         }
-        strQuery.append("SELECT `ID Учащегося`, `Фамилия`, `Имя`, `Отчество`, `Телефон`, `e-mail` FROM Состав_групп WHERE `ID Группы` = " + ui->groupID->text() + ";");
-        qDebug() << strQuery;
+        strQuery.append("SELECT `ID учащегося`, `Фамилия`, `Имя`, `Отчество`, `Телефон`, `e-mail` FROM Состав_групп WHERE `ID группы` = " + ui->groupID->text() + ";");
         query.exec(strQuery);
         drawRows(query, ui->studsInGroupe, false);
     }
