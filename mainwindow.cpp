@@ -1018,7 +1018,7 @@ void MainWindow::drawTree()
 
    // Получаем список направленностей
 
-   QString strQuery = "SELECT `Название` FROM Направленности;";
+   QString strQuery = "SELECT `Название` FROM Направленности ORDER BY `Название`;";
    QSqlQuery query;
    query.exec(strQuery);
    while (query.next())    // Пока есть результаты запроса
@@ -1040,7 +1040,7 @@ void MainWindow::drawTree()
        infoMap[dir].query.append("WHERE `Направленность` = '" + dir + "';");
 
        strQuery.clear();
-       strQuery.append("SELECT `Название` FROM Объединения WHERE `Направленность` = '" + dir + "';");
+       strQuery.append("SELECT `Название` FROM Объединения WHERE `Направленность` = '" + dir + "' ORDER BY `Название`;");
        query.exec(strQuery);
        while (query.next())    // Пока есть результаты запроса
        {
@@ -1061,7 +1061,7 @@ void MainWindow::drawTree()
 
            strQuery.clear();
            strQuery.append("SELECT  Группа.`Номер`, Группа.`ID` FROM Объединение, Направленности, Группа  WHERE Направленности.`ID` = Объединение.`ID направленности` AND Объединение.`ID` = Группа.`ID объединения` AND Направленности.`Название` = '");
-           strQuery.append(dir + "' AND Объединение.Название = '" + ass + "';");
+           strQuery.append(dir + "' AND Объединение.Название = '" + ass + "' ORDER BY `Номер`;");
            qDebug() << strQuery;
            query.exec(strQuery);
            qDebug() << query.lastError().text();
