@@ -457,7 +457,7 @@
                <property name="geometry">
                 <rect>
                  <x>0</x>
-                 <y>-771</y>
+                 <y>0</y>
                  <width>297</width>
                  <height>1107</height>
                 </rect>
@@ -2212,6 +2212,7 @@
      <string>Файл</string>
     </property>
     <addaction name="actionConnect"/>
+    <addaction name="actionHtml"/>
     <addaction name="actionExel"/>
     <addaction name="separator"/>
     <addaction name="exit"/>
@@ -2353,6 +2354,11 @@
   <action name="actionSearch">
    <property name="text">
     <string>Расширенный поиск</string>
+   </property>
+  </action>
+  <action name="actionHtml">
+   <property name="text">
+    <string>Экспорт в Html...</string>
    </property>
   </action>
  </widget>

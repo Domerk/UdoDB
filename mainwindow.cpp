@@ -69,6 +69,7 @@ MainWindow::MainWindow(QWidget *parent) :
 
     // Файл
     connect (ui->actionConnect, SIGNAL(triggered()), connectDialog, SLOT(exec()));
+    connect (ui->actionHtml, SIGNAL(triggered()), this, SLOT(exportInHtml()));
     connect(ui->exit, SIGNAL(triggered()), this, SLOT(close()));
     connect(ui->actionExel, SIGNAL(triggered()), this, SLOT(exportInExel()));
 
@@ -1573,6 +1574,73 @@ void MainWindow::exportInExel()
 
         ui->lblStatus->setText(tr("Экспорт завершён"));
 
+    }
+}
+
+void MainWindow::exportInHtml()
+{
+    QFileDialog fileDialog;
+    QString fileName = fileDialog.getSaveFileName(0, tr("Экспортировать в..."), "", "*.htm *.html");
+    qDebug()<<fileName;
+
+    if (!fileName.contains(".htm"))
+        fileName.append(".html");
+
+    QFile file(fileName);
+    if(file.open(QIODevice::WriteOnly))
+    {
+        QTextStream stream(&file);
+        QString text;
+        int columns = ui->tableWidget->columnCount();
+        int rows = ui->tableWidget->rowCount() - 1;
+
+        QDate date;
+        qDebug()<<date.currentDate().toString(Qt::SystemLocaleShortDate);
+
+        text.append("<!DOCTYPE html><html><head><meta charset=utf-8></head><body><h3>" + *currentTable + "</h3><br/>" + date.currentDate().toString(Qt::SystemLocaleShortDate) + "<br />");
+        text.append("<table border=1px align=justify><tr>");
+
+        if (infoMap.contains(*currentTable) && columns == currentMask.size())
+        {
+            for (int i = 1; i<columns; i++)
+            {
+                if (!currentMask[i])
+                    text.append("<td><b>" + ui->tableWidget->horizontalHeaderItem(i)->text() + "</b></td>");
+            }
+            for (int j = 0; j<rows; j++)
+            {
+                text.append("</tr><tr>");
+                for (int i = 1; i<columns; i++)
+                {
+                    if (!currentMask[i])
+                        text.append("<td>" + ui->tableWidget->item(j, i)->text() + "</td>");
+                }
+            }
+            text.append("</tr><tr>");
+        }
+        else
+        {
+            for (int i = 1; i<columns; i++)
+                text.append("<td><b>" + ui->tableWidget->horizontalHeaderItem(i)->text() + "</b></td>");
+            for (int j = 0; j<rows; j++)
+            {
+                text.append("</tr><tr>");
+                for (int i = 1; i<columns; i++)
+                {
+                    text.append("<td>" + ui->tableWidget->item(j, i)->text() + "</td>");
+                }
+            }
+            text.append("</tr><tr>");
+        }
+
+        text.append("</table></body>");
+        stream << text;
+        file.close();
+        ui->lblStatus->setText(tr("Экспорт завершён"));
+    }
+    else
+    {
+        ui->lblStatus->setText(tr("Ошибка: экспорт в Html не выполнен"));
     }
 }
 

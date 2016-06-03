@@ -98,25 +98,20 @@ private slots:
     void changeTableMask();
     void globalSearch();
     void simpleSearch();
-
     void setSearchActive();
-
     void exportInExel();
+    void exportInHtml();
 
     void on_treeWidget_itemClicked(QTreeWidgetItem *item, int column);
     void on_tableWidget_cellClicked(int row, int column);
     void on_saveButton_clicked();
-
     void on_addStudInGroup_clicked();
     void on_addAssForGroup_clicked();
     void on_addTeachForGroup_clicked();
-
     void on_addDirectInAl_clicked();
-
-    void showTempTable();
-
     void on_removeStudToGroup_clicked();
 
+    void showTempTable();
     void showQtInfo();
     void showLicense();
     void showProgramInfo();
