@@ -33,25 +33,24 @@ MainWindow::MainWindow(QWidget *parent) :
 
     // ------------------------- Всякая красота ----------------------------
 
-    this->setWindowTitle(tr("Тут будет содержательное название"));
-
+    // Скрываем служебные поля формы, содержащие ID
     ui->alID->hide();
     ui->studID->hide();
     ui->teachID->hide();
     ui->directID->hide();
     ui->groupID->hide();
-
     ui->groupTeachID->hide();
     ui->groupAssID->hide();
-
     ui->alDirectID->hide();
 
+    // Задаём количество столбцов в дереве
     ui->treeWidget->setColumnCount(1);
 
+    // Задаём иконки для конопок "Добавить в группу" и "Удалить из группы"
     ui->addStudInGroup->setIcon(QIcon(":/icons/Icons/add"));
     ui->removeStudToGroup->setIcon(QIcon(":/icons/Icons/remove"));
 
-
+    // Скрываем служебные поля вспомогательных таблиц
     ui->groupInAl->setColumnHidden(0, true);
     ui->groupInTeach->setColumnHidden(0, true);
     ui->studsInGroupe->setColumnHidden(0, true);
@@ -60,6 +59,7 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->studGroupTable->setColumnHidden(0, true);
     ui->studGroupTable->setColumnHidden(1, true);
 
+    // Получаем и устанавливаем заголовок главного окна
     QSettings settings ("Other/config.ini", QSettings::IniFormat);
     settings.beginGroup("Settings");
     this->setWindowTitle(settings.value("windowtile", "База данных учащихся УДО").toString());
@@ -268,16 +268,8 @@ void MainWindow::showTable(QString table)
     if (table == "Общее" || table == *currentTable)
         return;
 
-    if (table == "Учащиеся" || table == "Группы" || table == "Преподаватели" || table == "Объединения" || table == "Направленности")
-    {
-        ui->mainToolBar->actions()[MainToolButton::Delete]->setDisabled(false);
-        ui->actionDeleteStr->setDisabled(false);
-    }
-    else
-    {
-        ui->mainToolBar->actions()[MainToolButton::Delete]->setDisabled(true);
-        ui->actionDeleteStr->setDisabled(true);
-    }
+    ui->mainToolBar->actions()[MainToolButton::Delete]->setDisabled(true);
+    ui->actionDeleteStr->setDisabled(true);
 
     QSqlQuery query;        // Создаём запрос
     lastSelect->clear();    // Удаляем данные о последнем запросе
@@ -506,6 +498,9 @@ void MainWindow::deleteThis()
                     qDebug() << query.lastError().text();
                     repeatLastSelect();     // Повторяем последний Select
                     clearMoreInfoForm();    // Чистим поле с подробностями
+
+                    ui->mainToolBar->actions()[MainToolButton::Delete]->setDisabled(true);
+                    ui->actionDeleteStr->setDisabled(true);
 
                     if (*currentTable == "Объединения" || *currentTable == "Направленности" || *currentTable == "Группы")
                         drawTree();
@@ -1232,7 +1227,7 @@ void MainWindow::showMoreInfo(int row)
             ui->studComments->setPlainText(ui->tableWidget->item(row, 26)->text());
 
 
-            QString strQuery = "SELECT `ID объединения`, `ID Группы`, `Объединение`, `Номер группы` FROM Нагрузка_Учащегося WHERE `ID Учащегося` = '";
+            QString strQuery = "SELECT `ID объединения`, `ID группы`, `Объединение`, `Номер группы` FROM Нагрузка_Учащегося WHERE `ID учащегося` = '";
             strQuery.append(ui->studID->text() + "';");
             QSqlQuery query;
             query.exec(strQuery);
@@ -1490,9 +1485,20 @@ void MainWindow::on_tableWidget_cellClicked(int row, int column)
 {
     ui->tableWidget->setSortingEnabled(false); // Временно запрещаем сортировку
     if (row < ui->tableWidget->rowCount()-1)
+    {
         showMoreInfo(row);
+        if (bases->contains(*currentTable))
+        {
+            ui->mainToolBar->actions()[MainToolButton::Delete]->setEnabled(true);
+            ui->actionDeleteStr->setEnabled(true);
+        }
+    }
     else
+    {
         clearMoreInfoForm();
+        ui->mainToolBar->actions()[MainToolButton::Delete]->setDisabled(true);
+        ui->actionDeleteStr->setDisabled(true);
+    }
     ui->tableWidget->setSortingEnabled(true);
 }
 
@@ -1504,9 +1510,20 @@ void MainWindow::rowClicked(int row)
 {
     ui->tableWidget->setSortingEnabled(false); // Временно запрещаем сортировку
     if (row < ui->tableWidget->rowCount()-1)
+    {
         showMoreInfo(row);
+        if (bases->contains(*currentTable))
+        {
+            ui->mainToolBar->actions()[MainToolButton::Delete]->setEnabled(true);
+            ui->actionDeleteStr->setEnabled(true);
+        }
+    }
     else
+    {
         clearMoreInfoForm();
+        ui->mainToolBar->actions()[MainToolButton::Delete]->setDisabled(true);
+        ui->actionDeleteStr->setDisabled(true);
+    }
     ui->tableWidget->setSortingEnabled(true);
 }
 
@@ -1576,6 +1593,10 @@ void MainWindow::exportInExel()
 
     }
 }
+
+// ============================================================
+// ===================== Экспорт в Html =======================
+// ============================================================
 
 void MainWindow::exportInHtml()
 {
@@ -1894,7 +1915,7 @@ void MainWindow::showProgramInfo()
     aboutBox.setWindowTitle(tr("О программе"));
     aboutBox.setInformativeText(tr("Программа представляет собой клиент для работы с базой данных учреждения дополнительного образования. "
                                    "Она позволяет просматривать, добавлять, удалять и изменять данные об учащихся, преподавателях, объединениях, учебных группах и направленностях.<br /><br />"
-                                   "Если у Вас остались вопросы или Вы хотите помочь в развитии данного проекта, "
+                                   "Если у Вас остались вопросы или Вы хотите помочь развитию данного проекта, "
                                    "посетите его <a href=https://github.com/Domerk/KcttDB/wiki>домашнюю страницу</a> или обратитесь к администрации образовательного учреждения.<br /><br />"
                                    "Разработано по заказу Центра детского (юношеского) технического творчества Московского района Санкт-Петербурга.<br /><br />"
                                    "Программа основана на Qt 5.4.1 (MSVC 2010, 32 бита).<br /><br />"
