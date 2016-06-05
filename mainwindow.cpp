@@ -1880,9 +1880,9 @@ void MainWindow::showQtInfo()
 
 void MainWindow::showLicense()
 {
-    QDialog license;
-    license.setWindowTitle(tr("Лицензия"));
-    license.setWindowFlags(Qt::Window | Qt::WindowSystemMenuHint | Qt::WindowCloseButtonHint);
+    QDialog *license = new QDialog(this);
+    license->setWindowTitle(tr("Лицензия"));
+    license->setWindowFlags(Qt::Window | Qt::WindowSystemMenuHint | Qt::WindowCloseButtonHint);
     QTextEdit* textEdit = new QTextEdit;
     textEdit->setReadOnly(true);
     textEdit->setHtml(tr("The MIT License (MIT)"
@@ -1904,10 +1904,11 @@ void MainWindow::showLicense()
                          "по лицензии <a href=http://creativecommons.org/licenses/by/3.0/ title=Creative Commons BY 3.0>CC BY 3.0</a>.<br /><br />"));
     QVBoxLayout* layout = new QVBoxLayout;
     QDialogButtonBox* button = new QDialogButtonBox(QDialogButtonBox::Ok);
+    connect (button, SIGNAL(accepted()), license, SLOT(close()));
     layout->addWidget(textEdit);
     layout->addWidget(button);
-    license.setLayout(layout);
-    license.exec();
+    license->setLayout(layout);
+    license->exec();
 }
 
 void MainWindow::showProgramInfo()
