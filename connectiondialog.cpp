@@ -11,6 +11,7 @@ ConnectionDialog::ConnectionDialog(QWidget *parent) :
     ui->buttonBox->button(QDialogButtonBox::Cancel)->setText(tr("Отмена"));
 
     this->setWindowTitle(tr("Настройка соединения"));
+    this->setWindowFlags(Qt::Window | Qt::WindowSystemMenuHint | Qt::WindowCloseButtonHint);
 
     QSettings settings ("Other/config.ini", QSettings::IniFormat);
 

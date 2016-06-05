@@ -7,6 +7,8 @@ TableOpt::TableOpt(QWidget *parent) :
 {
     ui->setupUi(this);
 
+    this->setWindowFlags(Qt::Window | Qt::WindowSystemMenuHint | Qt::WindowCloseButtonHint);
+
     myType = "None";
 
     connect(ui->buttonSearch, SIGNAL(clicked()), this, SLOT(search()));

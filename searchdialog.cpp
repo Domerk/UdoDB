@@ -7,6 +7,7 @@ SearchDialog::SearchDialog(QWidget *parent) :
 {
     ui->setupUi(this);
     this->setWindowTitle(tr("Расширенный поиск"));
+    this->setWindowFlags(Qt::Window | Qt::WindowSystemMenuHint | Qt::WindowCloseButtonHint);
     ui->buttonBox->button(QDialogButtonBox::Ok)->setText(tr("Поиск"));
     ui->buttonBox->button(QDialogButtonBox::Cancel)->setText(tr("Отмена"));
 

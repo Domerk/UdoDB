@@ -403,6 +403,7 @@ void MainWindow::changeTableMask()
 {
     QVector<QCheckBox*> vct;
     QDialog *wgt = new QDialog(this);
+    wgt->setWindowFlags(Qt::Window | Qt::WindowSystemMenuHint | Qt::WindowCloseButtonHint);
     QVBoxLayout *layout = new QVBoxLayout();
     QGridLayout *gl = new QGridLayout();
     QDialogButtonBox *buttonBox;
@@ -1590,7 +1591,6 @@ void MainWindow::exportInExel()
         delete excel;
 
         ui->lblStatus->setText(tr("Экспорт завершён"));
-
     }
 }
 
@@ -1882,6 +1882,7 @@ void MainWindow::showLicense()
 {
     QDialog license;
     license.setWindowTitle(tr("Лицензия"));
+    license.setWindowFlags(Qt::Window | Qt::WindowSystemMenuHint | Qt::WindowCloseButtonHint);
     QTextEdit* textEdit = new QTextEdit;
     textEdit->setReadOnly(true);
     textEdit->setHtml(tr("The MIT License (MIT)"
