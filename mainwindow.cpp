@@ -71,7 +71,7 @@ MainWindow::MainWindow(QWidget *parent) :
     connect (ui->actionConnect, SIGNAL(triggered()), connectDialog, SLOT(exec()));
     connect (ui->actionHtml, SIGNAL(triggered()), this, SLOT(exportInHtml()));
     connect(ui->exit, SIGNAL(triggered()), this, SLOT(close()));
-    connect(ui->actionExel, SIGNAL(triggered()), this, SLOT(exportInExel()));
+    connect(ui->actionExcel, SIGNAL(triggered()), this, SLOT(exportInExcel()));
 
     // Таблица
     connect(ui->actionRefreshTab, SIGNAL(triggered()), this, SLOT(refreshTable()));
@@ -1536,7 +1536,7 @@ void MainWindow::rowClicked(int row)
 // ==================== Экспорт в Exсel =======================
 // ============================================================
 
-void MainWindow::exportInExel()
+void MainWindow::exportInExcel()
 {
     // Открываем QFileDialog
     QFileDialog fileDialog;

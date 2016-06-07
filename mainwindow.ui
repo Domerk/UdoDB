@@ -2213,7 +2213,7 @@
     </property>
     <addaction name="actionConnect"/>
     <addaction name="actionHtml"/>
-    <addaction name="actionExel"/>
+    <addaction name="actionExcel"/>
     <addaction name="separator"/>
     <addaction name="exit"/>
    </widget>
@@ -2316,9 +2316,9 @@
     <string>Повторить последний запрос</string>
    </property>
   </action>
-  <action name="actionExel">
+  <action name="actionExcel">
    <property name="text">
-    <string>Экспорт в Exel...</string>
+    <string>Экспорт в Excel...</string>
    </property>
   </action>
   <action name="actionConnect">

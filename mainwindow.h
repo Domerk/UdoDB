@@ -99,7 +99,7 @@ private slots:
     void globalSearch();
     void simpleSearch();
     void setSearchActive();
-    void exportInExel();
+    void exportInExcel();
     void exportInHtml();
 
     void on_treeWidget_itemClicked(QTreeWidgetItem *item, int column);
