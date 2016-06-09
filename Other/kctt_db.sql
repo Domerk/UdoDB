@@ -151,5 +151,5 @@ CREATE TRIGGER StudInGroupTrigger
 AFTER INSERT ON Нагрузка
 BEGIN 
 	DELETE FROM Нагрузка WHERE `ID учащегося` = NEW.`ID учащегося`
-	AND `ID группы` = (SELECT `ID группы` FROM Нагрузка_Учащегося WHERE `ID учащегося` = NEW.`ID учащегося` AND `Номер группы` = `Без группы` AND `ID объединения` = (SELECT `ID объединения` FROM Нагрузка_Учащегося WHERE `ID Учащегося` = NEW.`ID учащегося` AND `ID группы` = NEW.`ID группы`));
+	AND `ID группы` = (SELECT `ID группы` FROM Нагрузка_Учащегося WHERE `ID учащегося` = NEW.`ID учащегося` AND `Номер группы` = "Без группы" AND `ID объединения` = (SELECT `ID объединения` FROM Нагрузка_Учащегося WHERE `ID учащегося` = NEW.`ID учащегося` AND `ID группы` = NEW.`ID группы`));
  END;
