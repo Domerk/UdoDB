@@ -10,5 +10,6 @@
         <file>Icons/add.png</file>
         <file>Icons/remove.png</file>
         <file>Icons/import.png</file>
+        <file>Icons/udod.png</file>
     </qresource>
 </RCC>

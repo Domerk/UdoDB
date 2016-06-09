@@ -12,11 +12,11 @@ MainWindow::MainWindow(QWidget *parent) :
     lastSelect = new QString();
     currentTable = new QString();
 
-    connectDialog = new ConnectionDialog();
+    connectDialog = new ConnectionDialog(this);
     connect(connectDialog, SIGNAL(connectReconfig()), this, SLOT(connectReconfigSlot()));
     connect(ui->tableWidget->verticalHeader(), SIGNAL(sectionClicked(int)), this, SLOT(rowClicked(int)));
 
-    dbDialog = new TableOpt();
+    dbDialog = new TableOpt(this);
     dbDialog->setType("tempDB");
     connect(dbDialog, SIGNAL(signalQuery(QTableWidget*,QString,bool)), this, SLOT(querySlot(QTableWidget*,QString,bool)));
     connect(dbDialog, SIGNAL(signalQueries(QStringList,bool)), this, SLOT(queriesSlot(QStringList,bool)));
@@ -62,8 +62,10 @@ MainWindow::MainWindow(QWidget *parent) :
     // Получаем и устанавливаем заголовок главного окна
     QSettings settings ("Other/config.ini", QSettings::IniFormat);
     settings.beginGroup("Settings");
-    this->setWindowTitle(settings.value("windowtile", "База данных учащихся УДО").toString());
+    this->setWindowTitle("UdoDB - " + settings.value("windowtile", "База данных учащихся УДО").toString());
     settings.endGroup();
+
+    this->setWindowIcon(QIcon(":/icons/Icons/udod"));
 
     // -------------------------------- Меню --------------------------------
 
@@ -1445,7 +1447,7 @@ void MainWindow::clearMoreInfoForm()
 void MainWindow::globalSearch()
 {
     SearchDialog *dialog;
-    dialog = new SearchDialog();
+    dialog = new SearchDialog(this);
     connect (dialog, SIGNAL(signalQuery(QString)), this, SLOT(querySlot(QString)));
     dialog->exec();
 }
@@ -1913,9 +1915,12 @@ void MainWindow::showLicense()
 
 void MainWindow::showProgramInfo()
 {
-    QMessageBox aboutBox;
-    aboutBox.setWindowTitle(tr("О программе"));
-    aboutBox.setInformativeText(tr("Программа представляет собой клиент для работы с базой данных учреждения дополнительного образования. "
+    QMessageBox *aboutBox;
+    aboutBox = new QMessageBox(this);
+    aboutBox->setWindowTitle(tr("О программе"));
+    aboutBox->setIconPixmap(QPixmap(":/icons/Icons/udod"));
+    aboutBox->setText("<strong>UdoDB</strong>");
+    aboutBox->setInformativeText(tr("Программа представляет собой клиент для работы с базой данных учреждения дополнительного образования. "
                                    "Она позволяет просматривать, добавлять, удалять и изменять данные об учащихся, преподавателях, объединениях, учебных группах и направленностях.<br /><br />"
                                    "Если у Вас остались вопросы или Вы хотите помочь развитию данного проекта, "
                                    "посетите его <a href=https://github.com/Domerk/KcttDB/wiki>домашнюю страницу</a> или обратитесь к администрации образовательного учреждения.<br /><br />"
@@ -1926,5 +1931,5 @@ void MainWindow::showProgramInfo()
                                    "<strong>Благодарности:</strong><br />"
                                    "<a href=https://github.com/aksenoff>Alex Aksenoff</a>, <a href=https://github.com/aizenbit>Alex Aizenbit</a>"
                                    ));
-    aboutBox.exec();
+    aboutBox->exec();
 }
