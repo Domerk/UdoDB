@@ -62,7 +62,10 @@ MainWindow::MainWindow(QWidget *parent) :
     // Получаем и устанавливаем заголовок главного окна
     QSettings settings ("Other/config.ini", QSettings::IniFormat);
     settings.beginGroup("Settings");
-    this->setWindowTitle("UdoDB - " + settings.value("windowtile", "База данных учащихся УДО").toString());
+    QString windowTitle = QString::fromUtf8(settings.value("windowtitle", QString()).toString().toLatin1());
+    if (windowTitle.isNull())
+        windowTitle = QString("База данных учащихся УДО");
+    this->setWindowTitle("UdoDB - " + windowTitle);
     settings.endGroup();
 
     this->setWindowIcon(QIcon(":/icons/Icons/udod"));
