@@ -17,6 +17,7 @@ TableOpt::TableOpt(QWidget *parent) :
     ui->buttonSearch->setIcon(QIcon(":/icons/Icons/search.png"));
     ui->buttonBox->button(QDialogButtonBox::Ok)->setText(tr("Добавить"));
     ui->buttonBox->button(QDialogButtonBox::Cancel)->setText(tr("Отмена"));
+    ui->buttonBox->button(QDialogButtonBox::Close)->setText(tr("Закрыть"));
 
     ui->tableWidget->setSelectionBehavior(QAbstractItemView::SelectRows);
 
@@ -59,6 +60,13 @@ void TableOpt::setType(QString type)
 
     ui->deleteButton->hide();
     ui->insertButton->hide();
+
+    if (ui->buttonBox->button(QDialogButtonBox::Ok)->isHidden())
+    {
+        ui->buttonBox->button(QDialogButtonBox::Ok)->show();
+        ui->buttonBox->button(QDialogButtonBox::Cancel)->show();
+        ui->buttonBox->button(QDialogButtonBox::Close)->hide();
+    }
 
     if (ui->searchParam->isHidden())
     {
@@ -106,7 +114,9 @@ void TableOpt::setType(QString type)
     {
         this->setWindowTitle(tr("Учащиеся - самозапись"));
         ui->comments->setText(tr("Выберите учащегося и действие:"));
-        ui->buttonBox->button(QDialogButtonBox::Ok)->setText(tr("Ок"));
+        ui->buttonBox->button(QDialogButtonBox::Ok)->hide();
+        ui->buttonBox->button(QDialogButtonBox::Cancel)->hide();
+        ui->buttonBox->button(QDialogButtonBox::Close)->show();
         ui->deleteButton->show();
         ui->insertButton->show();
         mainDB = false;
