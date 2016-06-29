@@ -21,6 +21,8 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(dbDialog, SIGNAL(signalQuery(QTableWidget*,QString,bool)), this, SLOT(querySlot(QTableWidget*,QString,bool)));
     connect(dbDialog, SIGNAL(signalQueries(QStringList,bool)), this, SLOT(queriesSlot(QStringList,bool)));
 
+    helpDialog = new Help(this);
+
     bases = new QStringList();
     bases->append("Учащиеся");
     bases->append("Преподаватели");
@@ -97,6 +99,7 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->actionDeleteStr->setIcon(QIcon(":/icons/Icons/delete.png"));
 
     // Справка
+    connect(ui->actionHelp, SIGNAL(triggered()), helpDialog, SLOT(show()));
     connect(ui->actionQt, SIGNAL(triggered()), this, SLOT(showQtInfo()));
     connect(ui->actionLicense, SIGNAL(triggered()), this, SLOT(showLicense()));
     connect(ui->actionProgram, SIGNAL(triggered()), this, SLOT(showProgramInfo()));
@@ -201,6 +204,7 @@ MainWindow::~MainWindow()
     delete lastSelect;
     delete currentTable;
     delete dbDialog;
+    delete helpDialog;
     delete ui;
 }
 

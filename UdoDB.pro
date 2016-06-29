@@ -16,17 +16,20 @@ SOURCES += main.cpp\
         mainwindow.cpp \
     searchdialog.cpp \
     connectiondialog.cpp \
-    tableopt.cpp
+    tableopt.cpp \
+    help.cpp
 
 HEADERS  += mainwindow.h \
     searchdialog.h \
     connectiondialog.h \
-    tableopt.h
+    tableopt.h \
+    help.h
 
 FORMS    += mainwindow.ui \
     searchdialog.ui \
     connectiondialog.ui \
-    tableopt.ui
+    tableopt.ui \
+    help.ui
 
 QMAKE_CXXFLAGS += -std=gnu++0x
 

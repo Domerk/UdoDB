@@ -2239,6 +2239,7 @@
     <property name="title">
      <string>Справка</string>
     </property>
+    <addaction name="actionHelp"/>
     <addaction name="actionProgram"/>
     <addaction name="actionQt"/>
     <addaction name="actionLicense"/>
@@ -2359,6 +2360,11 @@
   <action name="actionHtml">
    <property name="text">
     <string>Экспорт в Html...</string>
+   </property>
+  </action>
+  <action name="actionHelp">
+   <property name="text">
+    <string>Справка</string>
    </property>
   </action>
  </widget>

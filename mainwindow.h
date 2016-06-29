@@ -23,6 +23,7 @@
 #include "searchdialog.h"
 #include "connectiondialog.h"
 #include "tableopt.h"
+#include "help.h"
 
 namespace Ui {
 class MainWindow;
@@ -64,6 +65,7 @@ private:
 
     TableOpt *dbDialog;
     ConnectionDialog *connectDialog;
+    Help *helpDialog;
 
     QMap<QString, Info> infoMap;
 
