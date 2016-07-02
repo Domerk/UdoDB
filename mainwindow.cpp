@@ -1485,7 +1485,8 @@ void MainWindow::on_treeWidget_itemClicked(QTreeWidgetItem *item, int column)
 void MainWindow::on_tableWidget_cellClicked(int row, int column)
 {
     ui->tableWidget->setSortingEnabled(false); // Временно запрещаем сортировку
-    if (row < ui->tableWidget->rowCount()-1)
+    if (row < ui->tableWidget->rowCount()-1 &&
+            *currentTable != "GlobalSearch")
     {
         showMoreInfo(row);
         if (bases->contains(*currentTable))
@@ -1510,7 +1511,8 @@ void MainWindow::on_tableWidget_cellClicked(int row, int column)
 void MainWindow::rowClicked(int row)
 {
     ui->tableWidget->setSortingEnabled(false); // Временно запрещаем сортировку
-    if (row < ui->tableWidget->rowCount()-1)
+    if (row < ui->tableWidget->rowCount()-1 &&
+            *currentTable != "GlobalSearch")
     {
         showMoreInfo(row);
         if (bases->contains(*currentTable))
