@@ -444,7 +444,7 @@ void SearchDialog::on_buttonBox_accepted()
 
     columns->resize(columns->size()-1);     // Убираем запятую в конце
     from->resize(from->size()-1);           // Убираем запятую в конце FROM
-    query->append("SELECT" + *columns + " FROM" + *from);
+    query->append("SELECT DISTINCT" + *columns + " FROM" + *from);
 
     if (!where->isEmpty())
         query->append(" WHERE " + *where);
