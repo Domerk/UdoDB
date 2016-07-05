@@ -2,6 +2,7 @@
 #define HELP_H
 
 #include <QDialog>
+#include <QTreeWidgetItem>
 
 namespace Ui {
 class Help;
