@@ -67,7 +67,7 @@
            </sizepolicy>
           </property>
           <property name="currentIndex">
-           <number>2</number>
+           <number>0</number>
           </property>
           <widget class="QWidget" name="alliance">
            <layout class="QVBoxLayout" name="verticalLayout_7">
@@ -106,7 +106,7 @@
                 <rect>
                  <x>0</x>
                  <y>0</y>
-                 <width>218</width>
+                 <width>297</width>
                  <height>317</height>
                 </rect>
                </property>
@@ -133,7 +133,7 @@
                   <item row="3" column="0">
                    <widget class="QLabel" name="label_32">
                     <property name="text">
-                     <string>Отдел *</string>
+                     <string>Отдел</string>
                     </property>
                    </widget>
                   </item>
@@ -1780,8 +1780,8 @@
                 <rect>
                  <x>0</x>
                  <y>0</y>
-                 <width>139</width>
-                 <height>155</height>
+                 <width>314</width>
+                 <height>316</height>
                 </rect>
                </property>
                <layout class="QVBoxLayout" name="verticalLayout_11">
@@ -1882,8 +1882,8 @@
                 <rect>
                  <x>0</x>
                  <y>0</y>
-                 <width>194</width>
-                 <height>302</height>
+                 <width>314</width>
+                 <height>316</height>
                 </rect>
                </property>
                <layout class="QVBoxLayout" name="verticalLayout_12">

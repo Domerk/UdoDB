@@ -27,6 +27,8 @@ SearchDialog::SearchDialog(QWidget *parent) :
     whereGroup = new QStringList();
 }
 
+// ============================================================
+
 SearchDialog::~SearchDialog()
 {
     delete ui;
@@ -46,6 +48,8 @@ SearchDialog::~SearchDialog()
     delete whereAss;
     delete whereGroup;
 }
+
+// ============================================================
 
 void SearchDialog::on_buttonBox_accepted()
 {
@@ -457,6 +461,8 @@ void SearchDialog::on_buttonBox_accepted()
     signalQuery(*query);
 }
 
+// ============================================================
+
 void SearchDialog::getDataFromLineEdit(QStringList *slist, QLineEdit *ledit, QString text)
 {
     QString str = ledit->text().simplified().replace(QRegularExpression("-{2,}"), "-");
@@ -466,6 +472,8 @@ void SearchDialog::getDataFromLineEdit(QStringList *slist, QLineEdit *ledit, QSt
     }
 }
 
+// ============================================================
+
 void SearchDialog::getDataFromBoolComboBox(QStringList *slist, QComboBox *box, QString text)
 {
     if (box->currentText() == "Да")
@@ -473,6 +481,8 @@ void SearchDialog::getDataFromBoolComboBox(QStringList *slist, QComboBox *box, Q
     else
         slist->append(text + " = 'false'");
 }
+
+// ============================================================
 
 QString SearchDialog::getDateToForm(int d, int m, int y)
 {

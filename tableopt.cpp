@@ -23,15 +23,21 @@ TableOpt::TableOpt(QWidget *parent) :
 
 }
 
+// ============================================================
+
 TableOpt::~TableOpt()
 {
     delete ui;
 }
 
+// ============================================================
+
 void TableOpt::on_lineSearch_textChanged(const QString &arg1)
 {
     ui->buttonSearch->setEnabled(true);
 }
+
+// ============================================================
 
 void TableOpt::search()
 {
@@ -40,15 +46,21 @@ void TableOpt::search()
     emit signalQuery(ui->tableWidget, strQuery, mainDB);
 }
 
+// ============================================================
+
 QTableWidget* TableOpt::letTable()
 {
     return ui->tableWidget;
 }
 
+// ============================================================
+
 QComboBox* TableOpt::letSearchBox()
 {
     return ui->searchParam;
 }
+
+// ============================================================
 
 void TableOpt::setType(QString type)
 {
@@ -124,6 +136,8 @@ void TableOpt::setType(QString type)
         forSearch = "AND";
     }
 }
+
+// ============================================================
 
 void TableOpt::on_insertButton_clicked()
 {

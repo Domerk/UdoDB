@@ -30,10 +30,14 @@ ConnectionDialog::ConnectionDialog(QWidget *parent) :
     settings.endGroup();
 }
 
+// ============================================================
+
 ConnectionDialog::~ConnectionDialog()
 {
     delete ui;
 }
+
+// ============================================================
 
 void ConnectionDialog::on_buttonBox_accepted()
 {

@@ -256,6 +256,9 @@ bool MainWindow::connectDB()
     return false;
 }
 
+// ============================================================
+// ============================================================
+
 void MainWindow::connectReconfigSlot()
 {
     connectDB();
@@ -500,12 +503,10 @@ void MainWindow::deleteThis()
                             {
                                 strQuery.append("DELETE FROM " + *currentTable + " WHERE `ID` = " + ui->tableWidget->item(row, 0)->text() + " ;");
                                 query.exec(strQuery);
-                                qDebug() << strQuery;
                                 strQuery.clear();
                             }
                     }
 
-                    qDebug() << query.lastError().text();
                     repeatLastSelect();     // Повторяем последний Select
                     clearMoreInfoForm();    // Чистим поле с подробностями
 
@@ -577,7 +578,7 @@ void MainWindow::on_saveButton_clicked()
             QString otd = ui->alOtd->text().simplified().replace(QRegularExpression("-{2,}"), "-");            // Отдел
             QString desc = ui->alDescript->toPlainText().replace(QRegularExpression("-{2,}"), "-");     // Описание
 
-            if (name.isEmpty() || otd.isEmpty())
+            if (name.isEmpty())
             {
                 // Сообщаем пользователю, что обязательные поля не заполнены
                 QMessageBox messageBox(QMessageBox::Information,
@@ -909,12 +910,14 @@ void MainWindow::on_saveButton_clicked()
     QSqlQuery query;
     query.exec(strQuery);
 
-    qDebug() << query.lastError().text();
     repeatLastSelect();
 
     if (*currentTable == "Объединения" || *currentTable == "Направленности" || *currentTable == "Группы")
         drawTree();
 }
+
+// ============================================================
+// ============================================================
 
 void MainWindow::getDateToForm(QString* str, QComboBox* d, QComboBox* m, QSpinBox* y)
 {
@@ -1063,9 +1066,7 @@ void MainWindow::drawTree()
            strQuery.clear();
            strQuery.append("SELECT  Группа.`Номер`, Группа.`ID` FROM Объединение, Направленности, Группа  WHERE Направленности.`ID` = Объединение.`ID направленности` AND Объединение.`ID` = Группа.`ID объединения` AND Направленности.`Название` = '");
            strQuery.append(dir + "' AND Объединение.Название = '" + ass + "' ORDER BY `Номер`;");
-           qDebug() << strQuery;
            query.exec(strQuery);
-           qDebug() << query.lastError().text();
            while (query.next())    // Пока есть результаты запроса
            {
                QTreeWidgetItem *treeGroup = new QTreeWidgetItem();
@@ -1237,9 +1238,6 @@ void MainWindow::showMoreInfo(int row)
             QSqlQuery query;
             query.exec(strQuery);
             drawRows(query, ui->studGroupTable, false);
-
-            qDebug()<<query.lastError().text();
-
             break;
         }
 
@@ -1283,6 +1281,9 @@ void MainWindow::showMoreInfo(int row)
         }
     }
 }
+
+// ============================================================
+// ============================================================
 
 void MainWindow::getDateToTable(QString str, QComboBox* d, QComboBox* m, QSpinBox* y)
 {
@@ -1454,6 +1455,9 @@ void MainWindow::globalSearch()
     dialog->exec();
 }
 
+// ============================================================
+// ============================================================
+
 void MainWindow::querySlot(QString textQuery)
 {
     currentTable->clear();
@@ -1608,7 +1612,6 @@ void MainWindow::exportInHtml()
 {
     QFileDialog fileDialog;
     QString fileName = fileDialog.getSaveFileName(0, tr("Экспортировать в..."), "", "*.htm *.html");
-    qDebug()<<fileName;
 
     if (!fileName.contains(".htm"))
         fileName.append(".html");
@@ -1622,7 +1625,6 @@ void MainWindow::exportInHtml()
         int rows = ui->tableWidget->rowCount() - 1;
 
         QDate date;
-        qDebug()<<date.currentDate().toString(Qt::SystemLocaleShortDate);
 
         text.append("<!DOCTYPE html><html><head><meta charset=utf-8></head><body><h3>" + *currentTable + "</h3><br/>" + date.currentDate().toString(Qt::SystemLocaleShortDate) + "<br />");
         text.append("<table border=1px align=justify><tr>");
@@ -1704,15 +1706,11 @@ void MainWindow::on_addStudInGroup_clicked()
                     for (int row = selectionRange.topRow(); row <= selectionRange.bottomRow(); row++)
                     {
                         strQuery.append("INSERT INTO Нагрузка(`ID учащегося`, `ID группы`) VALUES(" + wgt->item(row, 0)->text() + ", " + ui->groupID->text() + "); ");
-                        qDebug() << wgt->item(row, 0)->text();
                         query.exec(strQuery);
-                        qDebug() << strQuery;
-                        qDebug() << query.lastError().text();
                         strQuery.clear();
                     }
             }
             strQuery.append("SELECT `ID учащегося`, `Фамилия`, `Имя`, `Отчество`, `Телефон`, `e-mail` FROM Состав_групп WHERE `ID группы` = " + ui->groupID->text() + ";");
-            qDebug() << strQuery;
             query.exec(strQuery);
             drawRows(query, ui->studsInGroupe, false);
 
@@ -1808,7 +1806,6 @@ void MainWindow::showTempTable()
     QTableWidget *wgt = dbDialog->letTable();
     QSqlQuery query(tempDB);
     query.exec("SELECT Запись.`Объединение` `Объединение`, Учащийся.`Фамилия` `Фамилия`, Учащийся.`Имя` `Имя`, Учащийся.`Отчество` `Отчество`, Учащийся.`Тип документа` `Тип документа`, Учащийся.`Номер документа` `Номер документа`, Учащийся.`Пол` `Пол`, Учащийся.`Дата рождения` `Дата рождения`, Учащийся.`Район школы` `Район школы`, Учащийся.`Школа` `Школа`, Учащийся.`Класс` `Класс`, Учащийся.`Родители` `Родители`, Учащийся.`Домашний адрес` `Домашний адрес`, Учащийся.`Телефон` `Телефон`, Учащийся.`e-mail` `e-mail`, Учащийся.`Дата заявления` `Дата заявления` FROM Учащийся, Запись WHERE Учащийся.`Тип документа` = Запись.`Тип документа` AND Учащийся.`Номер документа` = Запись.`Номер документа`;");
-    qDebug()<<query.lastError().text();
     drawHeaders(query, wgt, true, dbDialog->letSearchBox());
     drawRows(query, wgt, false);
     dbDialog->show();
@@ -1841,8 +1838,6 @@ void MainWindow::queriesSlot(QStringList qsl, bool mainDB)
     for (QString & strQuery : qsl)
     {
         query.exec(strQuery);
-        qDebug() << strQuery;
-        qDebug() << query.lastError().text();
     }
 
     if(mainDB)
@@ -1866,9 +1861,7 @@ void MainWindow::on_removeStudToGroup_clicked()
                 for (int row = selectionRange.topRow(); row <= selectionRange.bottomRow(); row++)
                 {
                     strQuery.append("DELETE FROM Нагрузка WHERE `ID учащегося` = " + ui->studsInGroupe->item(row, 0)->text() + " AND `ID группы` = "  + ui->groupID->text() + ";");
-                    qDebug() << ui->studsInGroupe->item(row, 0)->text();
                     query.exec(strQuery);
-                    qDebug() << query.lastError().text();
                     strQuery.clear();
                 }
         }
@@ -1887,6 +1880,9 @@ void MainWindow::showQtInfo()
     QMessageBox messageBox;
     messageBox.aboutQt(this, tr("О библиотеке Qt"));
 }
+
+// ============================================================
+// ============================================================
 
 void MainWindow::showLicense()
 {
@@ -1920,6 +1916,9 @@ void MainWindow::showLicense()
     license->setLayout(layout);
     license->exec();
 }
+
+// ============================================================
+// ============================================================
 
 void MainWindow::showProgramInfo()
 {
