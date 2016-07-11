@@ -219,6 +219,7 @@ bool MainWindow::connectDB()
     if (myDB.isOpen())
         myDB.close();
     else
+        // QSQLITE
         myDB = QSqlDatabase::addDatabase("QSQLITE");    // Указываем СУБД, имени соединения нет - соединение по умолчанию
 
     QSettings settings ("Other/config.ini", QSettings::IniFormat);
@@ -495,13 +496,30 @@ void MainWindow::deleteThis()
             {
                     QSqlQuery query;        // Создаём и формируем запрос
                     QString strQuery;
+                    QString table;
+
+                    // Заменяем имена представлений именами таблиц
+                    // Представления Объединения и Группы - на Объединение и Группа
+                    // Остальные имена оставляем без изменений
+                    if (*currentTable == "Объединения")
+                    {
+                        table = "Объединение";
+                    }
+                    else
+                    {
+                        if (*currentTable == "Группы")
+                            table = "Группа";
+                        else
+                            table = *currentTable;
+                    }
+
 
                     for (QTableWidgetSelectionRange selectionRange : ui->tableWidget->selectedRanges())
                     {
                         if (selectionRange.rowCount() > 0)
                             for (int row = selectionRange.topRow(); row <= selectionRange.bottomRow(); row++)
                             {
-                                strQuery.append("DELETE FROM " + *currentTable + " WHERE `ID` = " + ui->tableWidget->item(row, 0)->text() + " ;");
+                                strQuery.append("DELETE FROM " + table + " WHERE `ID` = " + ui->tableWidget->item(row, 0)->text() + " ;");
                                 query.exec(strQuery);
                                 strQuery.clear();
                             }

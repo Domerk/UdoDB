@@ -1,6 +1,4 @@
-﻿﻿PRAGMA foreign_keys = ON;
-
-DROP TABLE IF EXISTS Учащиеся;
+﻿DROP TABLE IF EXISTS Учащиеся;
 DROP TABLE IF EXISTS Преподаватели;
 DROP TABLE IF EXISTS Направленности;
 DROP TABLE IF EXISTS Объединение;
@@ -9,7 +7,7 @@ DROP TABLE IF EXISTS Нагрузка;
 
 CREATE TABLE Учащиеся (
 -- Поля
-`ID`      			INTEGER			PRIMARY KEY			AUTOINCREMENT,
+`ID`      			INTEGER			PRIMARY KEY,
 `Фамилия`			VARCHAR(100)		NOT NULL,
 `Имя`				VARCHAR(100)		NOT NULL,
 `Отчество`		    VARCHAR(100),
@@ -45,7 +43,7 @@ CREATE TABLE Учащиеся (
 );
 
 CREATE TABLE Преподаватели (
-`ID` 				INTEGER			PRIMARY KEY			AUTOINCREMENT,
+`ID` 				INTEGER			PRIMARY KEY,
 `Фамилия`   		VARCHAR(100)		NOT NULL,
 `Имя`     			VARCHAR(100)		NOT NULL,
 `Отчество`    		VARCHAR(100),
@@ -54,12 +52,12 @@ CREATE TABLE Преподаватели (
 );
 
 CREATE TABLE Направленности (
-`ID` 			INTEGER				PRIMARY KEY			AUTOINCREMENT,
+`ID` 			INTEGER				PRIMARY KEY,
 `Название`	VARCHAR(60)		NOT NULL
 );
 
 CREATE TABLE Объединение (
-`ID` 			INTEGER				PRIMARY KEY			AUTOINCREMENT,
+`ID` 			INTEGER				PRIMARY KEY,
 `Название`		VARCHAR(100)		NOT NULL,
 `Отдел`			VARCHAR(60),
 `Описание`		VARCHAR(500),
@@ -69,7 +67,7 @@ FOREIGN KEY (`ID направленности`)	REFERENCES Направленн�
 );
 
 CREATE TABLE Группа (
-`ID` 				INTEGER			PRIMARY KEY			AUTOINCREMENT,
+`ID` 				INTEGER			PRIMARY KEY,
 `ID объединения` 	INTEGER,
 `ID преподавателя` 	INTEGER,
 `Номер`			   	VARCHAR(30),
@@ -126,7 +124,7 @@ CREATE VIEW Нагрузка_Учащегося AS
 DROP TRIGGER IF EXISTS AllInsertTrigger;
 CREATE TRIGGER AllInsertTrigger
  AFTER INSERT ON Объединение
- BEGIN 
+ FOR EACH ROW BEGIN 
 	INSERT INTO Группа (`Номер`,`ID объединения`) VALUES ("Без группы", (SELECT `ID` FROM Объединение WHERE `Название` = NEW.`Название`));
  END;
   
@@ -135,7 +133,7 @@ CREATE TRIGGER AllInsertTrigger
 DROP TRIGGER IF EXISTS StudInGroupTrigger;
 CREATE TRIGGER StudInGroupTrigger
 AFTER INSERT ON Нагрузка
-BEGIN 
+FOR EACH ROW BEGIN 
 	DELETE FROM Нагрузка WHERE `ID учащегося` = NEW.`ID учащегося`
 	AND `ID группы` = (SELECT `ID группы` FROM Нагрузка_Учащегося WHERE `ID учащегося` = NEW.`ID учащегося` AND `Номер группы` = "Без группы" AND `ID объединения` = (SELECT `ID объединения` FROM Нагрузка_Учащегося WHERE `ID учащегося` = NEW.`ID учащегося` AND `ID группы` = NEW.`ID группы`));
  END;
