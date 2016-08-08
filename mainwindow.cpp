@@ -1595,18 +1595,50 @@ void MainWindow::exportInExcel()
     if (!fileName.isEmpty())
     {
         ui->lblStatus->setText(tr("Экспорт..."));
+        qApp->processEvents();
 
         //Спасибо drweb86
         //https://forum.qt.io/topic/16547/how-to-export-excel-in-qt/10
 
-        QAxObject* excel = new QAxObject("Excel.Application", 0);
+        QAxObject* excel = new QAxObject("Excel.Application");
+
+        if (excel->isNull())
+        {
+            ui->lblStatus->setText(tr("Не могу иницировать взаимодействие с Excel. Возможно, Excel не установлен"));
+            return;
+        }
+
         excel->dynamicCall("SetVisible(bool)", false); //Скрываем Excel
         excel->setProperty("DisplayAlerts", 0);        //Выключем предупреждения
 
+        //TODO: Куча одинаковых проверок - отстой. Нельзя оформить их как-нибудь покрасивее?
         QAxObject* workbooks = excel->querySubObject("Workbooks");
+        if (workbooks == nullptr)
+        {
+            ui->lblStatus->setText(tr("Неизвестная ошибка. Экспорт не выполнен"));
+            return;
+        }
+
         QAxObject* workbook = workbooks->querySubObject("Add");
+        if (workbook == nullptr)
+        {
+            ui->lblStatus->setText(tr("Неизвестная ошибка. Экспорт не выполнен"));
+            return;
+        }
+
         QAxObject* sheets = workbook->querySubObject("Worksheets");
+        if (sheets == nullptr)
+        {
+            ui->lblStatus->setText(tr("Неизвестная ошибка. Экспорт не выполнен"));
+            return;
+        }
+
         QAxObject* sheet = sheets->querySubObject("Add");
+        if (sheet == nullptr)
+        {
+            ui->lblStatus->setText(tr("Неизвестная ошибка. Экспорт не выполнен"));
+            return;
+        }
 
         // Вставка значения в отдельную ячейку
 
