@@ -1568,7 +1568,12 @@ void MainWindow::exportInExcel()
 {
     // Открываем QFileDialog
     QFileDialog fileDialog;
-    QString fileName = fileDialog.getOpenFileName(0, tr("Экспортировать в..."), "", "*.xls *.xlsx");
+    QString fileName = fileDialog.getSaveFileName(0, tr("Экспортировать в..."), "", "*.xlsx *.xls");
+
+    for (QChar &character : fileName)
+        if (character ==  '/')
+            character = '\\';
+
     if (!fileName.isEmpty())
     {
         ui->lblStatus->setText(tr("Экспорт..."));
@@ -1577,20 +1582,22 @@ void MainWindow::exportInExcel()
         // http://wiki.crossplatform.ru/index.php/%D0%A0%D0%B0%D0%B1%D0%BE%D1%82%D0%B0_%D1%81_MS_Office_%D1%81_%D0%BF%D0%BE%D0%BC%D0%BE%D1%89%D1%8C%D1%8E_ActiveQt
 
         QAxObject* excel = new QAxObject("Excel.Application", 0);
+        excel->dynamicCall("SetVisible(bool)", false);
+        excel->setProperty("DisplayAlerts", 0);
+
         QAxObject* workbooks = excel->querySubObject("Workbooks");
-        QAxObject* workbook = workbooks->querySubObject("Open(const QString&)", fileName);
+        QAxObject* workbook = workbooks->querySubObject("Add");
         QAxObject* sheets = workbook->querySubObject("Worksheets");
+        QAxObject* sheet = sheets->querySubObject("Add");
 
         // Вставка значения в отдельную ячейку
 
-        QAxObject* StatSheet = sheets->querySubObject("Item( int )", 1);
-
        for (int col = 1; col < ui->tableWidget->columnCount(); col++)        // Запись заголовков
-        {
+       {
             // получение указателя на ячейку [row][col] ((!)нумерация с единицы)
-            QAxObject* cell = StatSheet->querySubObject("Cells(QVariant,QVariant)", 1, col);
+            QAxObject* cell = sheet->querySubObject("Cells(int,int)", 1, col);
             // вставка значения переменной в полученную ячейку
-            cell->setProperty("Value", QVariant(ui->tableWidget->horizontalHeaderItem(col)->text()));
+            cell->setProperty("Value", ui->tableWidget->horizontalHeaderItem(col)->text());
             // освобождение памяти
             delete cell;
         }
@@ -1600,19 +1607,19 @@ void MainWindow::exportInExcel()
             for (int col = 1; col < ui->tableWidget->columnCount(); col++)
             {
                 // получение указателя на ячейку [row][col] ((!)нумерация с единицы)
-                QAxObject* cell = StatSheet->querySubObject("Cells(QVariant,QVariant)", row+1, col);
+                QAxObject* cell = sheet->querySubObject("Cells(int,int)", row + 1, col);
                 // вставка значения переменной в полученную ячейку
-                cell->setProperty("Value", QVariant(ui->tableWidget->item(row-1, col)->text()));
+                cell->setProperty("Value", ui->tableWidget->item(row - 1, col)->text());
                 // освобождение памяти
                 delete cell;
             }
         }
 
-        excel->dynamicCall("Save()");       // Сохраняем - в примерах почему-то этого нет, но надо
+        workbook->dynamicCall("SaveAs(const QString&)", fileName);       // Сохраняем - в примерах почему-то этого нет, но надо
         workbook->dynamicCall("Close()");   // Закрываем
         excel->dynamicCall("Quit()");       // Выходим
 
-        delete StatSheet;
+        delete sheet;
         delete sheets;
         delete workbook;
         delete workbooks;
