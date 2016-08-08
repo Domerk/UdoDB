@@ -226,6 +226,7 @@ bool MainWindow::connectDB()
     settings.beginGroup("MainDB");
     myDB.setHostName(settings.value("hostname", "localhost").toString());
     myDB.setDatabaseName(settings.value("dbname", "kcttDB").toString());
+    myDB.setPort(settings.value("port").toInt());
     myDB.setUserName(settings.value("username").toString());
     myDB.setPassword(settings.value("password").toString());
     settings.endGroup();
@@ -239,22 +240,38 @@ bool MainWindow::connectDB()
     settings.beginGroup("TempDB");
     tempDB.setHostName(settings.value("hostname", "localhost").toString());
     tempDB.setDatabaseName(settings.value("dbname", "kcttTempDB").toString());
+    tempDB.setPort(settings.value("port").toInt());
     tempDB.setUserName(settings.value("username").toString());
     tempDB.setPassword(settings.value("password").toString());
     settings.endGroup();
 
-    // Вот это место переписать, тк соединене с основной базой критично, а со временной - нет
+    QString status;
+    bool myDBIsOpen = myDB.open(), tempDBIsOpen = tempDB.open(); // Открываем соединение
 
-    if (myDB.open() && tempDB.open())                            // Открываем соединение
-    {
-        ui->lblStatus->setText(tr("Соединение установлено")); // Выводим сообщение
-        return true;                 // Возвращаем true
-    }
+    if (myDBIsOpen)
+        status = tr("Соединение с основной базой установлено.");
     else
-    {
-        ui->lblStatus->setText(tr("Ошибка соединения: соединение не установлено"));
-    }
-    return false;
+        status = tr("Ошибка соединения с основной базой: ") + myDB.lastError().text();
+
+    if (tempDBIsOpen)
+        status += tr("\nСоединение с базой самозаписи установлено.");
+    else
+        status += tr("\nОшибка соединения с базой самозаписи: ")+ tempDB.lastError().text();
+
+    if (myDBIsOpen && tempDBIsOpen)
+        status = tr("Соединение установлено.");
+
+    if (!myDBIsOpen && !tempDBIsOpen)
+        status = tr("Ошибка: Соединение не установлено.") + '\n' +
+                 tr("Основная база: ") + myDB.lastError().text() + '\n' +
+                 tr("База самозаписи: ") + tempDB.lastError().text();
+
+    ui->lblStatus->setText(status);
+
+    if (myDBIsOpen)
+        return true;
+    else
+        return false;
 }
 
 // ============================================================
@@ -1570,6 +1587,7 @@ void MainWindow::exportInExcel()
     QFileDialog fileDialog;
     QString fileName = fileDialog.getSaveFileName(0, tr("Экспортировать в..."), "", "*.xlsx *.xls");
 
+    //Потому что Excel воспринимает только обратные слеши
     for (QChar &character : fileName)
         if (character ==  '/')
             character = '\\';
@@ -1578,12 +1596,12 @@ void MainWindow::exportInExcel()
     {
         ui->lblStatus->setText(tr("Экспорт..."));
 
-        // https://wiki.qt.io/Using_ActiveX_Object_in_QT
-        // http://wiki.crossplatform.ru/index.php/%D0%A0%D0%B0%D0%B1%D0%BE%D1%82%D0%B0_%D1%81_MS_Office_%D1%81_%D0%BF%D0%BE%D0%BC%D0%BE%D1%89%D1%8C%D1%8E_ActiveQt
+        //Спасибо drweb86
+        //https://forum.qt.io/topic/16547/how-to-export-excel-in-qt/10
 
         QAxObject* excel = new QAxObject("Excel.Application", 0);
-        excel->dynamicCall("SetVisible(bool)", false);
-        excel->setProperty("DisplayAlerts", 0);
+        excel->dynamicCall("SetVisible(bool)", false); //Скрываем Excel
+        excel->setProperty("DisplayAlerts", 0);        //Выключем предупреждения
 
         QAxObject* workbooks = excel->querySubObject("Workbooks");
         QAxObject* workbook = workbooks->querySubObject("Add");
@@ -1615,7 +1633,7 @@ void MainWindow::exportInExcel()
             }
         }
 
-        workbook->dynamicCall("SaveAs(const QString&)", fileName);       // Сохраняем - в примерах почему-то этого нет, но надо
+        workbook->dynamicCall("SaveAs(const QString&)", fileName);       // Сохраняем
         workbook->dynamicCall("Close()");   // Закрываем
         excel->dynamicCall("Quit()");       // Выходим
 
