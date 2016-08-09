@@ -15,7 +15,8 @@ MainWindow::MainWindow(QWidget *parent) :
 
     connectDialog = new ConnectionDialog(this);
     connect(connectDialog, SIGNAL(connectReconfig()), this, SLOT(connectReconfigSlot()));
-    connect(ui->tableWidget->verticalHeader(), SIGNAL(sectionClicked(int)), this, SLOT(rowClicked(int)));
+    connect(ui->tableWidget->selectionModel(), SIGNAL(currentRowChanged(QModelIndex, QModelIndex)),
+            this, SLOT(selectedRowChanged(QModelIndex,QModelIndex)));
 
     dbDialog = new TableOpt(this);
     dbDialog->setType("tempDB");
@@ -1562,9 +1563,14 @@ void MainWindow::on_tableWidget_cellClicked(int row, int column)
 // ========= Слот для сигнала Выбрана строка таблицы ==========
 // ============================================================
 
-void MainWindow::rowClicked(int row)
+void MainWindow::selectedRowChanged(const QModelIndex current, const QModelIndex previous)
 {
+    if (current.row() < 0 || current.row() == previous.row())
+        return;
+
+    int row = current.row();
     ui->tableWidget->setSortingEnabled(false); // Временно запрещаем сортировку
+
     if (row < ui->tableWidget->rowCount()-1 &&
             *currentTable != "GlobalSearch")
     {

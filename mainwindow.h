@@ -97,7 +97,7 @@ private slots:
     void deleteThis();
     void refreshTable();
     void repeatLastSelect();
-    void rowClicked(int);
+    void selectedRowChanged(const QModelIndex current, const QModelIndex previous);
     void changeTableMask();
     void globalSearch();
     void simpleSearch();
