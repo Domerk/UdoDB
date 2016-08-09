@@ -11,6 +11,7 @@ MainWindow::MainWindow(QWidget *parent) :
 
     lastSelect = new QString();
     currentTable = new QString();
+    simpleSearchDisplayed = false;
 
     connectDialog = new ConnectionDialog(this);
     connect(connectDialog, SIGNAL(connectReconfig()), this, SLOT(connectReconfigSlot()));
@@ -298,8 +299,11 @@ void MainWindow::connectReconfigSlot()
 void MainWindow::showTable(QString table)
 {
 
-    if (table == "Общее" || table == *currentTable)
+    if (table == "Общее" || (table == *currentTable && !simpleSearchDisplayed))
         return;
+
+    if (simpleSearchDisplayed)
+        simpleSearchDisplayed = false;
 
     setSearchActive();
     ui->mainToolBar->actions()[MainToolButton::Delete]->setDisabled(true);
@@ -1030,7 +1034,7 @@ void MainWindow::simpleSearch()
 
         drawRows(query, ui->tableWidget, true);
         lastSelect = newSelect;
-        *currentTable = "Результат простого поиска";
+        simpleSearchDisplayed = true;
     }
 }
 

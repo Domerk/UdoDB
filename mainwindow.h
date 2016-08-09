@@ -72,6 +72,7 @@ private:
     QString *lastSelect;
     QString *currentTable;   
     QVector<bool> currentMask;
+    bool simpleSearchDisplayed;
 
     QRegularExpression *names;
 
