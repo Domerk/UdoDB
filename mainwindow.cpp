@@ -120,7 +120,7 @@ MainWindow::MainWindow(QWidget *parent) :
     searchBox = new QComboBox();
     searchEdit = new QLineEdit();
     searchEdit->setFixedWidth(250);
-    searchBox->setLayoutDirection(Qt::LeftToRight);     // Поскольку сам ТулБар RingToLeft, принудительно задаём комбобоку нормальный вид
+    searchBox->setLayoutDirection(Qt::LeftToRight);     // Поскольку сам ТулБар RigthToLeft, принудительно задаём комбобоку нормальный вид
     ui->searchToolBar->addAction(QIcon(":/icons/Icons/search.png"),tr("Поиск"), this, SLOT(simpleSearch()));
     ui->searchToolBar->addWidget(searchEdit);
     ui->searchToolBar->addWidget(searchBox);
@@ -214,6 +214,9 @@ MainWindow::~MainWindow()
 
 bool MainWindow::connectDB()
 {
+    ui->lblStatus->setText(tr("Соединение..."));
+    qApp->processEvents();
+
     // Подключение к основной базе
 
     if (myDB.isOpen())
