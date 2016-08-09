@@ -1594,11 +1594,6 @@ void MainWindow::exportInExcel()
     QFileDialog fileDialog;
     QString fileName = fileDialog.getSaveFileName(0, tr("Экспортировать в..."), "", "*.xlsx *.xls");
 
-    //Потому что Excel воспринимает только обратные слеши
-    for (QChar &character : fileName)
-        if (character ==  '/')
-            character = '\\';
-
     if (!fileName.isEmpty())
     {
         ui->lblStatus->setText(tr("Экспорт..."));
@@ -1672,7 +1667,30 @@ void MainWindow::exportInExcel()
             }
         }
 
-        workbook->dynamicCall("SaveAs(const QString&)", fileName);       // Сохраняем
+        if (fileName.right(4) == ".xls")    // В зависимости от расширения файла выбираем, в каком формате сохранять
+        {
+            QList<QVariant> lstParam;
+            lstParam.append(QDir::toNativeSeparators(fileName));
+            lstParam.append(-4143);
+            lstParam.append("");
+            lstParam.append("");
+            lstParam.append(false);
+            lstParam.append(false);
+            lstParam.append(1);
+            lstParam.append(2);
+            lstParam.append(false);
+            lstParam.append(false);
+            lstParam.append(false);
+            lstParam.append(false);
+            workbook->dynamicCall("SaveAs(QVariant, QVariant, QVariant, QVariant, "
+                                         "QVariant, QVariant, QVariant, QVariant, "
+                                         "QVariant, QVariant, QVariant, QVariant)", lstParam);
+        }
+        else
+        {
+            workbook->dynamicCall("SaveAs(const QString&)", QDir::toNativeSeparators(fileName));
+        }
+
         workbook->dynamicCall("Close()");   // Закрываем
         excel->dynamicCall("Quit()");       // Выходим
 
