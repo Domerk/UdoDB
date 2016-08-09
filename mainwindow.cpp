@@ -301,6 +301,7 @@ void MainWindow::showTable(QString table)
     if (table == "Общее" || table == *currentTable)
         return;
 
+    setSearchActive();
     ui->mainToolBar->actions()[MainToolButton::Delete]->setDisabled(true);
     ui->actionDeleteStr->setDisabled(true);
 
@@ -1029,6 +1030,7 @@ void MainWindow::simpleSearch()
 
         drawRows(query, ui->tableWidget, true);
         lastSelect = newSelect;
+        *currentTable = "Результат простого поиска";
     }
 }
 
@@ -1500,6 +1502,8 @@ void MainWindow::querySlot(QString textQuery)
 {
     currentTable->clear();
     currentTable->append("GlobalSearch");
+
+    ui->searchToolBar->actions()[SearchToolButton::Start]->setDisabled(true); //Выключаем простой поиск, иначе будет чешуйня
 
     lastSelect->clear();
     lastSelect->append(textQuery);
