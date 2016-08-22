@@ -1623,29 +1623,20 @@ void MainWindow::exportInExcel()
         excel->dynamicCall("SetVisible(bool)", false); //Скрываем Excel
         excel->setProperty("DisplayAlerts", 0);        //Выключем предупреждения
 
-        //TODO: Куча одинаковых проверок - отстой. Нельзя оформить их как-нибудь покрасивее?
-        QAxObject* workbooks = excel->querySubObject("Workbooks");
-        if (workbooks == nullptr)
-        {
-            ui->lblStatus->setText(tr("Неизвестная ошибка. Экспорт не выполнен"));
-            return;
-        }
+        QAxObject *workbooks = nullptr, *workbook = nullptr,
+                  *sheets = nullptr, *sheet = nullptr;
 
-        QAxObject* workbook = workbooks->querySubObject("Add");
-        if (workbook == nullptr)
-        {
-            ui->lblStatus->setText(tr("Неизвестная ошибка. Экспорт не выполнен"));
-            return;
-        }
+        workbooks = excel->querySubObject("Workbooks");
 
-        QAxObject* sheets = workbook->querySubObject("Worksheets");
-        if (sheets == nullptr)
-        {
-            ui->lblStatus->setText(tr("Неизвестная ошибка. Экспорт не выполнен"));
-            return;
-        }
+        if (workbooks != nullptr)
+            workbook = workbooks->querySubObject("Add");
 
-        QAxObject* sheet = sheets->querySubObject("Add");
+        if (workbook != nullptr)
+            sheets = workbook->querySubObject("Worksheets");
+
+        if (sheets != nullptr)
+            sheet = sheets->querySubObject("Add");
+
         if (sheet == nullptr)
         {
             ui->lblStatus->setText(tr("Неизвестная ошибка. Экспорт не выполнен"));
