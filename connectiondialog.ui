@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>318</width>
-    <height>300</height>
+    <height>355</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -30,13 +30,6 @@
    <item>
     <layout class="QGridLayout" name="gridLayout">
      <item row="3" column="0">
-      <widget class="QLabel" name="label_6">
-       <property name="text">
-        <string>Пароль</string>
-       </property>
-      </widget>
-     </item>
-     <item row="2" column="0">
       <widget class="QLabel" name="label_5">
        <property name="text">
         <string>Пользователь</string>
@@ -50,12 +43,28 @@
        </property>
       </widget>
      </item>
+     <item row="4" column="0">
+      <widget class="QLabel" name="label_6">
+       <property name="text">
+        <string>Пароль</string>
+       </property>
+      </widget>
+     </item>
+     <item row="4" column="1">
+      <widget class="QLineEdit" name="mainPasswd"/>
+     </item>
      <item row="1" column="0">
       <widget class="QLabel" name="label_4">
        <property name="text">
         <string>Имя базы</string>
        </property>
       </widget>
+     </item>
+     <item row="1" column="1">
+      <widget class="QLineEdit" name="mainBase"/>
+     </item>
+     <item row="3" column="1">
+      <widget class="QLineEdit" name="mainUser"/>
      </item>
      <item row="0" column="1">
       <widget class="QLineEdit" name="mainHost">
@@ -64,14 +73,19 @@
        </property>
       </widget>
      </item>
-     <item row="1" column="1">
-      <widget class="QLineEdit" name="mainBase"/>
-     </item>
      <item row="2" column="1">
-      <widget class="QLineEdit" name="mainUser"/>
+      <widget class="QSpinBox" name="mainPort">
+       <property name="maximum">
+        <number>65535</number>
+       </property>
+      </widget>
      </item>
-     <item row="3" column="1">
-      <widget class="QLineEdit" name="mainPasswd"/>
+     <item row="2" column="0">
+      <widget class="QLabel" name="label_11">
+       <property name="text">
+        <string>Порт</string>
+       </property>
+      </widget>
      </item>
     </layout>
    </item>
@@ -97,14 +111,7 @@
    </item>
    <item>
     <layout class="QGridLayout" name="gridLayout_2">
-     <item row="1" column="0">
-      <widget class="QLabel" name="label_8">
-       <property name="text">
-        <string>Имя базы</string>
-       </property>
-      </widget>
-     </item>
-     <item row="2" column="0">
+     <item row="3" column="0">
       <widget class="QLabel" name="label_9">
        <property name="text">
         <string>Пользователь</string>
@@ -118,7 +125,17 @@
        </property>
       </widget>
      </item>
-     <item row="3" column="0">
+     <item row="1" column="0">
+      <widget class="QLabel" name="label_8">
+       <property name="text">
+        <string>Имя базы</string>
+       </property>
+      </widget>
+     </item>
+     <item row="3" column="1">
+      <widget class="QLineEdit" name="tempUser"/>
+     </item>
+     <item row="4" column="0">
       <widget class="QLabel" name="label_10">
        <property name="text">
         <string>Пароль</string>
@@ -132,14 +149,25 @@
        </property>
       </widget>
      </item>
+     <item row="4" column="1">
+      <widget class="QLineEdit" name="tempPasswd"/>
+     </item>
      <item row="1" column="1">
       <widget class="QLineEdit" name="tempBase"/>
      </item>
      <item row="2" column="1">
-      <widget class="QLineEdit" name="tempUser"/>
+      <widget class="QSpinBox" name="tempPort">
+       <property name="maximum">
+        <number>65535</number>
+       </property>
+      </widget>
      </item>
-     <item row="3" column="1">
-      <widget class="QLineEdit" name="tempPasswd"/>
+     <item row="2" column="0">
+      <widget class="QLabel" name="label_12">
+       <property name="text">
+        <string>Порт</string>
+       </property>
+      </widget>
      </item>
     </layout>
    </item>

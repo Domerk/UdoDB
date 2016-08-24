@@ -18,6 +18,7 @@ ConnectionDialog::ConnectionDialog(QWidget *parent) :
     settings.beginGroup("MainDB");
     ui->mainHost->setText(settings.value("hostname", "localhost").toString());
     ui->mainBase->setText(settings.value("dbname", "kcttDB").toString());
+    ui->mainPort->setValue(settings.value("port").toInt());
     ui->mainUser->setText(settings.value("username").toString());
     ui->mainPasswd->setText(settings.value("password").toString());
     settings.endGroup();
@@ -25,6 +26,7 @@ ConnectionDialog::ConnectionDialog(QWidget *parent) :
     settings.beginGroup("TempDB");
     ui->tempHost->setText(settings.value("hostname", "localhost").toString());
     ui->tempBase->setText(settings.value("dbname", "kcttTempDB").toString());
+    ui->tempPort->setValue(settings.value("port").toInt());
     ui->tempUser->setText(settings.value("username").toString());
     ui->tempPasswd->setText(settings.value("password").toString());
     settings.endGroup();
@@ -61,14 +63,16 @@ void ConnectionDialog::on_buttonBox_accepted()
 
         settings.beginGroup("MainDB");
         settings.setValue("hostname", ui->mainHost->text());
-        settings.setValue("dbname", ui->mainBase->text());
+        settings.setValue("dbname",   ui->mainBase->text());
+        settings.setValue("port",     ui->mainPort->value());
         settings.setValue("username", ui->mainUser->text());
         settings.setValue("password", ui->mainPasswd->text());
         settings.endGroup();
 
         settings.beginGroup("TempDB");
         settings.setValue("hostname", ui->tempHost->text());
-        settings.setValue("dbname", ui->tempBase->text());
+        settings.setValue("dbname",   ui->tempBase->text());
+        settings.setValue("port",     ui->tempPort->value());
         settings.setValue("username", ui->tempUser->text());
         settings.setValue("password", ui->tempPasswd->text());
         settings.endGroup();

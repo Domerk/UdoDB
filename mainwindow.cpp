@@ -11,10 +11,12 @@ MainWindow::MainWindow(QWidget *parent) :
 
     lastSelect = new QString();
     currentTable = new QString();
+    simpleSearchDisplayed = false;
 
     connectDialog = new ConnectionDialog(this);
     connect(connectDialog, SIGNAL(connectReconfig()), this, SLOT(connectReconfigSlot()));
-    connect(ui->tableWidget->verticalHeader(), SIGNAL(sectionClicked(int)), this, SLOT(rowClicked(int)));
+    connect(ui->tableWidget->selectionModel(), SIGNAL(currentRowChanged(QModelIndex, QModelIndex)),
+            this, SLOT(selectedRowChanged(QModelIndex,QModelIndex)));
 
     dbDialog = new TableOpt(this);
     dbDialog->setType("tempDB");
@@ -120,7 +122,7 @@ MainWindow::MainWindow(QWidget *parent) :
     searchBox = new QComboBox();
     searchEdit = new QLineEdit();
     searchEdit->setFixedWidth(250);
-    searchBox->setLayoutDirection(Qt::LeftToRight);     // Поскольку сам ТулБар RingToLeft, принудительно задаём комбобоку нормальный вид
+    searchBox->setLayoutDirection(Qt::LeftToRight);     // Поскольку сам ТулБар RigthToLeft, принудительно задаём комбобоку нормальный вид
     ui->searchToolBar->addAction(QIcon(":/icons/Icons/search.png"),tr("Поиск"), this, SLOT(simpleSearch()));
     ui->searchToolBar->addWidget(searchEdit);
     ui->searchToolBar->addWidget(searchBox);
@@ -214,6 +216,9 @@ MainWindow::~MainWindow()
 
 bool MainWindow::connectDB()
 {
+    ui->lblStatus->setText(tr("Соединение..."));
+    qApp->processEvents();
+
     // Подключение к основной базе
 
     if (myDB.isOpen())
@@ -226,6 +231,7 @@ bool MainWindow::connectDB()
     settings.beginGroup("MainDB");
     myDB.setHostName(settings.value("hostname", "localhost").toString());
     myDB.setDatabaseName(settings.value("dbname", "kcttDB").toString());
+    myDB.setPort(settings.value("port").toInt());
     myDB.setUserName(settings.value("username").toString());
     myDB.setPassword(settings.value("password").toString());
     settings.endGroup();
@@ -239,22 +245,38 @@ bool MainWindow::connectDB()
     settings.beginGroup("TempDB");
     tempDB.setHostName(settings.value("hostname", "localhost").toString());
     tempDB.setDatabaseName(settings.value("dbname", "kcttTempDB").toString());
+    tempDB.setPort(settings.value("port").toInt());
     tempDB.setUserName(settings.value("username").toString());
     tempDB.setPassword(settings.value("password").toString());
     settings.endGroup();
 
-    // Вот это место переписать, тк соединене с основной базой критично, а со временной - нет
+    QString status;
+    bool myDBIsOpen = myDB.open(), tempDBIsOpen = tempDB.open(); // Открываем соединение
 
-    if (myDB.open() && tempDB.open())                            // Открываем соединение
-    {
-        ui->lblStatus->setText(tr("Соединение установлено")); // Выводим сообщение
-        return true;                 // Возвращаем true
-    }
+    if (myDBIsOpen)
+        status = tr("Соединение с основной базой установлено.");
     else
-    {
-        ui->lblStatus->setText(tr("Ошибка соединения: соединение не установлено"));
-    }
-    return false;
+        status = tr("Ошибка соединения с основной базой: ") + myDB.lastError().text();
+
+    if (tempDBIsOpen)
+        status += tr("\nСоединение с базой самозаписи установлено.");
+    else
+        status += tr("\nОшибка соединения с базой самозаписи: ")+ tempDB.lastError().text();
+
+    if (myDBIsOpen && tempDBIsOpen)
+        status = tr("Соединение установлено.");
+
+    if (!myDBIsOpen && !tempDBIsOpen)
+        status = tr("Ошибка: Соединение не установлено.") + '\n' +
+                 tr("Основная база: ") + myDB.lastError().text() + '\n' +
+                 tr("База самозаписи: ") + tempDB.lastError().text();
+
+    ui->lblStatus->setText(status);
+
+    if (myDBIsOpen)
+        return true;
+    else
+        return false;
 }
 
 // ============================================================
@@ -278,9 +300,13 @@ void MainWindow::connectReconfigSlot()
 void MainWindow::showTable(QString table)
 {
 
-    if (table == "Общее" || table == *currentTable)
+    if (table == "Общее" || (table == *currentTable && !simpleSearchDisplayed))
         return;
 
+    if (simpleSearchDisplayed)
+        simpleSearchDisplayed = false;
+
+    setSearchActive();
     ui->mainToolBar->actions()[MainToolButton::Delete]->setDisabled(true);
     ui->actionDeleteStr->setDisabled(true);
 
@@ -1009,6 +1035,7 @@ void MainWindow::simpleSearch()
 
         drawRows(query, ui->tableWidget, true);
         lastSelect = newSelect;
+        simpleSearchDisplayed = true;
     }
 }
 
@@ -1481,6 +1508,8 @@ void MainWindow::querySlot(QString textQuery)
     currentTable->clear();
     currentTable->append("GlobalSearch");
 
+    ui->searchToolBar->actions()[SearchToolButton::Start]->setDisabled(true); //Выключаем простой поиск, иначе будет чешуйня
+
     lastSelect->clear();
     lastSelect->append(textQuery);
 
@@ -1534,9 +1563,14 @@ void MainWindow::on_tableWidget_cellClicked(int row, int column)
 // ========= Слот для сигнала Выбрана строка таблицы ==========
 // ============================================================
 
-void MainWindow::rowClicked(int row)
+void MainWindow::selectedRowChanged(const QModelIndex current, const QModelIndex previous)
 {
+    if (current.row() < 0 || current.row() == previous.row())
+        return;
+
+    int row = current.row();
     ui->tableWidget->setSortingEnabled(false); // Временно запрещаем сортировку
+
     if (row < ui->tableWidget->rowCount()-1 &&
             *currentTable != "GlobalSearch")
     {
@@ -1568,29 +1602,55 @@ void MainWindow::exportInExcel()
 {
     // Открываем QFileDialog
     QFileDialog fileDialog;
-    QString fileName = fileDialog.getOpenFileName(0, tr("Экспортировать в..."), "", "*.xls *.xlsx");
+    QString fileName = fileDialog.getSaveFileName(0, tr("Экспортировать в..."), "", "*.xlsx *.xls");
+
     if (!fileName.isEmpty())
     {
         ui->lblStatus->setText(tr("Экспорт..."));
+        qApp->processEvents();
 
-        // https://wiki.qt.io/Using_ActiveX_Object_in_QT
-        // http://wiki.crossplatform.ru/index.php/%D0%A0%D0%B0%D0%B1%D0%BE%D1%82%D0%B0_%D1%81_MS_Office_%D1%81_%D0%BF%D0%BE%D0%BC%D0%BE%D1%89%D1%8C%D1%8E_ActiveQt
+        //Спасибо drweb86
+        //https://forum.qt.io/topic/16547/how-to-export-excel-in-qt/10
 
-        QAxObject* excel = new QAxObject("Excel.Application", 0);
-        QAxObject* workbooks = excel->querySubObject("Workbooks");
-        QAxObject* workbook = workbooks->querySubObject("Open(const QString&)", fileName);
-        QAxObject* sheets = workbook->querySubObject("Worksheets");
+        QAxObject* excel = new QAxObject("Excel.Application");
+
+        if (excel->isNull())
+        {
+            ui->lblStatus->setText(tr("Не могу иницировать взаимодействие с Excel. Возможно, Excel не установлен"));
+            return;
+        }
+
+        excel->dynamicCall("SetVisible(bool)", false); //Скрываем Excel
+        excel->setProperty("DisplayAlerts", 0);        //Выключем предупреждения
+
+        QAxObject *workbooks = nullptr, *workbook = nullptr,
+                  *sheets = nullptr, *sheet = nullptr;
+
+        workbooks = excel->querySubObject("Workbooks");
+
+        if (workbooks != nullptr)
+            workbook = workbooks->querySubObject("Add");
+
+        if (workbook != nullptr)
+            sheets = workbook->querySubObject("Worksheets");
+
+        if (sheets != nullptr)
+            sheet = sheets->querySubObject("Add");
+
+        if (sheet == nullptr)
+        {
+            ui->lblStatus->setText(tr("Неизвестная ошибка. Экспорт не выполнен"));
+            return;
+        }
 
         // Вставка значения в отдельную ячейку
 
-        QAxObject* StatSheet = sheets->querySubObject("Item( int )", 1);
-
        for (int col = 1; col < ui->tableWidget->columnCount(); col++)        // Запись заголовков
-        {
+       {
             // получение указателя на ячейку [row][col] ((!)нумерация с единицы)
-            QAxObject* cell = StatSheet->querySubObject("Cells(QVariant,QVariant)", 1, col);
+            QAxObject* cell = sheet->querySubObject("Cells(int,int)", 1, col);
             // вставка значения переменной в полученную ячейку
-            cell->setProperty("Value", QVariant(ui->tableWidget->horizontalHeaderItem(col)->text()));
+            cell->setProperty("Value", ui->tableWidget->horizontalHeaderItem(col)->text());
             // освобождение памяти
             delete cell;
         }
@@ -1600,19 +1660,42 @@ void MainWindow::exportInExcel()
             for (int col = 1; col < ui->tableWidget->columnCount(); col++)
             {
                 // получение указателя на ячейку [row][col] ((!)нумерация с единицы)
-                QAxObject* cell = StatSheet->querySubObject("Cells(QVariant,QVariant)", row+1, col);
+                QAxObject* cell = sheet->querySubObject("Cells(int,int)", row + 1, col);
                 // вставка значения переменной в полученную ячейку
-                cell->setProperty("Value", QVariant(ui->tableWidget->item(row-1, col)->text()));
+                cell->setProperty("Value", ui->tableWidget->item(row - 1, col)->text());
                 // освобождение памяти
                 delete cell;
             }
         }
 
-        excel->dynamicCall("Save()");       // Сохраняем - в примерах почему-то этого нет, но надо
+        if (fileName.right(4) == ".xls")    // В зависимости от расширения файла выбираем, в каком формате сохранять
+        {
+            QList<QVariant> lstParam;
+            lstParam.append(QDir::toNativeSeparators(fileName));
+            lstParam.append(-4143);
+            lstParam.append("");
+            lstParam.append("");
+            lstParam.append(false);
+            lstParam.append(false);
+            lstParam.append(1);
+            lstParam.append(2);
+            lstParam.append(false);
+            lstParam.append(false);
+            lstParam.append(false);
+            lstParam.append(false);
+            workbook->dynamicCall("SaveAs(QVariant, QVariant, QVariant, QVariant, "
+                                         "QVariant, QVariant, QVariant, QVariant, "
+                                         "QVariant, QVariant, QVariant, QVariant)", lstParam);
+        }
+        else
+        {
+            workbook->dynamicCall("SaveAs(const QString&)", QDir::toNativeSeparators(fileName));
+        }
+
         workbook->dynamicCall("Close()");   // Закрываем
         excel->dynamicCall("Quit()");       // Выходим
 
-        delete StatSheet;
+        delete sheet;
         delete sheets;
         delete workbook;
         delete workbooks;
