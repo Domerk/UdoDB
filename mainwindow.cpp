@@ -224,8 +224,8 @@ bool MainWindow::connectDB()
     if (myDB.isOpen())
         myDB.close();
     else
-        // QSQLITE
-        myDB = QSqlDatabase::addDatabase("QSQLITE");    // Указываем СУБД, имени соединения нет - соединение по умолчанию
+        // QSQLITE || QMYSQL
+        myDB = QSqlDatabase::addDatabase("QMYSQL");    // Указываем СУБД, имени соединения нет - соединение по умолчанию
 
     QSettings settings ("Other/config.ini", QSettings::IniFormat);
     settings.beginGroup("MainDB");
@@ -240,7 +240,7 @@ bool MainWindow::connectDB()
     if (tempDB.isOpen())
         tempDB.close();
     else
-        tempDB = QSqlDatabase::addDatabase("QSQLITE", "tempDB");    // Указываем СУБД
+        tempDB = QSqlDatabase::addDatabase("QMYSQL", "tempDB");    // Указываем СУБД
 
     settings.beginGroup("TempDB");
     tempDB.setHostName(settings.value("hostname", "localhost").toString());

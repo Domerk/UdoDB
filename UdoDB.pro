@@ -36,3 +36,4 @@ QMAKE_CXXFLAGS += -std=gnu++0x
 RESOURCES += \
     sources.qrc
 
+RC_ICONS = Icons\udod.ico
