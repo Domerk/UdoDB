@@ -2027,8 +2027,9 @@ void MainWindow::showProgramInfo()
     aboutBox = new QMessageBox(this);
     aboutBox->setWindowTitle(tr("О программе"));
     aboutBox->setIconPixmap(QPixmap(":/icons/Icons/udod"));
-    aboutBox->setText("<strong>UdoDB</strong>");
+    aboutBox->setText("<strong>UdoDB v0.1.1 beta</strong>");
     QString str;
+    str.append("Данная сборка предназначения для работы с MySql-5.7.14, Windows x86.<br /><br />");
     str.append("Программа представляет собой клиент для работы с базой данных учреждения дополнительного образования. Она позволяет просматривать, добавлять, удалять и изменять данные об учащихся, преподавателях, объединениях, учебных группах и направленностях.<br /><br />");
     str.append("Если у Вас остались вопросы или Вы хотите помочь развитию данного проекта, посетите его <a href=https://github.com/Domerk/UdoDB/wiki>домашнюю страницу</a> или обратитесь к администрации образовательного учреждения.<br /><br />");
     str.append("Разработано по заказу Центра детского (юношеского) технического творчества Московского района Санкт-Петербурга.<br /><br /> Программа основана на Qt ");
