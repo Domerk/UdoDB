@@ -1711,11 +1711,10 @@ void MainWindow::exportInExcel()
 
 void MainWindow::exportInHtml()
 {
-    QFileDialog fileDialog;
-    QString fileName = fileDialog.getSaveFileName(0, tr("Экспортировать в..."), "", "*.htm *.html");
+    QString fileName = QFileDialog::getSaveFileName(0, tr("Экспортировать в..."), "", "*.htm *.html");
 
-    if (!fileName.contains(".htm"))
-        fileName.append(".html");
+    if (fileName.isEmpty())
+        return;
 
     QFile file(fileName);
     if(file.open(QIODevice::WriteOnly))
@@ -2027,7 +2026,7 @@ void MainWindow::showProgramInfo()
     aboutBox = new QMessageBox(this);
     aboutBox->setWindowTitle(tr("О программе"));
     aboutBox->setIconPixmap(QPixmap(":/icons/Icons/udod"));
-    aboutBox->setText("<strong>UdoDB v0.1.1 beta</strong>");
+    aboutBox->setText("<strong>UdoDB v1.0.1 beta</strong>");
     QString str;
     str.append("Данная сборка предназначения для работы с MySql-5.7.14, Windows x86.<br /><br />");
     str.append("Программа представляет собой клиент для работы с базой данных учреждения дополнительного образования. Она позволяет просматривать, добавлять, удалять и изменять данные об учащихся, преподавателях, объединениях, учебных группах и направленностях.<br /><br />");
