@@ -20,6 +20,8 @@
 #include <QMap>
 #include <QSpinBox>
 
+#include <QDebug>
+
 #include "searchdialog.h"
 #include "connectiondialog.h"
 #include "tableopt.h"

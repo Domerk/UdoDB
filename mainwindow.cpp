@@ -399,12 +399,16 @@ void MainWindow::drawRows(QSqlQuery query, QTableWidget *table, bool available)
             {
                 // Создаём ячейку в текущем поле текущей строки и заносим туда инфу
 
-                if (query.value(i).toString() == "true")
+                // ВАЖНО
+                // MySQL возвращает вместо true и false словами 1 и 0
+                // В данный момент это костыль, потому что 1 и 0 могут быть ещё и классом хС
+
+                if (query.value(i).toString() == "true" || query.value(i).toString() == "1")
                 {
                     table->setItem(rowCount, i, new QTableWidgetItem("Да"));
                     continue;
                 }
-                if (query.value(i).toString() == "false")
+                if (query.value(i).toString() == "false" || query.value(i).toString() == "0")
                 {
                     table->setItem(rowCount, i, new QTableWidgetItem("Нет"));
                     continue;
@@ -838,23 +842,24 @@ void MainWindow::on_saveButton_clicked()
                 strQuery.append("`Район школы`, `Школа`, `Класс`, `Родители`, `Домашний адрес`, `Телефон`, `e-mail`, `Дата заявления`, `Форма обучения`, ");
                 strQuery.append("`Когда выбыл`, `С ослабленным здоровьем`, `Сирота`, `Инвалид`, `На учёте в полиции`, `Многодетная семья`, ");
                 strQuery.append("`Неполная семья`, `Малообеспеченная семья`, `Мигранты`, `Примечания`) VALUES ('");
-                strQuery.append(surname + "', '" + name  + "', '" + patr  + "', '" + docType  + "', '" + docNum  + "', '" + gender  + "', '" + birthday  + "', '");
-                strQuery.append(arSchool  + "', '" + school  + "', '" + grad  + "', '" + parents  + "', '" + address  + "', '" + phone  + "', '" + email  + "', '" + admiss  + "', '" + eduForm  + "', '");
-                strQuery.append(out  + "', '" + weackHealth  + "', '" + orphan  + "', '" + invalid  + "', '" + accountInPolice + "', '" + large  + "', '");
-                strQuery.append(incompleteFamily  + "', '" + lowIncome  + "', '" + migrants  + "', '" + comments  + "');");
+                strQuery.append(surname + "', '" + name  + "', '" + patr  + "', '" + docType  + "', '" + docNum  + "', '" + gender  + "', " + birthday  + ", '");
+                strQuery.append(arSchool  + "', '" + school  + "', '" + grad  + "', '" + parents  + "', '" + address  + "', '" + phone  + "', '" + email  + "', " + admiss  + ", '" + eduForm  + "', ");
+                strQuery.append(out  + ", " + weackHealth  + ", " + orphan  + ", " + invalid  + ", " + accountInPolice + ", " + large  + ", ");
+                strQuery.append(incompleteFamily  + ", " + lowIncome  + ", " + migrants  + ", '" + comments  + "');");
                 clearMoreInfoForm();
 
             }
             else
             {
                 // UPDATE
-                strQuery.append("UPDATE Учащиеся SET `Фамилия` = '" + surname + "', `Имя` = '" + name  + "', `Отчество` = '" + patr  + "', `Тип документа` = '" + docType  + "', `Номер документа` = '" + docNum  + "', `Пол` = '" + gender  + "', `Дата рождения` = '" + birthday  + "', ");
-                strQuery.append("`Район школы` = '" + arSchool  + "', `Школа` = '" + school  + "', `Класс` = '" + grad  + "', `Родители` = '" + parents  + "', `Домашний адрес` = '" + address  + "', `Телефон` = '" + phone  + "', `e-mail` = '" + email  + "', `Дата заявления` = '" + admiss  + "', `Форма обучения` = '" + eduForm  + "', ");
-                strQuery.append("`Когда выбыл` = '" + out  + "', `С ослабленным здоровьем` = '" + weackHealth  + "', `Сирота` = '" + orphan  + "', `Инвалид` = '" + invalid  + "', `На учёте в полиции` = '" + accountInPolice + "', `Многодетная семья` = '" + large  + "', ");
-                strQuery.append("`Неполная семья` = '" + incompleteFamily  + "', `Малообеспеченная семья` = '" + lowIncome  + "', `Мигранты` = '" + migrants  + "', `Примечания` = '" + comments  + "' ");
+                strQuery.append("UPDATE Учащиеся SET `Фамилия` = '" + surname + "', `Имя` = '" + name  + "', `Отчество` = '" + patr  + "', `Тип документа` = '" + docType  + "', `Номер документа` = '" + docNum  + "', `Пол` = '" + gender  + "', `Дата рождения` = " + birthday  + ", ");
+                strQuery.append("`Район школы` = '" + arSchool  + "', `Школа` = '" + school  + "', `Класс` = '" + grad  + "', `Родители` = '" + parents  + "', `Домашний адрес` = '" + address  + "', `Телефон` = '" + phone  + "', `e-mail` = '" + email  + "', `Дата заявления` = " + admiss  + ", `Форма обучения` = '" + eduForm  + "', ");
+                strQuery.append("`Когда выбыл` = " + out  + ", `С ослабленным здоровьем` = " + weackHealth  + ", `Сирота` = " + orphan  + ", `Инвалид` = " + invalid  + ", `На учёте в полиции` = " + accountInPolice + ", `Многодетная семья` = " + large  + ", ");
+                strQuery.append("`Неполная семья` = " + incompleteFamily  + ", `Малообеспеченная семья` = " + lowIncome  + ", `Мигранты` = " + migrants  + ", `Примечания` = '" + comments  + "' ");
                 strQuery.append("WHERE `ID` = " + id + ";");
             }
 
+            qDebug() << strQuery;
             break;
         }
 
@@ -969,8 +974,10 @@ void MainWindow::getDateToForm(QString* str, QComboBox* d, QComboBox* m, QSpinBo
     {
         QDate date;
         date.setDate(y->value(), m->currentText().toInt(), d->currentText().toInt());
-        str->append(date.toString(Qt::SystemLocaleShortDate));
+        str->append("'" + date.toString(Qt::SystemLocaleShortDate) + "'");
     }
+    else
+        str->append("NULL");
 }
 
 // ============================================================
@@ -2026,7 +2033,7 @@ void MainWindow::showProgramInfo()
     aboutBox = new QMessageBox(this);
     aboutBox->setWindowTitle(tr("О программе"));
     aboutBox->setIconPixmap(QPixmap(":/icons/Icons/udod"));
-    aboutBox->setText("<strong>UdoDB v1.0.1 beta</strong>");
+    aboutBox->setText("<strong>UdoDB v1.0.2</strong>");
     QString str;
     str.append("Данная сборка предназначения для работы с MySql-5.7.14, Windows x86.<br /><br />");
     str.append("Программа представляет собой клиент для работы с базой данных учреждения дополнительного образования. Она позволяет просматривать, добавлять, удалять и изменять данные об учащихся, преподавателях, объединениях, учебных группах и направленностях.<br /><br />");
