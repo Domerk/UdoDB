@@ -183,6 +183,18 @@
    </item>
   </layout>
  </widget>
+ <tabstops>
+  <tabstop>mainHost</tabstop>
+  <tabstop>mainBase</tabstop>
+  <tabstop>mainPort</tabstop>
+  <tabstop>mainUser</tabstop>
+  <tabstop>mainPasswd</tabstop>
+  <tabstop>tempHost</tabstop>
+  <tabstop>tempBase</tabstop>
+  <tabstop>tempPort</tabstop>
+  <tabstop>tempUser</tabstop>
+  <tabstop>tempPasswd</tabstop>
+ </tabstops>
  <resources/>
  <connections>
   <connection>

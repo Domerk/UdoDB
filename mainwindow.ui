@@ -67,7 +67,7 @@
            </sizepolicy>
           </property>
           <property name="currentIndex">
-           <number>0</number>
+           <number>2</number>
           </property>
           <widget class="QWidget" name="alliance">
            <layout class="QVBoxLayout" name="verticalLayout_7">
@@ -290,8 +290,8 @@
                 <rect>
                  <x>0</x>
                  <y>0</y>
-                 <width>166</width>
-                 <height>268</height>
+                 <width>314</width>
+                 <height>316</height>
                 </rect>
                </property>
                <layout class="QVBoxLayout" name="verticalLayout_6">
@@ -457,7 +457,7 @@
                <property name="geometry">
                 <rect>
                  <x>0</x>
-                 <y>0</y>
+                 <y>-204</y>
                  <width>297</width>
                  <height>1107</height>
                 </rect>
@@ -1780,8 +1780,8 @@
                 <rect>
                  <x>0</x>
                  <y>0</y>
-                 <width>314</width>
-                 <height>316</height>
+                 <width>139</width>
+                 <height>155</height>
                 </rect>
                </property>
                <layout class="QVBoxLayout" name="verticalLayout_11">
@@ -1882,8 +1882,8 @@
                 <rect>
                  <x>0</x>
                  <y>0</y>
-                 <width>314</width>
-                 <height>316</height>
+                 <width>194</width>
+                 <height>302</height>
                 </rect>
                </property>
                <layout class="QVBoxLayout" name="verticalLayout_12">
@@ -2369,6 +2369,72 @@
   </action>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
+ <tabstops>
+  <tabstop>treeWidget</tabstop>
+  <tabstop>tableWidget</tabstop>
+  <tabstop>scrollArea_3</tabstop>
+  <tabstop>alName</tabstop>
+  <tabstop>alDirect</tabstop>
+  <tabstop>addDirectInAl</tabstop>
+  <tabstop>alOtd</tabstop>
+  <tabstop>alDescript</tabstop>
+  <tabstop>groupInAl</tabstop>
+  <tabstop>scrollArea_2</tabstop>
+  <tabstop>teachSurname</tabstop>
+  <tabstop>teachName</tabstop>
+  <tabstop>teachPatr</tabstop>
+  <tabstop>teachNumPass</tabstop>
+  <tabstop>teachOtd</tabstop>
+  <tabstop>groupInTeach</tabstop>
+  <tabstop>scrollArea</tabstop>
+  <tabstop>studSurname</tabstop>
+  <tabstop>studName</tabstop>
+  <tabstop>studPatr</tabstop>
+  <tabstop>studDoc</tabstop>
+  <tabstop>studNumDoc</tabstop>
+  <tabstop>studGender</tabstop>
+  <tabstop>studBDay</tabstop>
+  <tabstop>studBMon</tabstop>
+  <tabstop>studBYear</tabstop>
+  <tabstop>areaSchools</tabstop>
+  <tabstop>school</tabstop>
+  <tabstop>grade</tabstop>
+  <tabstop>parents</tabstop>
+  <tabstop>address</tabstop>
+  <tabstop>studInDay</tabstop>
+  <tabstop>studInMon</tabstop>
+  <tabstop>studInYear</tabstop>
+  <tabstop>studOutDay</tabstop>
+  <tabstop>studOutMon</tabstop>
+  <tabstop>studOutYear</tabstop>
+  <tabstop>phone</tabstop>
+  <tabstop>email</tabstop>
+  <tabstop>eduForm</tabstop>
+  <tabstop>weackHealth</tabstop>
+  <tabstop>orphan</tabstop>
+  <tabstop>invalid</tabstop>
+  <tabstop>accountInPolice</tabstop>
+  <tabstop>large</tabstop>
+  <tabstop>incompleteFamily</tabstop>
+  <tabstop>lowIncome</tabstop>
+  <tabstop>migrants</tabstop>
+  <tabstop>studComments</tabstop>
+  <tabstop>studGroupTable</tabstop>
+  <tabstop>scrollArea_4</tabstop>
+  <tabstop>directName</tabstop>
+  <tabstop>alInDirect</tabstop>
+  <tabstop>scrollArea_5</tabstop>
+  <tabstop>groupNum</tabstop>
+  <tabstop>groupYear</tabstop>
+  <tabstop>groupTeach</tabstop>
+  <tabstop>addTeachForGroup</tabstop>
+  <tabstop>groupAss</tabstop>
+  <tabstop>addAssForGroup</tabstop>
+  <tabstop>addStudInGroup</tabstop>
+  <tabstop>removeStudToGroup</tabstop>
+  <tabstop>studsInGroupe</tabstop>
+  <tabstop>saveButton</tabstop>
+ </tabstops>
  <resources/>
  <connections/>
 </ui>

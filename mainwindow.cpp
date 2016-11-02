@@ -403,15 +403,16 @@ void MainWindow::drawRows(QSqlQuery query, QTableWidget *table, bool available)
                 // MySQL возвращает вместо true и false словами 1 и 0
                 // В данный момент это костыль, потому что 1 и 0 могут быть ещё и классом хС
 
-                if (query.value(i).toString() == "true" || query.value(i).toString() == "1")
+                qDebug() << query.value(i).userType();
+
+                if (query.value(i).userType() == QMetaType::Bool)
                 {
-                    table->setItem(rowCount, i, new QTableWidgetItem("Да"));
-                    continue;
-                }
-                if (query.value(i).toString() == "false" || query.value(i).toString() == "0")
-                {
-                    table->setItem(rowCount, i, new QTableWidgetItem("Нет"));
-                    continue;
+                    if (query.value(i).toBool())
+                        table->setItem(rowCount, i, new QTableWidgetItem("Да"));
+                    else
+                        table->setItem(rowCount, i, new QTableWidgetItem("Нет"));
+
+                continue;
                 }
 
                 table->setItem(rowCount, i, new QTableWidgetItem(query.value(i).toString()));
@@ -2033,7 +2034,7 @@ void MainWindow::showProgramInfo()
     aboutBox = new QMessageBox(this);
     aboutBox->setWindowTitle(tr("О программе"));
     aboutBox->setIconPixmap(QPixmap(":/icons/Icons/udod"));
-    aboutBox->setText("<strong>UdoDB v1.0.2</strong>");
+    aboutBox->setText("<strong>UdoDB v1.0.2 beta</strong>");
     QString str;
     str.append("Данная сборка предназначения для работы с MySql-5.7.14, Windows x86.<br /><br />");
     str.append("Программа представляет собой клиент для работы с базой данных учреждения дополнительного образования. Она позволяет просматривать, добавлять, удалять и изменять данные об учащихся, преподавателях, объединениях, учебных группах и направленностях.<br /><br />");
