@@ -18,4 +18,6 @@ UdoDB - это клиент для работы с базой данных, ча
 ![UdoDB - Скриншот](https://cloud.githubusercontent.com/assets/5664923/18027363/573fd3d6-6c6a-11e6-920a-8c69e25efd21.PNG)
 
 
-[Скачать UdoDB](https://github.com/Domerk/UdoDB/releases "Скачать UdoDB")
+#### Загрузки:
+* [FormUdod](https://github.com/Domerk/FormUdod/releases "Скачать FormUdod")
+* [UdoDB](https://github.com/Domerk/UdoDB/releases "Скачать UdoDB")
