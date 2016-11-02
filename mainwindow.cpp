@@ -370,6 +370,20 @@ void MainWindow::drawHeaders(QSqlQuery query, QTableWidget *table, bool forSearc
             qsl.removeFirst();          // Удаляем 0й элемент (ID)
         serchCBox->addItems(qsl);       // Задаём комбобоксу поиска
     }
+    else
+    {
+        serchCBox->clear();
+        QVector<bool> tempMask;
+        for (QString & name : qsl)
+        {
+            if(name.contains("ID"))
+                tempMask.append(true);
+            else
+                tempMask.append(false);
+        }
+        currentMask = tempMask;
+        hideColumnsFromMask(tempMask);
+    }
 }
 
 // ============================================================
@@ -1149,7 +1163,8 @@ void MainWindow::drawTree()
 
 void MainWindow::setSearchActive()
 {
-    ui->searchToolBar->actions()[SearchToolButton::Start]->setDisabled(false);
+    if (*currentTable != "GlobalSearch") // Если текущая таблица - не результат глобального поиска
+        ui->searchToolBar->actions()[SearchToolButton::Start]->setDisabled(false);
 }
 
 // ============================================================
@@ -1523,7 +1538,7 @@ void MainWindow::querySlot(QString textQuery)
 
     QSqlQuery query;
     query.exec(textQuery);
-    drawHeaders(query, ui->tableWidget, true, searchBox);
+    drawHeaders(query, ui->tableWidget, false, searchBox);
     drawRows(query, ui->tableWidget, true);
 }
 
