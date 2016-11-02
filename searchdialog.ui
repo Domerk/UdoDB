@@ -7,15 +7,34 @@
     <x>0</x>
     <y>0</y>
     <width>610</width>
-    <height>552</height>
+    <height>494</height>
    </rect>
+  </property>
+  <property name="sizePolicy">
+   <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+    <horstretch>0</horstretch>
+    <verstretch>0</verstretch>
+   </sizepolicy>
   </property>
   <property name="windowTitle">
    <string>Dialog</string>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
    <item>
-    <widget class="QLabel" name="label">
+    <widget class="QLabel" name="label_5">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+     <property name="text">
+      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Выберите необходимые таблицы, затем отметтье галочкой поля, которые должны быть выведены.&lt;br/&gt;Если по полю должен осуществляться поиск, укажите необходимое значение.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="QCheckBox" name="useStud">
      <property name="font">
       <font>
        <weight>75</weight>
@@ -714,7 +733,7 @@
     </widget>
    </item>
    <item>
-    <widget class="QLabel" name="label_2">
+    <widget class="QCheckBox" name="useGroup">
      <property name="font">
       <font>
        <weight>75</weight>
@@ -729,7 +748,7 @@
    <item>
     <widget class="QScrollArea" name="scrollArea_2">
      <property name="sizePolicy">
-      <sizepolicy hsizetype="Expanding" vsizetype="Minimum">
+      <sizepolicy hsizetype="Expanding" vsizetype="MinimumExpanding">
        <horstretch>0</horstretch>
        <verstretch>0</verstretch>
       </sizepolicy>
@@ -795,7 +814,7 @@
     </widget>
    </item>
    <item>
-    <widget class="QLabel" name="label_4">
+    <widget class="QCheckBox" name="useAss">
      <property name="font">
       <font>
        <weight>75</weight>
@@ -810,7 +829,7 @@
    <item>
     <widget class="QScrollArea" name="scrollArea_3">
      <property name="sizePolicy">
-      <sizepolicy hsizetype="Expanding" vsizetype="Minimum">
+      <sizepolicy hsizetype="Expanding" vsizetype="MinimumExpanding">
        <horstretch>0</horstretch>
        <verstretch>0</verstretch>
       </sizepolicy>
@@ -879,7 +898,7 @@
     </widget>
    </item>
    <item>
-    <widget class="QLabel" name="label_3">
+    <widget class="QCheckBox" name="useTeach">
      <property name="font">
       <font>
        <weight>75</weight>
@@ -894,7 +913,7 @@
    <item>
     <widget class="QScrollArea" name="scrollArea_4">
      <property name="sizePolicy">
-      <sizepolicy hsizetype="Expanding" vsizetype="Minimum">
+      <sizepolicy hsizetype="Expanding" vsizetype="MinimumExpanding">
        <horstretch>0</horstretch>
        <verstretch>0</verstretch>
       </sizepolicy>
@@ -983,13 +1002,6 @@
     </widget>
    </item>
    <item>
-    <widget class="QLabel" name="label_5">
-     <property name="text">
-      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Отметтье галочкой поля, которые должны быть выведены.&lt;br /&gt;Если по полю должен осуществляться поиск, укажите необходимое значение.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-     </property>
-    </widget>
-   </item>
-   <item>
     <widget class="QDialogButtonBox" name="buttonBox">
      <property name="orientation">
       <enum>Qt::Horizontal</enum>
@@ -1001,6 +1013,89 @@
    </item>
   </layout>
  </widget>
+ <tabstops>
+  <tabstop>useStud</tabstop>
+  <tabstop>scrollArea</tabstop>
+  <tabstop>studSurname_ch</tabstop>
+  <tabstop>studSurname</tabstop>
+  <tabstop>studName_ch</tabstop>
+  <tabstop>studName</tabstop>
+  <tabstop>studPatr_ch</tabstop>
+  <tabstop>studPatr</tabstop>
+  <tabstop>studDocType_ch</tabstop>
+  <tabstop>studDocType</tabstop>
+  <tabstop>studDocNum_ch</tabstop>
+  <tabstop>studDocNum</tabstop>
+  <tabstop>studGender_ch</tabstop>
+  <tabstop>studGender</tabstop>
+  <tabstop>studBYear_ch</tabstop>
+  <tabstop>studBYear_min</tabstop>
+  <tabstop>studBYear_max</tabstop>
+  <tabstop>studSchoolReg_ch</tabstop>
+  <tabstop>studSchoolReg</tabstop>
+  <tabstop>studSchool_ch</tabstop>
+  <tabstop>studSchool</tabstop>
+  <tabstop>studClass_ch</tabstop>
+  <tabstop>studClass</tabstop>
+  <tabstop>studParents_ch</tabstop>
+  <tabstop>studParents</tabstop>
+  <tabstop>studAdr_ch</tabstop>
+  <tabstop>studAdr</tabstop>
+  <tabstop>studPhone_ch</tabstop>
+  <tabstop>studPhone</tabstop>
+  <tabstop>studMail_ch</tabstop>
+  <tabstop>studMail</tabstop>
+  <tabstop>studDataIn_ch</tabstop>
+  <tabstop>studMIn</tabstop>
+  <tabstop>studYIn</tabstop>
+  <tabstop>studEduForm_ch</tabstop>
+  <tabstop>studEduForm</tabstop>
+  <tabstop>studDataOut_ch</tabstop>
+  <tabstop>studDataOutMin</tabstop>
+  <tabstop>studDataOutMax</tabstop>
+  <tabstop>studWhealth_ch</tabstop>
+  <tabstop>studWhealth</tabstop>
+  <tabstop>studOrph_ch</tabstop>
+  <tabstop>studOrph</tabstop>
+  <tabstop>studInv_ch</tabstop>
+  <tabstop>studInv</tabstop>
+  <tabstop>studPolice_ch</tabstop>
+  <tabstop>studPolice</tabstop>
+  <tabstop>studLarge_ch</tabstop>
+  <tabstop>studLarge</tabstop>
+  <tabstop>studIncom_ch</tabstop>
+  <tabstop>studIncom</tabstop>
+  <tabstop>studNeedy_ch</tabstop>
+  <tabstop>studNeedy</tabstop>
+  <tabstop>studMigrants_ch</tabstop>
+  <tabstop>studMigrants</tabstop>
+  <tabstop>useGroup</tabstop>
+  <tabstop>scrollArea_2</tabstop>
+  <tabstop>grNum_ch</tabstop>
+  <tabstop>grNum</tabstop>
+  <tabstop>grYear_ch</tabstop>
+  <tabstop>grYear</tabstop>
+  <tabstop>useAss</tabstop>
+  <tabstop>scrollArea_3</tabstop>
+  <tabstop>assName_ch</tabstop>
+  <tabstop>assName</tabstop>
+  <tabstop>assDirect_ch</tabstop>
+  <tabstop>assDirect</tabstop>
+  <tabstop>assOtd_ch</tabstop>
+  <tabstop>assOtd</tabstop>
+  <tabstop>useTeach</tabstop>
+  <tabstop>scrollArea_4</tabstop>
+  <tabstop>teachSurname_ch</tabstop>
+  <tabstop>teachSurname</tabstop>
+  <tabstop>teachName_ch</tabstop>
+  <tabstop>teachName</tabstop>
+  <tabstop>teachPatrname_ch</tabstop>
+  <tabstop>teachPatrname</tabstop>
+  <tabstop>teachPass_ch</tabstop>
+  <tabstop>teachPass</tabstop>
+  <tabstop>teachOtd_ch</tabstop>
+  <tabstop>teachOtd</tabstop>
+ </tabstops>
  <resources/>
  <connections>
   <connection>

@@ -23,6 +23,14 @@ public:
 private slots:
     void on_buttonBox_accepted();
 
+    void on_useStud_stateChanged(int arg1);
+
+    void on_useGroup_stateChanged(int arg1);
+
+    void on_useAss_stateChanged(int arg1);
+
+    void on_useTeach_stateChanged(int arg1);
+
 private:
     Ui::SearchDialog *ui;
 
