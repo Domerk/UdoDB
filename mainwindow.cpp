@@ -406,6 +406,24 @@ void MainWindow::drawRows(QSqlQuery query, QTableWidget *table, bool available)
 
     table->setSortingEnabled(false); // Временно запрещаем сортировку
 
+    QStringList* ColumnsBool = new QStringList();
+    ColumnsBool->append("С ослабленным здоровьем");
+    ColumnsBool->append("Сирота");
+    ColumnsBool->append("Инвалид");
+    ColumnsBool->append("На учёте в полиции");
+    ColumnsBool->append("Многодетная семья");
+    ColumnsBool->append("Неполная семья");
+    ColumnsBool->append("Малообеспеченная семья");
+    ColumnsBool->append("Мигранты");
+    ColumnsBool->append("Учащийся: С ослабленным здоровьем");
+    ColumnsBool->append("Учащийся: Сирота");
+    ColumnsBool->append("Учащийся: Инвалид");
+    ColumnsBool->append("Учащийся: На учёте в полиции");
+    ColumnsBool->append("Учащийся: Многодетная семья");
+    ColumnsBool->append("Учащийся: Неполная семья");
+    ColumnsBool->append("Учащийся: Малообеспеченная семья");
+    ColumnsBool->append("Учащийся: Мигранты");
+
     while (query.next())    // Пока есть результаты запроса
         {
             table->insertRow(rowCount);   // Добавляем строку в конец
@@ -414,12 +432,11 @@ void MainWindow::drawRows(QSqlQuery query, QTableWidget *table, bool available)
                 // Создаём ячейку в текущем поле текущей строки и заносим туда инфу
 
                 // ВАЖНО
-                // MySQL возвращает вместо true и false словами 1 и 0
-                // В данный момент это костыль, потому что 1 и 0 могут быть ещё и классом хС
+                // MySQL возвращает вместо true и false словами 1 и 0, и отличить их от int нельзя
 
                 qDebug() << query.value(i).userType();
 
-                if (query.value(i).userType() == QMetaType::Bool)
+                if (ColumnsBool->contains(table->horizontalHeaderItem(i)->text()))
                 {
                     if (query.value(i).toBool())
                         table->setItem(rowCount, i, new QTableWidgetItem("Да"));
