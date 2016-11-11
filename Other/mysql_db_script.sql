@@ -130,19 +130,24 @@ CREATE VIEW Нагрузка_Учащегося AS
 
 -- Триггеры
 
-
+delimiter |
 CREATE TRIGGER AllInsertTrigger
  AFTER INSERT ON Объединение
  FOR EACH ROW BEGIN 
 	INSERT INTO Группа (`Номер`,`ID объединения`) VALUES ("Без группы", (SELECT `ID` FROM Объединение WHERE `Название` = NEW.`Название`));
  END;
-  
+|
+delimiter ;
+
  -- Удалить запись в таблице Нагрузка о том, что учащийся в группе "Без группы"
  -- при добавлении новой, если у них одинаковые учащиеся и объединения
 
+ delimiter |
 CREATE TRIGGER StudInGroupTrigger
 AFTER INSERT ON Нагрузка
 FOR EACH ROW BEGIN 
 	DELETE FROM Нагрузка WHERE `ID учащегося` = NEW.`ID учащегося`
 	AND `ID группы` = (SELECT `ID группы` FROM Нагрузка_Учащегося WHERE `ID учащегося` = NEW.`ID учащегося` AND `Номер группы` = "Без группы" AND `ID объединения` = (SELECT `ID объединения` FROM Нагрузка_Учащегося WHERE `ID учащегося` = NEW.`ID учащегося` AND `ID группы` = NEW.`ID группы`));
  END;
+|
+delimiter ;
