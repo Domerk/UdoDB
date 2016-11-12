@@ -431,16 +431,31 @@ void SearchDialog::on_buttonBox_accepted()
 
     if (useStud && (useGroup || useAss || useTeach))
     {
-        from->append(" Нагрузка,");
-        if (!where->isEmpty())
+        from->remove(" Учащиеся,");
+        from->remove(" Группа,");
+        //from->append(" Нагрузка,");
+        from->append(" Учащиеся LEFT OUTER JOIN Нагрузка ON (Учащиеся.`ID` = Нагрузка.`ID учащегося`) LEFT OUTER JOIN Группа ON (Группа.`ID` = Нагрузка.`ID группы`)");
+
+        /*if (!where->isEmpty())
             where->append(" AND");
-        where->append(" Учащиеся.`ID` = Нагрузка.`ID учащегося` AND Группа.`ID` = Нагрузка.`ID группы`");
+        where->append(" Учащиеся.`ID` = Нагрузка.`ID учащегося` AND Группа.`ID` = Нагрузка.`ID группы`");*/
 
         if (useAss)
-            where->append(" AND Объединения.`ID` = Группа.`ID объединения`");
+        {
+            if (!where->isEmpty())
+                where->append(" AND");
+            where->append(" Объединения.`ID` = Группа.`ID объединения`");
+        }
 
         if (useTeach)
-            where->append(" AND Преподаватели.`ID` = Группа.`ID преподавателя`");
+        {
+            from->remove(" Группа,");
+            from->remove(" Преподаватели,");
+            if (from->contains("JOIN Группа"))
+                from->append(" LEFT OUTER JOIN Преподаватели ON (Группа.`ID преподавателя` = Преподаватели.`ID`),");
+            else
+                from->append(", Группа LEFT OUTER JOIN Преподаватели ON (Группа.`ID преподавателя` = Преподаватели.`ID`),");
+        }
     }
     else
     {
@@ -453,9 +468,9 @@ void SearchDialog::on_buttonBox_accepted()
 
         if (useGroup && useTeach)
         {
-            if (!where->isEmpty())
-                where->append(" AND");
-            where->append(" Преподаватели.`ID` = Группа.`ID преподавателя`");
+            from->remove(" Группа,");
+            from->remove(" Преподаватели,");
+            from->append(" Группа LEFT OUTER JOIN Преподаватели ON (Группа.`ID преподавателя` = Преподаватели.`ID`),");
         }
     }
 
