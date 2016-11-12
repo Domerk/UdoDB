@@ -431,11 +431,23 @@ void MainWindow::drawRows(QSqlQuery query, QTableWidget *table, bool available)
             {
                 // Создаём ячейку в текущем поле текущей строки и заносим туда инфу
 
-                // ВАЖНО
-                // MySQL возвращает вместо true и false словами 1 и 0, и отличить их от int нельзя
+                // Если дата, то она может прийти в каком-нибудь диком формате, а отобразить её надо в ДД.ММ.ГГГГ
+                if (query.value(i).userType() == QMetaType::QDate)
+                {
+                    QDate date;
+                    QString sdate;
+                    date = query.value(i).toDate(); // Получаем дату
+                    sdate += QString::number(date.day()) + "."; // Формируем из неё строку в привычном виде
+                    sdate += (QString::number(date.month()).size() == 1) ? ("0" + QString::number(date.month())) : QString::number(date.month());
+                    sdate += "." + QString::number(date.year());
+                    table->setItem(rowCount, i, new QTableWidgetItem(sdate)); // Отправляем её в таблицу
+                    continue;
+                }
 
                 qDebug() << query.value(i).userType();
 
+                // ВАЖНО
+                // MySQL возвращает вместо true и false словами 1 и 0, и отличить их от int нельзя
                 if (ColumnsBool->contains(table->horizontalHeaderItem(i)->text()))
                 {
                     if (query.value(i).toBool())
@@ -891,7 +903,7 @@ void MainWindow::on_saveButton_clicked()
                 strQuery.append("WHERE `ID` = " + id + ";");
             }
 
-            qDebug() << strQuery;
+
             break;
         }
 
@@ -974,6 +986,9 @@ void MainWindow::on_saveButton_clicked()
             return;
         }
 
+        if (teachID.isEmpty())
+            teachID.append("NULL");
+
         if (id.isEmpty())
         {
             strQuery = "INSERT INTO Группа (`Номер`, `Год обучения`, `ID объединения`, `ID преподавателя`) VALUES ('" + num + "', " + year + ", " + assID + ", " + teachID + ");";
@@ -987,7 +1002,7 @@ void MainWindow::on_saveButton_clicked()
 
     }
     }
-
+    qDebug() << strQuery;
     QSqlQuery query;
     query.exec(strQuery);
 
