@@ -555,6 +555,34 @@ void MainWindow::deleteThis()
 {
     if(ui->tableWidget->verticalHeader()->currentIndex().row() >= 0) // Если выбрана строка
         {
+            // Запрещаем удаление группы "Ьез группы"
+            qDebug() << ui->tableWidget->item(ui->tableWidget->currentRow(), 3)->text();
+            if (*currentTable == "Группы")
+            {
+                int column = 0;
+                for (int i = 0; i < ui->tableWidget->columnCount(); i++)
+                {
+                    if (ui->tableWidget->horizontalHeaderItem(i)->text() == "Номер")
+                    {
+                        column = i;
+                        break;
+                    }
+                }
+
+                if (ui->tableWidget->item(ui->tableWidget->currentRow(), column)->text() == "Без группы")
+                {
+                    QMessageBox messageBox(QMessageBox::Information,
+                                           tr("Удаление записи невозможно"),
+                                           tr("Группа 'Без группы' является служебной и не может быть удалена."),
+                                           QMessageBox::Yes,
+                                           this);
+                    messageBox.setButtonText(QMessageBox::Yes, tr("ОК"));
+                    messageBox.exec();
+                    return;
+                }
+            }
+
+
             // Создаём окно, запрашивающее подтверждение действия
             QMessageBox messageBox(QMessageBox::Question,
                         tr("Удаление записи"),
