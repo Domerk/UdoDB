@@ -434,17 +434,13 @@ void MainWindow::drawRows(QSqlQuery query, QTableWidget *table, bool available)
                 // Если дата, то она может прийти в каком-нибудь диком формате, а отобразить её надо в ДД.ММ.ГГГГ
                 if (query.value(i).userType() == QMetaType::QDate)
                 {
-                    QDate date;
                     QString sdate;
-                    date = query.value(i).toDate(); // Получаем дату
-                    sdate += QString::number(date.day()) + "."; // Формируем из неё строку в привычном виде
-                    sdate += (QString::number(date.month()).size() == 1) ? ("0" + QString::number(date.month())) : QString::number(date.month());
-                    sdate += "." + QString::number(date.year());
+                    sdate.append(query.value(i).toDate().toString("dd.MM.yyyy")); // получаем дату в нужном формате
                     table->setItem(rowCount, i, new QTableWidgetItem(sdate)); // Отправляем её в таблицу
                     continue;
                 }
 
-                qDebug() << query.value(i).userType();
+                // qDebug() << query.value(i).userType();
 
                 // ВАЖНО
                 // MySQL возвращает вместо true и false словами 1 и 0, и отличить их от int нельзя
@@ -556,7 +552,6 @@ void MainWindow::deleteThis()
     if(ui->tableWidget->verticalHeader()->currentIndex().row() >= 0) // Если выбрана строка
         {
             // Запрещаем удаление группы "Ьез группы"
-            qDebug() << ui->tableWidget->item(ui->tableWidget->currentRow(), 3)->text();
             if (*currentTable == "Группы")
             {
                 int column = 0;
@@ -1049,7 +1044,8 @@ void MainWindow::getDateToForm(QString* str, QComboBox* d, QComboBox* m, QSpinBo
     {
         QDate date;
         date.setDate(y->value(), m->currentText().toInt(), d->currentText().toInt());
-        str->append("'" + date.toString(Qt::SystemLocaleShortDate) + "'");
+        //str->append("'" + date.toString(Qt::SystemLocaleShortDate) + "'");
+        str->append("'" + date.toString(Qt::ISODate) + "'");
     }
     else
         str->append("NULL");
@@ -1889,6 +1885,7 @@ void MainWindow::on_addStudInGroup_clicked()
                     for (int row = selectionRange.topRow(); row <= selectionRange.bottomRow(); row++)
                     {
                         strQuery.append("INSERT INTO Нагрузка(`ID учащегося`, `ID группы`) VALUES(" + wgt->item(row, 0)->text() + ", " + ui->groupID->text() + "); ");
+                        qDebug() << strQuery;
                         query.exec(strQuery);
                         strQuery.clear();
                     }
