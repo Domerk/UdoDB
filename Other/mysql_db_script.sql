@@ -1,5 +1,4 @@
 ﻿DROP TRIGGER IF EXISTS AllInsertTrigger;
-DROP TRIGGER IF EXISTS StudInGroupTrigger;
 
 DROP VIEW IF EXISTS Объединения;
 DROP VIEW IF EXISTS Состав_групп;
@@ -109,9 +108,8 @@ CREATE VIEW Объединения AS
 CREATE VIEW Группы AS 
 	CREATE VIEW Группы AS 
 	SELECT Группа.`ID` `ID`, Группа.`ID преподавателя` `ID преподавателя`, Группа.`Номер` `Номер`, Группа.`Год обучения` `Год обучения`, Объединение.`ID` `ID объединения`, Объединение.`Название` `Объединение`, Преподаватели.`Фамилия` `Фамилия преподавателя`, Преподаватели.`Имя` `Имя преподавателя`, Преподаватели.`Отчество` `Отчество преподавателя`
-	FROM группа LEFT OUTER JOIN  преподаватели ON (Группа.`ID преподавателя` = Преподаватели.`ID`), Объединение
+	FROM Группа LEFT OUTER JOIN Преподаватели ON (Группа.`ID преподавателя` = Преподаватели.`ID`), Объединение
 	WHERE Группа.`ID объединения` = Объединение.`ID`
-;
 ;
 
 
@@ -136,16 +134,6 @@ CREATE TRIGGER AllInsertTrigger
  AFTER INSERT ON Объединение
  FOR EACH ROW BEGIN 
 	INSERT INTO Группа (`Номер`,`ID объединения`) VALUES ("Без группы", (SELECT `ID` FROM Объединение WHERE `Название` = NEW.`Название`));
- END
-|
-delimiter ;
-
- delimiter |
-CREATE TRIGGER StudInGroupTrigger
-AFTER INSERT ON Нагрузка
-FOR EACH ROW BEGIN 
-	DELETE FROM Нагрузка WHERE `ID учащегося` = NEW.`ID учащегося`
-	AND `ID группы` = (SELECT `ID группы` FROM Нагрузка_Учащегося WHERE `ID учащегося` = NEW.`ID учащегося` AND `Номер группы` = "Без группы" AND `ID объединения` = (SELECT `ID объединения` FROM Нагрузка_Учащегося WHERE `ID учащегося` = NEW.`ID учащегося` AND `ID группы` = NEW.`ID группы`));
  END
 |
 delimiter ;

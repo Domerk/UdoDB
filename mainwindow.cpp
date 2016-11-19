@@ -1888,6 +1888,19 @@ void MainWindow::on_addStudInGroup_clicked()
                         qDebug() << strQuery;
                         query.exec(strQuery);
                         strQuery.clear();
+
+                        strQuery.append("SELECT группа.`ID` FROM Нагрузка, Группа WHERE Группа.`ID` = нагрузка.`ID группы` AND Нагрузка.`ID учащегося` = "+ wgt->item(row, 0)->text() + " AND Группа.`Номер` = 'Без группы' AND Группа.`ID объединения` = (SELECT `ID объединения` FROM группа WHERE `ID`  = " + ui->groupID->text() + ")");
+                        qDebug() << strQuery;
+                        query.exec(strQuery);
+                        if (query.next())
+                        {
+                            int id = query.value(0).toInt();
+                            strQuery.clear();
+                            strQuery.append("DELETE FROM Нагрузка WHERE `ID учащегося` = " + wgt->item(row, 0)->text() + " AND `ID группы` <> " + ui->groupID->text() + " AND `ID группы` = " + QString::number(id));
+                            qDebug() << strQuery;
+                            query.exec(strQuery);
+                        }
+                        strQuery.clear();
                     }
             }
             strQuery.append("SELECT `ID учащегося`, `Фамилия`, `Имя`, `Отчество`, `Телефон`, `e-mail` FROM Состав_групп WHERE `ID группы` = " + ui->groupID->text() + ";");
