@@ -106,7 +106,7 @@
                 <rect>
                  <x>0</x>
                  <y>0</y>
-                 <width>218</width>
+                 <width>297</width>
                  <height>317</height>
                 </rect>
                </property>
@@ -457,7 +457,7 @@
                <property name="geometry">
                 <rect>
                  <x>0</x>
-                 <y>-419</y>
+                 <y>0</y>
                  <width>297</width>
                  <height>1107</height>
                 </rect>
@@ -1780,8 +1780,8 @@
                 <rect>
                  <x>0</x>
                  <y>0</y>
-                 <width>139</width>
-                 <height>155</height>
+                 <width>314</width>
+                 <height>316</height>
                 </rect>
                </property>
                <layout class="QVBoxLayout" name="verticalLayout_11">
@@ -1882,8 +1882,8 @@
                 <rect>
                  <x>0</x>
                  <y>0</y>
-                 <width>194</width>
-                 <height>302</height>
+                 <width>314</width>
+                 <height>316</height>
                 </rect>
                </property>
                <layout class="QVBoxLayout" name="verticalLayout_12">
@@ -1914,7 +1914,11 @@
                    <widget class="QLineEdit" name="groupNum"/>
                   </item>
                   <item row="2" column="1">
-                   <widget class="QSpinBox" name="groupYear"/>
+                   <widget class="QSpinBox" name="groupYear">
+                    <property name="maximum">
+                     <number>20</number>
+                    </property>
+                   </widget>
                   </item>
                   <item row="3" column="0">
                    <widget class="QLabel" name="label_42">
