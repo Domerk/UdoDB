@@ -221,6 +221,9 @@
                 </item>
                 <item>
                  <widget class="QTableWidget" name="groupInAl">
+                  <property name="editTriggers">
+                   <set>QAbstractItemView::NoEditTriggers</set>
+                  </property>
                   <attribute name="horizontalHeaderShowSortIndicator" stdset="0">
                    <bool>false</bool>
                   </attribute>
@@ -290,8 +293,8 @@
                 <rect>
                  <x>0</x>
                  <y>0</y>
-                 <width>166</width>
-                 <height>268</height>
+                 <width>314</width>
+                 <height>316</height>
                 </rect>
                </property>
                <layout class="QVBoxLayout" name="verticalLayout_6">
@@ -390,6 +393,9 @@
                 </item>
                 <item>
                  <widget class="QTableWidget" name="groupInTeach">
+                  <property name="editTriggers">
+                   <set>QAbstractItemView::NoEditTriggers</set>
+                  </property>
                   <attribute name="horizontalHeaderStretchLastSection">
                    <bool>true</bool>
                   </attribute>
@@ -457,7 +463,7 @@
                <property name="geometry">
                 <rect>
                  <x>0</x>
-                 <y>0</y>
+                 <y>-791</y>
                  <width>297</width>
                  <height>1107</height>
                 </rect>
@@ -1712,6 +1718,9 @@
                     <height>120</height>
                    </size>
                   </property>
+                  <property name="editTriggers">
+                   <set>QAbstractItemView::NoEditTriggers</set>
+                  </property>
                   <attribute name="horizontalHeaderStretchLastSection">
                    <bool>true</bool>
                   </attribute>
@@ -1824,6 +1833,9 @@
                 </item>
                 <item>
                  <widget class="QTableWidget" name="alInDirect">
+                  <property name="editTriggers">
+                   <set>QAbstractItemView::NoEditTriggers</set>
+                  </property>
                   <attribute name="horizontalHeaderStretchLastSection">
                    <bool>true</bool>
                   </attribute>
@@ -2084,6 +2096,9 @@
                 </item>
                 <item>
                  <widget class="QTableWidget" name="studsInGroupe">
+                  <property name="editTriggers">
+                   <set>QAbstractItemView::NoEditTriggers</set>
+                  </property>
                   <attribute name="horizontalHeaderStretchLastSection">
                    <bool>true</bool>
                   </attribute>
