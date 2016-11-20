@@ -1046,10 +1046,9 @@ void MainWindow::on_saveButton_clicked()
     qDebug() << strQuery;
     QSqlQuery query;
     query.exec(strQuery);
-
     repeatLastSelect();
 
-    if (*currentTable == "Объединения" || *currentTable == "Направленности" || *currentTable == "Группы")
+    if (currentIndex == 4 || currentIndex == 3 || currentIndex == 0)
         drawTree();
 }
 
