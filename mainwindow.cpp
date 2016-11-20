@@ -284,9 +284,20 @@ bool MainWindow::connectDB()
 
 void MainWindow::connectReconfigSlot()
 {
-    connectDB();
-    if (!currentTable->isEmpty())
-        refreshTable();
+    if (connectDB())
+    {
+        drawTree();
+        if (!currentTable->isEmpty())
+            refreshTable();
+        else
+            showTable("Учащиеся");
+    }
+    else
+    {
+        ui->treeWidget->clear();
+        ui->tableWidget->clear();
+    }
+    clearMoreInfoForm();
 }
 
 // ----------------------------------------------------------------------------------------------------
