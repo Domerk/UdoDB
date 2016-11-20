@@ -998,6 +998,19 @@ void MainWindow::on_saveButton_clicked()
         QString num = ui->groupNum->text();
         QString year = QString::number(ui->groupYear->value());
 
+
+        if ((!id.isEmpty() || !id.isNull()) && num == "Без группы")
+        {
+            QMessageBox messageBox(QMessageBox::Information,
+                                   tr("Изменение записи"),
+                                   tr("Группа Без группы является служебной и не может быть изменена!"),
+                                   QMessageBox::Yes,
+                                   this);
+            messageBox.setButtonText(QMessageBox::Yes, tr("ОК"));
+            messageBox.exec();
+            return;
+        }
+
         // ЗДЕСЬ: Продумать, какие поля должны быть обязательными
 
         if (num.isEmpty())
