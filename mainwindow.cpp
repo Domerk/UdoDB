@@ -442,6 +442,12 @@ void MainWindow::drawRows(QSqlQuery query, QTableWidget *table, bool available)
             {
                 // Создаём ячейку в текущем поле текущей строки и заносим туда инфу
 
+                if (query.value(i).isNull())
+                {
+                    table->setItem(rowCount, i, new QTableWidgetItem(""));
+                    continue;
+                }
+
                 // Если дата, то она может прийти в каком-нибудь диком формате, а отобразить её надо в ДД.ММ.ГГГГ
                 if (query.value(i).userType() == QMetaType::QDate)
                 {
@@ -1020,7 +1026,8 @@ void MainWindow::on_saveButton_clicked()
             return;
         }
 
-        if (teachID.isEmpty())
+        qDebug() << teachID;
+        if (teachID.isEmpty() || teachID.isNull())
             teachID.append("NULL");
 
         if (id.isEmpty())
