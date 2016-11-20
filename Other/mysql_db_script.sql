@@ -71,7 +71,7 @@ CREATE TABLE Объединение (
 `Описание`		VARCHAR(500),
 `ID направленности` INTEGER,
 
-FOREIGN KEY (`ID направленности`)	REFERENCES Направленности(`ID`)
+FOREIGN KEY (`ID направленности`)	REFERENCES Направленности(`ID`)		ON DELETE CASCADE
 );
 
 CREATE TABLE Группа (
@@ -82,7 +82,7 @@ CREATE TABLE Группа (
 `Год обучения`		INTEGER,
 
 FOREIGN KEY (`ID объединения`) 		REFERENCES Объединение(`ID`)		ON DELETE CASCADE,
-FOREIGN KEY (`ID преподавателя`)	REFERENCES Преподаватели(`ID`)		ON DELETE CASCADE
+FOREIGN KEY (`ID преподавателя`)	REFERENCES Преподаватели(`ID`)		ON DELETE SET NULL
 );
 
 CREATE TABLE Нагрузка (
