@@ -634,8 +634,21 @@ void MainWindow::deleteThis()
                             for (int row = selectionRange.topRow(); row <= selectionRange.bottomRow(); row++)
                             {
                                 strQuery.append("DELETE FROM " + table + " WHERE `ID` = " + ui->tableWidget->item(row, 0)->text() + " ;");
-                                query.exec(strQuery);
-                                strQuery.clear();
+                                if (query.exec(strQuery)) // Если запрос выполнен
+                                {
+                                    strQuery.clear();
+                                }
+                                else
+                                {
+                                    QMessageBox messageBox(QMessageBox::Warning,
+                                                           tr("Ошибка выполнения запроса"),
+                                                           tr("В ходе выполнения запроса возникла ошибка:") + query.lastError().text(),
+                                                           QMessageBox::Yes,
+                                                           this);
+                                    messageBox.setButtonText(QMessageBox::Yes, tr("ОК"));
+                                    messageBox.exec();
+                                    return;
+                                }
                             }
                     }
 
@@ -672,8 +685,20 @@ void MainWindow::refreshTable()
     QSqlQuery query;
     lastSelect->clear();
     lastSelect->append(infoMap.value(*currentTable).query);
-    query.exec(*lastSelect);
-    drawRows(query, ui->tableWidget, true);
+    if (query.exec(*lastSelect))
+    {
+        drawRows(query, ui->tableWidget, true);
+    }
+    else
+    {
+        QMessageBox messageBox(QMessageBox::Warning,
+                               tr("Ошибка выполнения запроса"),
+                               tr("В ходе выполнения запроса на обсновление таблицы возникла ошибка:") + query.lastError().text(),
+                               QMessageBox::Yes,
+                               this);
+        messageBox.setButtonText(QMessageBox::Yes, tr("ОК"));
+        messageBox.exec();
+    }
 }
 
 // ============================================================
@@ -683,8 +708,20 @@ void MainWindow::refreshTable()
 void MainWindow::repeatLastSelect()
 {
     QSqlQuery query;
-    query.exec(*lastSelect);
-    drawRows(query, ui->tableWidget, true);
+    if (query.exec(*lastSelect))
+    {
+        drawRows(query, ui->tableWidget, true);
+    }
+    else
+    {
+        QMessageBox messageBox(QMessageBox::Warning,
+                               tr("Ошибка выполнения запроса"),
+                               tr("В ходе выполнения запроса возникла ошибка:") + query.lastError().text(),
+                               QMessageBox::Yes,
+                               this);
+        messageBox.setButtonText(QMessageBox::Yes, tr("ОК"));
+        messageBox.exec();
+    }
 }
 
 // ============================================================
@@ -1058,11 +1095,23 @@ void MainWindow::on_saveButton_clicked()
     }
     qDebug() << strQuery;
     QSqlQuery query;
-    query.exec(strQuery);
-    repeatLastSelect();
+    if (query.exec(strQuery))
+    {
+        repeatLastSelect();
 
-    if (currentIndex == 4 || currentIndex == 3 || currentIndex == 0)
-        drawTree();
+        if (currentIndex == 4 || currentIndex == 3 || currentIndex == 0)
+            drawTree();
+    }
+    else
+    {
+        QMessageBox messageBox(QMessageBox::Warning,
+                               tr("Ошибка выполнения запроса"),
+                               tr("В ходе выполнения запроса на изменение данных возникла ошибка:") + query.lastError().text(),
+                               QMessageBox::Yes,
+                               this);
+        messageBox.setButtonText(QMessageBox::Yes, tr("ОК"));
+        messageBox.exec();
+    }
 }
 
 // ============================================================
@@ -1139,11 +1188,22 @@ void MainWindow::simpleSearch()
         }
 
         QSqlQuery query;
-        query.exec(*newSelect);
-
-        drawRows(query, ui->tableWidget, true);
-        lastSelect = newSelect;
-        simpleSearchDisplayed = true;
+        if (query.exec(*newSelect))
+        {
+            drawRows(query, ui->tableWidget, true);
+            lastSelect = newSelect;
+            simpleSearchDisplayed = true;
+        }
+        else
+        {
+            QMessageBox messageBox(QMessageBox::Warning,
+                                   tr("Ошибка выполнения запроса"),
+                                   tr("В ходе выполнения запроса возникла ошибка:") + query.lastError().text(),
+                                   QMessageBox::Yes,
+                                   this);
+            messageBox.setButtonText(QMessageBox::Yes, tr("ОК"));
+            messageBox.exec();
+        }
     }
 }
 
@@ -2110,7 +2170,18 @@ void MainWindow::on_removeStudToGroup_clicked()
                 for (int row = selectionRange.topRow(); row <= selectionRange.bottomRow(); row++)
                 {
                     strQuery.append("DELETE FROM Нагрузка WHERE `ID учащегося` = " + ui->studsInGroupe->item(row, 0)->text() + " AND `ID группы` = "  + ui->groupID->text() + ";");
-                    query.exec(strQuery);
+                    if (!query.exec(strQuery))
+                    {
+                        // Если запрос не выполнился, выводим сообщение об ошибке
+                        QMessageBox messageBox(QMessageBox::Warning,
+                                               tr("Ошибка выполнения запроса"),
+                                               tr("В ходе выполнения запроса возникла ошибка:") + query.lastError().text(),
+                                               QMessageBox::Yes,
+                                               this);
+                        messageBox.setButtonText(QMessageBox::Yes, tr("ОК"));
+                        messageBox.exec();
+                        return; // И выходим.
+                    }
                     strQuery.clear();
                 }
         }
