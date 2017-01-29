@@ -4,7 +4,9 @@
 #include <QMainWindow>
 #include <QtSql/QSql>
 #include <QtSql/QSqlDatabase>
-#include <QtSql/QtSql>
+#include <QtSql/QSqlQuery>
+#include <QtSql/QSqlError>
+#include <QtSql/QSqlRecord>
 #include <ActiveQt/QAxObject>
 #include <ActiveQt/QAxBase>
 #include <QFileInfo>
@@ -126,6 +128,7 @@ public slots:
     void querySlot(QString);
     void querySlot(QTableWidget* tableWidget, QString strQuery, bool mainDB);
     void queriesSlot(QStringList qsl, bool mainDB);
+
 };
 
 #endif // MAINWINDOW_H

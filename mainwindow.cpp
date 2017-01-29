@@ -2044,8 +2044,23 @@ void MainWindow::querySlot(QTableWidget* tableWidget, QString strQuery, bool mai
     if (!mainDB)
         query = QSqlQuery(tempDB);
 
-    query.exec(strQuery);
-    drawRows(query, tableWidget, false);
+    if (query.exec(strQuery))
+    {
+        // Если запрос выполнен успешно
+        drawRows(query, tableWidget, false); // Рисуем строки
+    }
+    else
+    {
+        // Иначе выводим сообщение обошибке
+        QMessageBox messageBox(QMessageBox::Warning,
+                               tr("Ошибка выполнения запроса"),
+                               tr("В ходе выполнения запроса возникла ошибка:") + query.lastError().text(),
+                               QMessageBox::Yes,
+                               this);
+        messageBox.setButtonText(QMessageBox::Yes, tr("ОК"));
+        messageBox.exec();
+    }
+
 }
 
 // ============================================================
@@ -2060,7 +2075,18 @@ void MainWindow::queriesSlot(QStringList qsl, bool mainDB)
 
     for (QString & strQuery : qsl)
     {
-        query.exec(strQuery);
+        if (!query.exec(strQuery))
+        {
+            // Если запрос не выполнился, выводим сообщение об ошибке
+            QMessageBox messageBox(QMessageBox::Warning,
+                                   tr("Ошибка выполнения запроса"),
+                                   tr("В ходе выполнения запроса возникла ошибка:") + query.lastError().text(),
+                                   QMessageBox::Yes,
+                                   this);
+            messageBox.setButtonText(QMessageBox::Yes, tr("ОК"));
+            messageBox.exec();
+            return; // И выходим.
+        }
     }
 
     if(mainDB)
@@ -2149,7 +2175,7 @@ void MainWindow::showProgramInfo()
     aboutBox = new QMessageBox(this);
     aboutBox->setWindowTitle(tr("О программе"));
     aboutBox->setIconPixmap(QPixmap(":/icons/Icons/udod"));
-    aboutBox->setText("<strong>UdoDB v1.0.2 beta</strong>");
+    aboutBox->setText("<strong>UdoDB v1.0.2</strong>");
     QString str;
     str.append("Данная сборка предназначения для работы с MySql-5.7.14, Windows x86.<br /><br />");
     str.append("Программа представляет собой клиент для работы с базой данных учреждения дополнительного образования. Она позволяет просматривать, добавлять, удалять и изменять данные об учащихся, преподавателях, объединениях, учебных группах и направленностях.<br /><br />");
