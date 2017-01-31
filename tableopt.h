@@ -6,6 +6,9 @@
 #include <QRegularExpression>
 #include <QVector>
 #include <QComboBox>
+#include <QDate>
+#include <QStringList>
+#include <QString>
 
 namespace Ui {
 class TableOpt;
@@ -36,6 +39,7 @@ private:
     QString forSearch;
     QVector <int> id;
     bool mainDB;
+    QString getDateToTable(QString str);
 
 signals:
     void signalQuery(QTableWidget* tableWidget, QString strQuery, bool mainDB);

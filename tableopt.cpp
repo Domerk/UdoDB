@@ -155,7 +155,11 @@ void TableOpt::on_insertButton_clicked()
                     // `Фамилия`, `Имя`, `Отчество`,`Тип документа`, `Номер документа`, `Пол`, `Дата рождения`, `Район школы`, `Школа`, `Класс`, `Родители`, `Домашний адрес`, `Телефон`, `e-mail`, `Дата заявления`
                     strQuery.append("INSERT INTO Учащиеся (`Фамилия`, `Имя`, `Отчество`,`Тип документа`, `Номер документа`, `Пол`, `Дата рождения`, `Район школы`, `Школа`, `Класс`, `Родители`, `Домашний адрес`, `Телефон`, `e-mail`, `Дата заявления`) VALUES (");
                     for (int i = 1; i<ui->tableWidget->columnCount(); i++)
-                        strQuery.append(" '" + ui->tableWidget->item(row, i)->text() + "',");
+                        if (i == 7 || i == 15)
+                            strQuery.append(" " + getDateToTable(ui->tableWidget->item(row, i)->text()) + ",");
+                        else
+                             strQuery.append(" '" + ui->tableWidget->item(row, i)->text() + "',");
+
                     strQuery.resize(strQuery.size()-1);
                     strQuery.append(");");
                     qsl.append(strQuery);
@@ -188,4 +192,17 @@ void TableOpt::on_deleteButton_clicked()
         emit signalQueries(qsl, false);
         emit signalQuery(ui->tableWidget, baseQuery, mainDB);
     }
+}
+
+QString TableOpt::getDateToTable(QString str)
+{
+    QDate date = QDate::fromString(str, "dd.MM.yyyy");
+    if (date.isValid())
+    {
+        str.clear();
+        str.append("'" + date.toString(Qt::ISODate) + "'");
+        return str;
+    }
+
+    return "NULL";
 }
