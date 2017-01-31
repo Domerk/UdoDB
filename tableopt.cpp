@@ -158,7 +158,7 @@ void TableOpt::on_insertButton_clicked()
                         if (i == 7 || i == 15)
                             strQuery.append(" " + getDateToTable(ui->tableWidget->item(row, i)->text()) + ",");
                         else
-                             strQuery.append(" '" + ui->tableWidget->item(row, i)->text() + "',");
+                            strQuery.append(" '" + ui->tableWidget->item(row, i)->text() + "',");
 
                     strQuery.resize(strQuery.size()-1);
                     strQuery.append(");");
@@ -166,9 +166,11 @@ void TableOpt::on_insertButton_clicked()
                     strQuery.clear();
                     strQuery.append("INSERT INTO Нагрузка (`ID учащегося`, `ID группы`) VALUES ((SELECT `ID` FROM Учащиеся WHERE `Тип документа` = '" + ui->tableWidget->item(row, 4)->text() + "' AND `Номер документа` = '" + ui->tableWidget->item(row, 5)->text() + "'), (SELECT Группа.`ID` FROM Группа, Объединение WHERE Группа.`ID объединения` = Объединение.`ID` AND Объединение.`Название` = '" +ui->tableWidget->item(row, 0)->text()  + "' AND Группа.`Номер` = 'Без группы'));");
                     qsl.append(strQuery);
+                    strQuery.clear();
                 }
             }
         }
+        qsl.removeDuplicates();
         emit signalQueries(qsl, true);
         on_deleteButton_clicked();
         emit signalQuery(ui->tableWidget, baseQuery, mainDB);      
