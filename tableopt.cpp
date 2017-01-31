@@ -153,7 +153,7 @@ void TableOpt::on_insertButton_clicked()
                 for (int row = selectionRange.topRow(); row <= selectionRange.bottomRow(); row++)
                 {
                     // `Фамилия`, `Имя`, `Отчество`,`Тип документа`, `Номер документа`, `Пол`, `Дата рождения`, `Район школы`, `Школа`, `Класс`, `Родители`, `Домашний адрес`, `Телефон`, `e-mail`, `Дата заявления`
-                    strQuery.append("INSERT INTO Учащиеся (`Фамилия`, `Имя`, `Отчество`,`Тип документа`, `Номер документа`, `Пол`, `Дата рождения`, `Район школы`, `Школа`, `Класс`, `Родители`, `Домашний адрес`, `Телефон`, `e-mail`, `Дата заявления`) VALUES (");
+                    strQuery.append("INSERT IGNORE INTO Учащиеся (`Фамилия`, `Имя`, `Отчество`,`Тип документа`, `Номер документа`, `Пол`, `Дата рождения`, `Район школы`, `Школа`, `Класс`, `Родители`, `Домашний адрес`, `Телефон`, `e-mail`, `Дата заявления`) VALUES (");
                     for (int i = 1; i<ui->tableWidget->columnCount(); i++)
                         if (i == 7 || i == 15)
                             strQuery.append(" " + getDateToTable(ui->tableWidget->item(row, i)->text()) + ",");
@@ -164,7 +164,7 @@ void TableOpt::on_insertButton_clicked()
                     strQuery.append(");");
                     qsl.append(strQuery);
                     strQuery.clear();
-                    strQuery.append("INSERT INTO Нагрузка (`ID учащегося`, `ID группы`) VALUES ((SELECT `ID` FROM Учащиеся WHERE `Тип документа` = '" + ui->tableWidget->item(row, 4)->text() + "' AND `Номер документа` = '" + ui->tableWidget->item(row, 5)->text() + "'), (SELECT Группа.`ID` FROM Группа, Объединение WHERE Группа.`ID объединения` = Объединение.`ID` AND Объединение.`Название` = '" +ui->tableWidget->item(row, 0)->text()  + "' AND Группа.`Номер` = 'Без группы'));");
+                    strQuery.append("INSERT IGNORE INTO Нагрузка (`ID учащегося`, `ID группы`) VALUES ((SELECT `ID` FROM Учащиеся WHERE `Тип документа` = '" + ui->tableWidget->item(row, 4)->text() + "' AND `Номер документа` = '" + ui->tableWidget->item(row, 5)->text() + "'), (SELECT Группа.`ID` FROM Группа, Объединение WHERE Группа.`ID объединения` = Объединение.`ID` AND Объединение.`Название` = '" +ui->tableWidget->item(row, 0)->text()  + "' AND Группа.`Номер` = 'Без группы'));");
                     qsl.append(strQuery);
                     strQuery.clear();
                 }
