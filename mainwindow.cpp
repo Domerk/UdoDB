@@ -2104,23 +2104,20 @@ void MainWindow::querySlot(QTableWidget* tableWidget, QString strQuery, bool mai
     if (!mainDB)
         query = QSqlQuery(tempDB);
 
-    if (query.exec(strQuery))
-    {
-        // Если запрос выполнен успешно
-        drawRows(query, tableWidget, false); // Рисуем строки
-    }
-    else
+    if (!query.exec(strQuery))
     {
         // Иначе выводим сообщение обошибке
         QMessageBox messageBox(QMessageBox::Warning,
                                tr("Ошибка выполнения запроса"),
-                               tr("В ходе выполнения запроса возникла ошибка: ") + query.lastError().text(),
+                               tr("В ходе выполнения запроса:\n") + strQuery + tr("\n\nВозникла ошибка:\n") + query.lastError().text(),
                                QMessageBox::Yes,
                                this);
         messageBox.setButtonText(QMessageBox::Yes, tr("ОК"));
         messageBox.exec();
+        return;
     }
 
+    drawRows(query, tableWidget, false); // Рисуем строки
 }
 
 // ============================================================
@@ -2137,14 +2134,19 @@ void MainWindow::queriesSlot(QStringList qsl, bool mainDB)
     {
         if (!query.exec(strQuery))
         {
+            qDebug() << strQuery;
             // Если запрос не выполнился, выводим сообщение об ошибке
             QMessageBox messageBox(QMessageBox::Warning,
                                    tr("Ошибка выполнения запроса"),
-                                   tr("В ходе выполнения запроса возникла ошибка: ") + query.lastError().text(),
+                                   tr("В ходе выполнения запроса:\n") + strQuery + tr("\n\nВозникла ошибка:\n") + query.lastError().text(),
                                    QMessageBox::Yes,
                                    this);
             messageBox.setButtonText(QMessageBox::Yes, tr("ОК"));
             messageBox.exec();
+
+            // Посольку выполняется серия запросов, на всякий случай обновляем таблицу
+            if(mainDB)
+                repeatLastSelect();
             return; // И выходим.
         }
     }
