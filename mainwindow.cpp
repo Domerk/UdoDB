@@ -642,7 +642,7 @@ void MainWindow::deleteThis()
                                 {
                                     QMessageBox messageBox(QMessageBox::Warning,
                                                            tr("Ошибка выполнения запроса"),
-                                                           tr("В ходе выполнения запроса возникла ошибка:") + query.lastError().text(),
+                                                           tr("В ходе выполнения запроса возникла ошибка: ") + query.lastError().text(),
                                                            QMessageBox::Yes,
                                                            this);
                                     messageBox.setButtonText(QMessageBox::Yes, tr("ОК"));
@@ -693,7 +693,7 @@ void MainWindow::refreshTable()
     {
         QMessageBox messageBox(QMessageBox::Warning,
                                tr("Ошибка выполнения запроса"),
-                               tr("В ходе выполнения запроса на обсновление таблицы возникла ошибка:") + query.lastError().text(),
+                               tr("В ходе выполнения запроса на обсновление таблицы возникла ошибка: ") + query.lastError().text(),
                                QMessageBox::Yes,
                                this);
         messageBox.setButtonText(QMessageBox::Yes, tr("ОК"));
@@ -716,7 +716,7 @@ void MainWindow::repeatLastSelect()
     {
         QMessageBox messageBox(QMessageBox::Warning,
                                tr("Ошибка выполнения запроса"),
-                               tr("В ходе выполнения запроса возникла ошибка:") + query.lastError().text(),
+                               tr("В ходе выполнения запроса возникла ошибка: ") + query.lastError().text(),
                                QMessageBox::Yes,
                                this);
         messageBox.setButtonText(QMessageBox::Yes, tr("ОК"));
@@ -1106,7 +1106,7 @@ void MainWindow::on_saveButton_clicked()
     {
         QMessageBox messageBox(QMessageBox::Warning,
                                tr("Ошибка выполнения запроса"),
-                               tr("В ходе выполнения запроса на изменение данных возникла ошибка:") + query.lastError().text(),
+                               tr("В ходе выполнения запроса на изменение данных возникла ошибка: ") + query.lastError().text(),
                                QMessageBox::Yes,
                                this);
         messageBox.setButtonText(QMessageBox::Yes, tr("ОК"));
@@ -1198,7 +1198,7 @@ void MainWindow::simpleSearch()
         {
             QMessageBox messageBox(QMessageBox::Warning,
                                    tr("Ошибка выполнения запроса"),
-                                   tr("В ходе выполнения запроса возникла ошибка:") + query.lastError().text(),
+                                   tr("В ходе выполнения запроса возникла ошибка: ") + query.lastError().text(),
                                    QMessageBox::Yes,
                                    this);
             messageBox.setButtonText(QMessageBox::Yes, tr("ОК"));
@@ -2114,7 +2114,7 @@ void MainWindow::querySlot(QTableWidget* tableWidget, QString strQuery, bool mai
         // Иначе выводим сообщение обошибке
         QMessageBox messageBox(QMessageBox::Warning,
                                tr("Ошибка выполнения запроса"),
-                               tr("В ходе выполнения запроса возникла ошибка:") + query.lastError().text(),
+                               tr("В ходе выполнения запроса возникла ошибка: ") + query.lastError().text(),
                                QMessageBox::Yes,
                                this);
         messageBox.setButtonText(QMessageBox::Yes, tr("ОК"));
@@ -2140,7 +2140,7 @@ void MainWindow::queriesSlot(QStringList qsl, bool mainDB)
             // Если запрос не выполнился, выводим сообщение об ошибке
             QMessageBox messageBox(QMessageBox::Warning,
                                    tr("Ошибка выполнения запроса"),
-                                   tr("В ходе выполнения запроса возникла ошибка:") + query.lastError().text(),
+                                   tr("В ходе выполнения запроса возникла ошибка: ") + query.lastError().text(),
                                    QMessageBox::Yes,
                                    this);
             messageBox.setButtonText(QMessageBox::Yes, tr("ОК"));
@@ -2175,7 +2175,7 @@ void MainWindow::on_removeStudToGroup_clicked()
                         // Если запрос не выполнился, выводим сообщение об ошибке
                         QMessageBox messageBox(QMessageBox::Warning,
                                                tr("Ошибка выполнения запроса"),
-                                               tr("В ходе выполнения запроса возникла ошибка:") + query.lastError().text(),
+                                               tr("В ходе выполнения запроса возникла ошибка: ") + query.lastError().text(),
                                                QMessageBox::Yes,
                                                this);
                         messageBox.setButtonText(QMessageBox::Yes, tr("ОК"));
